@@ -1,0 +1,218 @@
+[v-cloak] {
+    display: none;
+}
+
+.get-support::before {
+    display: none;
+}
+
+.site-logo-wrap {
+    justify-content: space-between;
+}
+
+.form-control,
+.custom-select {
+    border-radius: 0;
+}
+
+.danny--form-step {
+    background-color: #F3F4F6;
+    position: relative;
+    padding: 2rem;
+}
+
+.danny--form-group {
+    background-color: #fff;
+    color: #000;
+    padding: 0.5rem;
+    align-items: center;
+}
+
+.danny--form-group div > .input-group {
+    border-left: 2px solid #6c757d;
+}
+
+.danny--form-group .input-group input[type=text].form-control,
+.danny--form-group .input-group input[type=number].form-control {
+    border: 0;
+    padding-left: 0;
+}
+
+.danny--form-group div > .b-form-btn-label-control.b-form-datepicker,
+.danny--form-group div > .b-form-btn-label-control.b-form-timepicker {
+    border: 0;
+    border-radius: 0;
+    border-left: 2px solid #6c757d;
+}
+
+.danny--btn {
+    background-color: #ff7043;
+    padding: 0 33px;
+    line-height: 60px;
+    color: white;
+    font-size: 14px;
+    display: inline-block;
+    font-weight: 700;
+    text-transform: uppercase;
+    position: relative;
+    border: none;
+    -webkit-transition: all 0.15s ease;
+    transition: all 0.15s ease;
+}
+
+.danny--btn:hover {
+    background-color: #404040;
+    color: #fff;
+}
+
+.danny--btn:before,
+.danny--btn:after {
+    content: '';
+    display: inline-block;
+    position: static;
+    position: absolute;
+}
+
+.danny--btn:before {
+    bottom: 5px;
+    left: 5px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-color: transparent transparent transparent #ffffff;
+}
+
+.danny--btn:before {
+    border-width: 33px 0 0 33px;
+}
+
+.danny--btn:after {
+    top: 5px;
+    right: 5px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 10px 10px 0;
+    border-color: transparent #ffffff transparent transparent;
+}
+
+.danny--btn:after {
+    border-width: 0 33px 33px 0;
+}
+
+.danny--car-name {
+    font-size: 22px;
+    color: #262626;
+    font-weight: bold;
+    padding-left: 35px;
+    margin: 0;
+    line-height: normal;
+}
+
+.danny--car-availability {
+    font-size: 14px;
+    color: #585858;
+    font-weight: bold;
+    padding-left: 35px;
+    margin: 0;
+    line-height: normal;
+}
+
+.danny--car-price {
+    font-size: 25px;
+    color: #ff7043;
+    font-weight: bold;
+    letter-spacing: normal;
+    margin: 0;
+}
+
+.danny--group-title {
+    font-size: 20px;
+    color: #262626;
+    text-transform: uppercase;
+    line-height: 1.5;
+    font-weight: bold;
+    position: relative;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    letter-spacing: -.4px;
+}
+
+.danny--group-title:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 45px;
+    background: url(../images/z-brd.png);
+}
+
+.danny--car-option-price {
+    font-weight: 600;
+    color: #F16541;
+    letter-spacing: -.1px;
+}
+
+.danny--review-pickup-time {
+    font-size: 17px;
+    color: #ff7043;
+    font-weight: bold;
+    text-transform: uppercase;
+    line-height: 1.5;
+}
+
+.danny--review-payment-total-text {
+    position: relative;
+    font-size: 25px;
+    color: #262626;
+    font-weight: bold;
+}
+
+.danny--review-payment-total-price {
+    position: relative;
+    font-size: 25px;
+    color: #F16541;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.danny--review-payment-agree {
+    color: #F16541;
+    border-bottom: 1px solid #F16541;
+    font-size: 16px;
+    -webkit-transition: all 300ms ease-in-out;
+    transition: all 300ms ease-in-out;
+    letter-spacing: -.4px;
+}
+
+.danny--nav-tabs.nav-tabs {
+    border-bottom: 0;
+}
+
+.danny--nav-tabs.nav-tabs .nav-link {
+    border: 0;
+    border-radius: 0;
+    border-bottom: 5px solid #E9EDF0;
+    padding-left: 0;
+    color: #C6C6C6;
+    margin-right: 1rem;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.danny--nav-tabs.nav-tabs .nav-link.active {
+    background-color: inherit;
+    color: #F16541;
+    border-bottom-color: #F16541;
+}
+
+.danny--nav-tabs.nav-tabs .nav-link.active .tab-heading {
+    color: #000;
+}
+
+.ltn__car-dealer-form-area {
+    position: relative;
+    top: -10rem;
+    z-index: 10;
+}

@@ -1,0 +1,714 @@
+Vue.use(window.vuelidate.default);
+Vue.component('multiselect', window.VueMultiselect.default);
+const { required, requiredIf, minLength, email, minValue } = window.validators;
+// import placePredictions from "../mixins/placePrediction";
+
+var app = new Vue({
+    el: '#main-app',
+    data: function () {
+        return {
+            options: {
+                YESNO: [
+                    {
+                        text: 'Yes',
+                        value: true,
+                    },
+                    {
+                        text: 'No',
+                        value: false,
+                    },
+                ],
+            },
+            form: {
+                bookingId: null,
+                bookingRequirements: {
+                    selectCar: {
+                        oneWayTrip: {
+                            vehicle: null,
+                        },
+                        roundTrip: {
+                            vehicle: null,
+                        },
+                    },
+                    reservation: {
+                        oneWayTrip: {
+                            origin: null,
+                            destination: null,
+                            miles: 0,
+                            pickup: {
+                                date: "2023-06-03",
+                                time: "12:00:00",
+                            },
+                            originSearch: null,
+                            destinationSearch: null,
+                            passengers: 4,
+                        },
+                        roundTrip: {
+                            origin: null,
+                            destination: null,
+                            miles: 0,
+                            pickup: {
+                                date: "2023-06-03",
+                                time: "12:00:00",
+                            },
+                            originSearch: null,
+                            destinationSearch: null,
+                            passengers: 5,
+                        },
+                        tripType: 'one-way',
+                    },
+                    chooseOptions: {
+                        oneWayTrip: {
+                            extras: [],
+                            protection: [],
+                        },
+                        roundTrip: {
+                            extras: [],
+                            protection: [],
+                        },
+                    },
+                    review: {
+                        customer: {
+                            firstName: null,
+                            lastName: null,
+                            dob: null,
+                            contact: {
+                                mobileNumber: null,
+                                email: null,
+                            },
+                        },
+                        airline: {
+                            brand: null,
+                            flightNumber: null,
+                        },
+                        routes: {
+                            oneWayTrip: {
+                                miles: 0,
+                            },
+                            roundTrip: {
+                                miles: 0
+                            }
+                        },
+                        prices: {
+                            oneWayTrip: 0,
+                            roundTrip: 0,
+                            total: 0,
+                        },
+                        agreeTermsConditions: null,
+                    },
+                },
+            },
+            errorMessages: {
+                required: 'This field is required',
+            },
+            originList: [],
+            destinationList: [],
+            formActiveTab: 0,
+            vehicles: {
+                oneWayTrip: [],
+                roundTrip: [],
+            },
+            tripTypes: [
+                {
+                    text: 'One-way trip',
+                    value: 'one-way'
+                },
+                {
+                    text: 'Round trip',
+                    value: 'round-trip'
+                }
+            ],
+            options: {
+                extras: [],
+                protection: [],
+            },
+            airlineBrands: [
+                {
+                    text: 'Select airline',
+                    value: null,
+                },
+                {
+                    text: 'Delta Air Lines',
+                    value: 1,
+                },
+                {
+                    text: 'Southwest Airlines',
+                    value: 2,
+                },
+                {
+                    text: 'United Airlines',
+                    value: 3,
+                },
+                {
+                    text: 'Alaska Airlines',
+                    value: 4,
+                },
+            ],
+            configurations: [],
+            transformedConfigs: {},
+            dropdowns: {
+                oneWayTrip: {
+                    origin: false, 
+                    destination: false,
+                },
+                roundTrip: {
+                    origin: false, 
+                    destination: false,
+                },
+            },
+        }
+    },
+    mounted: async function () {
+        console.log('app mounted');
+
+        this.form.bookingId = bookingId;
+
+        this.originList = originPredictions;
+        this.destinationList = destinationPredictions;
+
+        // this.form.bookingRequirements.reservation.oneWayTrip.origin = originPredictions[3];
+        // this.form.bookingRequirements.reservation.oneWayTrip.destination = destinationPredictions[4];
+
+        // this.form.bookingRequirements.reservation.roundTrip.origin = originPredictions[3];
+        // this.form.bookingRequirements.reservation.roundTrip.destination = destinationPredictions[4];
+    },
+    methods: {
+        updateSearchResult: function (location, tripType, place) {
+            const self = this;
+
+            self.form.bookingRequirements.reservation[tripType][place] = location;
+            self.form.bookingRequirements.reservation[tripType][place + 'Search'] = location.description;
+            self.dropdowns[tripType][place] = false;
+        },
+        fetchSearchResultFromGoogle: function (type) {
+            const self = this;
+
+            var userSearch = "camping";
+            var options = {
+                types: [
+                    'airport',
+                    'bank',
+                    'pharmacy',
+                    'school',
+                    'establishment'
+                ],
+                componentRestrictions: {
+                    country: 'us'
+                },
+                fields: [
+                    'place_id',
+                    'name',
+                    'geometry',
+                ],
+            };
+
+            const displaySuggestions = function (predictions, status) {
+                if (status != google.maps.places.PlacesServiceStatus.OK || !predictions) {
+                    console.log(status);
+                    alert(status);
+                    return;
+                }
+
+                if (type === 'origin') {
+                    self.originList = predictions;
+                }
+
+                if (type === 'destination') {
+                    self.destinationList = predictions;
+                }
+            };
+
+            placesService.getPlacePredictions({ input: userSearch, options }, displaySuggestions);
+        },
+        validateInputField: function (input) {
+            const self = this;
+
+            return input.$dirty ? !input.$invalid : null;
+        },
+        checkout: function () {
+            const self = this;
+
+            self.formActiveTab = 2;
+        },
+        saveReservation: function () {
+            const self = this;
+
+            self.$v.form.bookingRequirements.reservation.$touch();
+            var formValid = !self.$v.form.bookingRequirements.reservation.$invalid;
+
+            if (!formValid) {
+                self.showToastNotification(type = 'error');
+
+                setTimeout(function () {
+                    self.scrollToInvalidFields();
+                }, 1000);
+
+                return;
+            }
+
+            self.formActiveTab = 1;
+            self.getAvailableCars();
+        },
+        getAvailableCars: function () {
+            const self = this;
+
+            var payload = {
+                form: { ...self.form.bookingRequirements.reservation }
+            }
+
+            console.log(payload);
+
+            axios
+                .post(baseURL + '/api/car/list', payload)
+                .then(res => {
+                    console.log(res);
+                    self.vehicles.oneWayTrip = res.data.oneWayCars;
+                    self.vehicles.roundTrip = res.data.roundTripCars;
+                    var toastType = res.data.result ? 'success' : 'error';
+                    self.showToastNotification(toastType);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        saveSelectCar: function () {
+            const self = this;
+
+            self.$v.form.bookingRequirements.selectCar.$touch();
+            var formValid = !self.$v.form.bookingRequirements.selectCar.$invalid;
+
+            if (!formValid) {
+                self.showToastNotification(type = 'error', message = 'Please select at least one');
+
+                setTimeout(function () {
+                    self.scrollToInvalidFields();
+                }, 1000);
+
+                return;
+            }
+
+            self.getOptionsList();
+            self.formActiveTab = 2;
+        },
+        getOptionsList: function () {
+            const self = this;
+
+            var payload = {}
+
+            axios
+                .get(baseURL + '/api/configurations/list', payload)
+                .then(res => {
+                    self.options.extras = _.filter(res.data.configs, (option) => { return option.configGroupId === 'cfg-gr-opt' });
+                    self.options.protection = _.filter(res.data.configs, (option) => { return option.configGroupId === 'cfg-gr-prt' });
+                    self.configurations = _.filter(res.data.configs, (option) => { return option.configGroupId === 'cfg-gr-sys' });
+                    self.transformedConfigs = self.constructConfigDictionary();
+
+                    var toastType = res.data.result ? 'success' : 'error';
+                    self.showToastNotification(toastType);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        saveChooseOptions: function () {
+            const self = this;
+
+            console.log(self.form.bookingRequirements.chooseOptions);
+            self.computeRoutes();
+            self.formActiveTab = 3;
+        },
+        submitBooking: function () {
+            const self = this;
+
+            self.$v.form.bookingRequirements.review.$touch();
+            var formValid = !self.$v.form.bookingRequirements.review.$invalid;
+
+            if (!formValid) {
+                self.showToastNotification(type = 'error');
+
+                setTimeout(function () {
+                    self.scrollToInvalidFields();
+                }, 1000);
+
+                return;
+            }
+
+            var payload = {
+                form: { ...self.form }
+            }
+
+            axios
+                .post(baseURL + '/api/booking/save', payload)
+                .then(res => {
+                    console.log(res);
+                    var toastType = res.data.result ? 'success' : 'error';
+                    self.showToastNotification(toastType);
+
+                    if (res.data.result === true) {
+                        window.location.href = res.data.paymentLink;
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        showToastNotification: function (type = 'error', message = '') {
+            const self = this;
+
+            var titleType = type === 'error' ? 'Error' : 'Success';
+            var variantType = type === 'error' ? 'danger' : 'success';
+            var toastMessage = "";
+
+            if (type === 'error') {
+                toastMessage = message ? message : 'There are errors occured';
+            }
+
+            if (type === 'success') {
+                toastMessage = message ? message : 'Data is saved';
+            }
+
+            self.$bvToast.toast(
+                toastMessage,
+                {
+                    title: titleType,
+                    autoHideDelay: 3000,
+                    variant: variantType,
+                    solid: true,
+                    noCloseButton: true,
+                }
+            );
+        },
+        scrollToInvalidFields: function () {
+            const self = this;
+
+            var invalidFields = $('.tab-content .tab-pane.active form .form-group.is-invalid .d-block.invalid-feedback, .tab-content .tab-pane.active form .alert.alert-danger');
+
+            if (invalidFields.length > 0) {
+                invalidFields[0].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                });
+            }
+        },
+        computeRoutes: function () {
+            const self = this;
+
+            const oneMeterPerMile = 0.000621371;
+            var tripType = self.form.bookingRequirements.reservation.tripType;
+
+            self.form.bookingRequirements.review.routes.oneWayTrip.miles = parseFloat(oneMeterPerMile * parseInt(routeMatrix.routes[0].distanceMeters)).toFixed(0);
+
+            var oneWayTripRouteMiles = self.form.bookingRequirements.review.routes.oneWayTrip.miles;
+            var oneWayTripPassengers = self.form.bookingRequirements.reservation.oneWayTrip.passengers;
+            var oneWayTripCarPrice = self.form.bookingRequirements.selectCar.oneWayTrip.vehicle.carStartPrice;
+
+            self.form.bookingRequirements.review.prices.oneWayTrip = self.calculateRoutePrice(oneWayTripRouteMiles, oneWayTripPassengers, oneWayTripCarPrice);
+
+            if (tripType === 'round-trip') {
+                self.form.bookingRequirements.review.routes.roundTrip.miles = parseFloat(oneMeterPerMile * parseInt(routeMatrix.routes[0].distanceMeters)).toFixed(0);
+
+                var roundTripRouteMiles = self.form.bookingRequirements.review.routes.roundTrip.miles;
+                var roundTripPassengers = self.form.bookingRequirements.reservation.roundTrip.passengers;
+                var roundTripCarPrice = self.form.bookingRequirements.selectCar.roundTrip.vehicle.carStartPrice;
+
+                self.form.bookingRequirements.review.prices.roundTrip = self.calculateRoutePrice(roundTripRouteMiles, roundTripPassengers, roundTripCarPrice);
+            }
+        },
+        constructConfigDictionary: function () {
+            const self = this;
+
+            const arrayOfObjects = [...self.configurations];
+
+            // New object to store the key-value pairs
+            var newObject = {};
+
+            // Iterate over the array
+            for (let i = 0; i < arrayOfObjects.length; i++) {
+                const currentObject = arrayOfObjects[i];
+
+                // Iterate over the key-value pairs of the current object
+                for (const key in currentObject) {
+                    if (currentObject.hasOwnProperty(key) && key === 'configId') {
+                        const objectKey = currentObject['configId'];
+                        const objectValue = currentObject['configValue'];
+
+                        // Add the key-value pair to the new object
+                        newObject[objectKey] = objectValue;
+                    }
+                }
+            }
+
+            console.log(newObject);
+            return newObject;
+        },
+        calculateRoutePrice: function (miles, passengers, carPrice) {
+            const self = this;
+
+            var totalPrice = 0;
+            var milesPrice = 0;
+            var passengersPrice = 0;
+            var adminFee = 0;
+            
+            var pricePassengersGT4 = parseFloat(self.transformedConfigs['cfg-psr-gt-4']);
+            var priceMilesLT30 = parseFloat(self.transformedConfigs['cfg-pr-ml']);
+            var priceMilesGT30 = parseFloat(self.transformedConfigs['cfg-pr-ml-gt-30']);
+            var priceAdmin = 0.50;
+            
+            var parsedCarPrice = parseFloat(carPrice);
+
+            passengersPrice = passengers <= 4 ? parsedCarPrice : parsedCarPrice + ((passengers - 4) * pricePassengersGT4);
+            milesPrice = miles <= 30 ? (priceMilesLT30 * miles) : (priceMilesLT30 * 30) + (priceMilesGT30 * (miles - 30));
+            adminFee = priceAdmin * miles;
+
+            totalPrice = passengersPrice + milesPrice + adminFee;
+            
+            return totalPrice;
+        },
+    },
+    computed: {
+        errorMessageEmail: function () {
+            if (!this.$v.form.bookingRequirements.review.customer.contact.email.required) {
+                return this.errorMessages.required;
+            }
+
+            if (!this.$v.form.bookingRequirements.review.customer.contact.email.email) {
+                return 'Invalid email address';
+            }
+        },
+        errorMessagePassengers: function () {
+            // if (!this.$v.form.bookingRequirements.passengers.required) {
+            //     return this.errorMessages.required;
+            // }
+
+            // if (!this.$v.form.bookingRequirements.passengers.minValue) {
+            //     return 'Number of passengers must be greater than 0';
+            // }
+        },
+        routeMapPreview: function () {
+            // const self = this;
+
+            // var markers = 'https://www.google.com/maps/embed/v1/directions?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y';
+
+            // if (
+            //     !_.isNil(self.form.bookingRequirements.oneWayTrip.origin) && !_.isNil(self.form.bookingRequirements.oneWayTrip.destination) &&
+            //     !_.isNil(self.form.bookingRequirements.oneWayTrip.origin.place_id) && !_.isNil(self.form.bookingRequirements.oneWayTrip.destination.place_id)
+            // ) {
+            //     markers += '&origin=place_id:' + self.form.bookingRequirements.oneWayTrip.origin.place_id + '&destination=place_id:' + self.form.bookingRequirements.oneWayTrip.destination.place_id;
+            // } else {
+            //     markers = null;
+            // }
+
+            // return markers;
+        },
+        oneWayTripOrigin: function () {
+            const self = this;
+            return self.form.bookingRequirements.reservation.oneWayTrip.origin && self.form.bookingRequirements.reservation.oneWayTrip.origin.description ?
+                    self.form.bookingRequirements.reservation.oneWayTrip.origin.description :
+                    'Not provided';
+        },
+        oneWayTripDestination: function () {
+            const self = this;
+            return self.form.bookingRequirements.reservation.oneWayTrip.destination && self.form.bookingRequirements.reservation.oneWayTrip.destination.description ?
+                    self.form.bookingRequirements.reservation.oneWayTrip.destination.description :
+                    'Not provided';
+        },
+        oneWayTripRouteMiles: function () {
+            const self = this;
+
+            return self.form.bookingRequirements.review.routes.oneWayTrip.miles > 0 ?
+                self.form.bookingRequirements.review.routes.oneWayTrip.miles + ' mile(s)' :
+                'Not provided';
+        },
+        oneWayTripPickup: function () {
+            const self = this;
+
+            return self.form.bookingRequirements.reservation.oneWayTrip.pickup ?
+            moment(
+                self.form.bookingRequirements.reservation.oneWayTrip.pickup.date + ' ' + self.form.bookingRequirements.reservation.oneWayTrip.pickup.time,
+                'YYYY-MM-DD hh:mm'
+                ).format('LLLL') :
+            'Not provided';
+        },
+        oneWayTripVehicle: function () {
+            const self = this;
+
+            const defaultImage = baseURL + '/images/vehicles/vehicle-placeholder.png';
+
+            if (self.form.bookingRequirements.selectCar.oneWayTrip.vehicle) {
+                return baseURL + '/images/vehicles/' + self.form.bookingRequirements.selectCar.oneWayTrip.vehicle.carImage;
+            }
+
+            return defaultImage;
+        },
+        roundTripPickup: function () {
+            const self = this;
+
+            return self.form.bookingRequirements.reservation.roundTrip.pickup ?
+            moment(
+                self.form.bookingRequirements.reservation.roundTrip.pickup.date + ' ' + self.form.bookingRequirements.reservation.roundTrip.pickup.time,
+                'YYYY-MM-DD hh:mm'
+                ).format('LLLL') :
+            'Not provided';
+        },
+        roundTripOrigin: function () {
+            const self = this;
+
+            return self.form.bookingRequirements.reservation.roundTrip.origin && self.form.bookingRequirements.reservation.roundTrip.origin.description ?
+            self.form.bookingRequirements.reservation.roundTrip.origin.description :
+            'Not provided';
+        },
+        roundTripDestination: function () {
+            const self = this;
+
+            return self.form.bookingRequirements.reservation.roundTrip.destination && self.form.bookingRequirements.reservation.roundTrip.destination.description ?
+                    self.form.bookingRequirements.reservation.roundTrip.destination.description :
+                    'Not provided';
+        },
+        roundTripRouteMiles: function () {
+            const self = this;
+
+            return self.form.bookingRequirements.review.routes.roundTrip.miles > 0 ?
+                self.form.bookingRequirements.review.routes.roundTrip.miles + ' mile(s)' :
+                'Not provided';
+        },
+        roundTripVehicle: function () {
+            const self = this;
+
+            const defaultImage = baseURL + '/images/vehicles/vehicle-placeholder.png';
+
+            if (self.form.bookingRequirements.selectCar.roundTrip.vehicle) {
+                return baseURL + '/images/vehicles/' + self.form.bookingRequirements.selectCar.roundTrip.vehicle.carImage;
+            }
+
+            return defaultImage;
+        },
+        totalRoutesPrice: function () {
+            const self = this;
+
+            var price = 0;
+
+            
+            price = parseFloat(self.form.bookingRequirements.review.prices.oneWayTrip);
+            
+
+            if (self.form.bookingRequirements.reservation.tripType === 'round-trip') {
+                price += parseFloat(self.form.bookingRequirements.review.prices.roundTrip);
+            }
+
+            self.form.bookingRequirements.review.prices.total = parseInt(price);
+            
+            return price.toFixed(2);
+        },
+    },
+    validations: {
+        form: {
+            bookingRequirements: {
+                reservation: {
+                    tripType: {
+                        required: required,
+                    },
+                    oneWayTrip: {
+                        pickup: {
+                            date: {
+                                required: required,
+                            },
+                            time: {
+                                required: required,
+                            },
+                        },
+                        origin: {
+                            required: required,
+                        },
+                        destination: {
+                            required: required,
+                        },
+                        originSearch: {},
+                        destinationSearch: {},
+                        passengers: {
+                            required: required,
+                        },
+                    },
+                    roundTrip: {
+                        pickup: {
+                            date: {
+                                requiredIf: requiredIf(function () {
+                                    return this.form.bookingRequirements.reservation.tripType === 'round-trip';
+                                })
+                            },
+                            time: {
+                                requiredIf: requiredIf(function () {
+                                    return this.form.bookingRequirements.reservation.tripType === 'round-trip';
+                                })
+                            },
+                        },
+                        origin: {
+                            requiredIf: requiredIf(function () {
+                                return this.form.bookingRequirements.reservation.tripType === 'round-trip';
+                            })
+                        },
+                        destination: {
+                            requiredIf: requiredIf(function () {
+                                return this.form.bookingRequirements.reservation.tripType === 'round-trip';
+                            })
+                        },
+                        originSearch: {},
+                        destinationSearch: {},
+                        passengers: {
+                            required: required,
+                        },
+                    },
+                },
+                selectCar: {
+                    oneWayTrip: {
+                        vehicle: {
+                            required: required,
+                        },
+                    },
+                    roundTrip: {
+                        vehicle: {
+                            requiredIf: requiredIf(function () {
+                                return this.form.bookingRequirements.reservation.tripType === 'round-trip';
+                            }),
+                        },
+                    },
+                },
+                chooseOptions: {
+                    oneWayTrip: {
+                        extras: {},
+                        protection: {},
+                    },
+                    roundTrip: {
+                        extras: {},
+                        protection: {},
+                    },
+                },
+                review: {
+                    customer: {
+                        firstName: {
+                            required: required,
+                        },
+                        lastName: {
+                            required: required,
+                        },
+                        contact: {
+                            mobileNumber: {
+                                required: required,
+                            },
+                            email: {
+                                required: required,
+                                email: email,
+                            }
+                        },
+                    },
+                    airline: {
+                        brand: {},
+                        flightNumber: {},
+                    },
+                    agreeTermsConditions: {
+                        required: required,
+                    }
+                }
+            },
+        },
+    },
+});
