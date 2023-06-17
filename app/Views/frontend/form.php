@@ -474,7 +474,7 @@
                                 :class="vehicle.availableCars === '0' ? 'bg-white' : 'bg-white'"
                                 v-for="vehicle in vehicles.oneWayTrip">
                                 <div class="col-12 col-md-3">
-                                    <img :src="'<?= base_url('images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
+                                    <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
                                 </div>
                                 <div class="col-12 col-md-3">
                                     <p class="danny--car-name">
@@ -506,7 +506,7 @@
                                 :class="vehicle.availableCars === '0' ? 'bg-white' : 'bg-white'"
                                 v-for="vehicle in vehicles.roundTrip">
                                 <div class="col-12 col-md-3">
-                                    <img :src="'<?= base_url('images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
+                                    <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
                                 </div>
                                 <div class="col-12 col-md-3">
                                     <p class="danny--car-name">
@@ -1295,7 +1295,7 @@
 <script src="<?= base_url('static/mixins/routeMatrix.js') ?>" type="text/javascript"></script>
 
 <script
-    async
+    defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y&libraries=places&callback=initMap">
 </script>
 

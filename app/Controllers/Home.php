@@ -3,6 +3,7 @@
 namespace App\Controllers;
 use App\Models\ConfigModel;
 use App\Models\BookingModel;
+use \TCPDF as TCPDF;
 
 use CodeIgniter\I18n\Time;
 
@@ -91,6 +92,18 @@ class Home extends BaseController
             'paymentLink' => $payment_link
         ];
 
+        $payment_data = [
+            'bookingId' => $booking_id,
+            'customer' => $booking_data->bookingRequirements->review->customer,
+            'paymentLink' => $payment_link,
+            'total' => $booking_data->bookingRequirements->review->prices->total,
+            'bookingCreatedAt' => Time::now('UTC'),
+        ];
+
+        $send_payment_link = $this->sendBookingPaymentLinkEmail((object) $payment_data);
+
+        $response['sendPaymentLinkEmail'] = $send_payment_link;
+
         return $this->response->setJSON($response);
     }
 
@@ -99,12 +112,18 @@ class Home extends BaseController
 
     }
 
-    public function sendBookingReceiptEmail($data)
+    public function sendBookingPaymentLinkEmail($payment_data)
     {
-        $sender = 'minhquanw3c@gmail.com';
-        $recipient = $booking_data->customer->contact->email;
-        $email_subject = 'Receipt for booking No. ';
-        $message = view('templates/receipt', array('sender' => $sender, 'recipient' => $recipient));
+        $config_model = model(ConfigModel::class);
+
+        $config = $config_model->getEmailSender();
+        $sender = $config['configValue'];
+
+        $recipient = $payment_data->customer->contact->email;
+
+        $email_subject = 'Stripe payment link for booking: ' . $payment_data->bookingId;
+
+        $message = view('templates/mail/booking_payment_link', array('paymentData' => $payment_data));
 
         $email = \Config\Services::email();
 
@@ -115,14 +134,79 @@ class Home extends BaseController
 
         $send_email_result = $email->send();
 
-        if ($send_email_result == true) {
-            $response['result'] = true;
-            $response['message'] = 'Email sent successfully.';
-        } else {
-            $response['result'] = false;
-            $response['message'] = 'There are errors during sending email.';
-            $response['errorStack'] = $email->printDebugger(['headers']);
-        }
+        $response['result'] = $send_email_result;
+        $response['message'] = $send_email_result ? 'Email sent successfully.' : 'There are errors during sending email.';
+
+        return $response;
+    }
+
+    public function generateBookingReceipt($pdf_template, $booking_id)
+    {
+        // Create a new PDF instance
+        $pdf = new TCPDF('P', 'mm', 'LETTER', true, 'UTF-8');
+
+        // Set document information
+        $pdf->SetCreator('Your Name');
+        $pdf->SetAuthor('Your Name');
+        $pdf->SetTitle('Sample PDF');
+        $pdf->SetSubject('Generating PDF using TCPDF');
+        $pdf->SetKeywords('TCPDF, PDF, sample');
+
+        // Set default font settings
+        $pdf->SetFont('helvetica', '', 12);
+
+        
+
+        // Add a page
+        $pdf->AddPage();
+
+        // Set the HTML content as the PDF content
+        $pdf->writeHTML($pdf_template, true, false, true, false, '');
+
+        // Specify the path to the folder where you want to save the PDF
+        $savePath = WRITEPATH . '/receipts/pdf/';
+
+        // Generate a unique filename for the PDF
+        $filename = $booking_id . '.pdf';
+
+        // Save the PDF to the specified folder
+        $pdf->Output($savePath . $filename, 'F');
+
+    }
+
+    public function sendBookingReceiptEmail($booking_data, $booking_id)
+    {
+        $config_model = model(ConfigModel::class);
+
+        $config = $config_model->getEmailSender();
+        $sender = $config['configValue'];
+
+        $recipient = $booking_data->review->customer->contact->email;
+
+        $email_subject = 'Receipt for booking: ' . $booking_id;
+
+        $message = view('templates/mail/booking_receipt', array('bookingData' => $booking_data));
+        $pdf_content = view('templates/pdf/booking_info', array('bookingData' => $booking_data), ['debug' => false]);
+        // $pdf_content = "hello world";
+
+        $this->generateBookingReceipt($pdf_content, $booking_id);
+
+        $receiptsPath = WRITEPATH . 'receipts/' .$booking_id;
+
+        $email = \Config\Services::email();
+
+        $email->setFrom($sender);
+        $email->setTo($recipient);
+        $email->setSubject($email_subject);
+        $email->setMessage($message);
+        $email->attach($receiptsPath);
+
+        $send_email_result = $email->send();
+
+        $response['result'] = $send_email_result;
+        $response['message'] = $send_email_result ? 'Email sent successfully.' : 'There are errors during sending email.';
+
+        return $response;
     }
 
     public function confirmBookingPayment()
@@ -145,16 +229,21 @@ class Home extends BaseController
         }
 
         $update_booking_data = [
-            'payment_status' => 'pmst-paid',
+            // 'payment_status' => 'pmst-paid',
             'checkout_session_id' => $session_checkout_id,
             'booking_updated_at' => Time::now('UTC'),
         ];
 
         $update_booking_result = $booking_model->updateBookingById($booking_id, $update_booking_data);
 
+        $receipt_data = json_decode($booking['bookingData']);
+
+        $send_receipt = $this->sendBookingReceiptEmail($receipt_data, $booking_id);
+
         $response = [
             'bookingId' => $booking_id,
             'result' => $update_booking_result,
+            'sendBookingReceipt' => $send_receipt,
         ];
 
         return view('templates/confirmation');

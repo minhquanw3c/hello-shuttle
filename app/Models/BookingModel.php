@@ -30,6 +30,7 @@ class BookingModel extends Model
     {
         $get_booking_query = $this->select([
             'bookings.booking_id AS bookingId',
+            'bookings.booking_data AS bookingData',
             'bookings.payment_status AS bookingPaymentStatus',
             'bookings.checkout_session_id AS bookingCheckoutSessionId',
         ])

@@ -345,7 +345,7 @@ var app = new Vue({
                     self.showToastNotification(toastType);
 
                     if (res.data.result === true) {
-                        window.location.href = res.data.paymentLink;
+                        // window.location.href = res.data.paymentLink;
                     }
                 })
                 .catch(error => {
@@ -532,10 +532,10 @@ var app = new Vue({
         oneWayTripVehicle: function () {
             const self = this;
 
-            const defaultImage = baseURL + '/images/vehicles/vehicle-placeholder.png';
+            const defaultImage = baseURL + '/static/images/vehicles/vehicle-placeholder.png';
 
             if (self.form.bookingRequirements.selectCar.oneWayTrip.vehicle) {
-                return baseURL + '/images/vehicles/' + self.form.bookingRequirements.selectCar.oneWayTrip.vehicle.carImage;
+                return baseURL + '/static/images/vehicles/' + self.form.bookingRequirements.selectCar.oneWayTrip.vehicle.carImage;
             }
 
             return defaultImage;
@@ -574,10 +574,10 @@ var app = new Vue({
         roundTripVehicle: function () {
             const self = this;
 
-            const defaultImage = baseURL + '/images/vehicles/vehicle-placeholder.png';
+            const defaultImage = baseURL + '/static/images/vehicles/vehicle-placeholder.png';
 
             if (self.form.bookingRequirements.selectCar.roundTrip.vehicle) {
-                return baseURL + '/images/vehicles/' + self.form.bookingRequirements.selectCar.roundTrip.vehicle.carImage;
+                return baseURL + '/static/images/vehicles/' + self.form.bookingRequirements.selectCar.roundTrip.vehicle.carImage;
             }
 
             return defaultImage;

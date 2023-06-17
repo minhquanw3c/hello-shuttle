@@ -40,4 +40,17 @@ class ConfigModel extends Model
 
         return $get_list_query;
     }
+
+    public function getEmailSender()
+    {
+        $get_sender_query = $this->select([
+            'configurations.config_id AS configId',
+            'configurations.config_name AS configName',
+            'configurations.config_value AS configValue',
+        ])
+        ->where('configurations.config_active', 1)
+        ->first();
+
+        return $get_sender_query;
+    }
 }
