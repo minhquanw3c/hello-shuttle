@@ -1273,9 +1273,9 @@
 <!-- preloader area end -->
 
 <!-- All JS Plugins -->
-<script src="<?= base_url('autixir/js/plugins.js') ?>"></script>
+<script src="<?= base_url('static/js/theme/plugins.js') ?>"></script>
 <!-- Main JS -->
-<script src="<?= base_url('autixir/js/main.js') ?>"></script>
+<script src="<?= base_url('static/js/theme/main.js') ?>"></script>
 
 <script src="<?= base_url('static/js/vendors/jquery.min.js') ?>" type="text/javascript"></script>
 <script src="<?= base_url('static/js/vendors/popper.min.js') ?>" type="text/javascript"></script>
