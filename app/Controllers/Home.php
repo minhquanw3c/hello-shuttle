@@ -155,8 +155,6 @@ class Home extends BaseController
         // Set default font settings
         $pdf->SetFont('helvetica', '', 12);
 
-        
-
         // Add a page
         $pdf->AddPage();
 

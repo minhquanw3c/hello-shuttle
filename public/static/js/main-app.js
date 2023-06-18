@@ -345,7 +345,7 @@ var app = new Vue({
                     self.showToastNotification(toastType);
 
                     if (res.data.result === true) {
-                        // window.location.href = res.data.paymentLink;
+                        window.location.href = res.data.paymentLink;
                     }
                 })
                 .catch(error => {

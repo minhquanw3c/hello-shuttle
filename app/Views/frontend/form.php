@@ -1198,7 +1198,7 @@
                                         <li class="ltn__blog-date"><i class="far fa-calendar-alt"></i> June 24, 2020</li>
                                     </ul>
                                 </div>
-                                <h4 class="ltn__blog-title"><a href="blog-details.html">The branch of biology that
+                                <h4 class="ltn__blog-title"><a href="javascript:void(0)">The branch of biology that
                                     deals with the normal.</a></h4>
                             </div>
                             <div class="ltn__footer-blog-item">
@@ -1207,7 +1207,7 @@
                                         <li class="ltn__blog-date"><i class="far fa-calendar-alt"></i> June 28, 2020</li>
                                     </ul>
                                 </div>
-                                <h4 class="ltn__blog-title"><a href="blog-details.html">Electric Car Maintenance, Servicing & Repairs</a></h4>
+                                <h4 class="ltn__blog-title"><a href="javascript:void(0)">Electric Car Maintenance, Servicing & Repairs</a></h4>
                             </div>
                             <div class="ltn__footer-blog-item">
                                 <div class="ltn__blog-meta">
@@ -1215,7 +1215,7 @@
                                         <li class="ltn__blog-date"><i class="far fa-calendar-alt"></i> June 24, 2020</li>
                                     </ul>
                                 </div>
-                                <h4 class="ltn__blog-title"><a href="blog-details.html">The branch of biology that
+                                <h4 class="ltn__blog-title"><a href="javascript:void(0)">The branch of biology that
                                     deals with the normal.</a></h4>
                             </div>
                         </div>
@@ -1237,7 +1237,7 @@
                                 <div class="get-support-info">
                                     <h6>Copyright & Design By</h6>
                                     <h4>
-                                        <a href="https://www.dannythedesigner.com" target="_blank">DannyTheDesigner</a> - <span class="current-year"></span>
+                                        <a href="https://www.dannythedesigner.com" target="_blank">DannyTheDesigner</a> - <span class="current-year"><?= date('Y') ?></span>
                                     </h4>
                                 </div>
                             </div>

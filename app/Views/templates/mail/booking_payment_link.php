@@ -17,7 +17,7 @@
             <p>Payment link: <?= $paymentData->paymentLink ?></p>
         </li>
         <li>
-            <p>Total price: &<?= $paymentData->total ?></p>
+            <p>Total price: $<?= $paymentData->total ?></p>
         </li>
         <li>
             <p>Created at: <?= $paymentData->bookingCreatedAt ?></p>
