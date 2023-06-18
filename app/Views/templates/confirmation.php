@@ -127,7 +127,7 @@
             <div class="row">
                 <div class="col-lg-8 offset-lg-2">
                     <h1 class="section-title">Thank you for choosing us!</h1>
-                    <a href="<?= base_url('/') ?>">Return to home page.</a>
+                    <a href="<?= base_url('/') ?>" class="btn btn-transparent">Return to home page.</a>
                 </div>
             </div>
         </div>

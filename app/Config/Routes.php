@@ -32,6 +32,7 @@ $routes->set404Override('App\Controllers\ErrorHandler::pageNotFound');
 $routes->get('/', 'Home::index');
 $routes->get('/reservation', 'Home::reservationForm');
 $routes->get('/confirmation', 'Home::confirmBookingPayment');
+$routes->get('/cancel', 'Home::cancelBooking');
 
 $routes->post('api/car/list', 'Home::getAvailableCarsList');
 

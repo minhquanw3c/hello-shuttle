@@ -38,18 +38,18 @@ class Home extends BaseController
     {
         $booking_data = $this->request->getVar('form');
 
-        $scheduled_cars_model = model(ScheduledCarsModel::class);
+        $booking_schedule_model = model(BookingScheduleModel::class);
 
         $one_way_cars = [];
         $round_trip_cars = [];
 
         $booking_date = $booking_data->oneWayTrip->pickup->date;
-        $one_way_cars = $scheduled_cars_model->getAvailableCarsForDate($booking_date);
+        $one_way_cars = $booking_schedule_model->getAvailableCarsForDate($booking_date);
 
         if ($booking_data->tripType == 'round-trip') {
             $round_trip_booking_date = $booking_data->roundTrip->pickup->date;
 
-            $round_trip_cars = $scheduled_cars_model->getAvailableCarsForDate($round_trip_booking_date);
+            $round_trip_cars = $booking_schedule_model->getAvailableCarsForDate($round_trip_booking_date);
         }
 
         $response = [
@@ -172,6 +172,11 @@ class Home extends BaseController
 
     }
 
+    public function generateBookingCancelLink($booking_id)
+    {
+
+    }
+
     public function sendBookingReceiptEmail($booking_data, $booking_id)
     {
         $config_model = model(ConfigModel::class);
@@ -183,9 +188,10 @@ class Home extends BaseController
 
         $email_subject = 'Receipt for booking: ' . $booking_id;
 
-        $message = view('templates/mail/booking_receipt', array('bookingData' => $booking_data));
+        $cancel_booking_link = $this->generateBookingCancelLink($booking_id);
+
+        $message = view('templates/mail/booking_receipt', array('cancelBookingLink' => $cancel_booking_link));
         $pdf_content = view('templates/pdf/booking_info', array('bookingData' => $booking_data), ['debug' => false]);
-        // $pdf_content = "hello world";
 
         $this->generateBookingReceipt($pdf_content, $booking_id);
 
@@ -234,7 +240,35 @@ class Home extends BaseController
 
         $update_booking_result = $booking_model->updateBookingById($booking_id, $update_booking_data);
 
+        $booking_schedule_model = model(BookingScheduleModel::class);
+
         $receipt_data = json_decode($booking['bookingData']);
+
+        $trip_type = $receipt_data->reservation->tripType;
+
+        $one_way_car_id = $receipt_data->selectCar->oneWayTrip->vehicle->carId;
+        $one_way_car_booked_date = $receipt_data->reservation->oneWayTrip->pickup->date;
+
+        $booking_schedules = [
+            [
+                'booking_id' => $booking_id,
+                'car_id' => $one_way_car_id,
+                'scheduled_date' => $one_way_car_booked_date,
+            ]
+        ];
+
+        if ($trip_type == 'round-trip') {
+            $round_trip_car_id = $receipt_data->selectCar->roundTrip->vehicle->carId;
+            $round_trip_car_booked_date = $receipt_data->reservation->roundTrip->pickup->date;
+
+            array_push($booking_schedules, [
+                'booking_id' => $booking_id,
+                'car_id' => $round_trip_car_id,
+                'scheduled_date' => $round_trip_car_booked_date,
+            ]);
+        }
+
+        $create_booking_schedule_result = $booking_schedule_model->createBookingSchedule($booking_schedules);
 
         $send_receipt = $this->sendBookingReceiptEmail($receipt_data, $booking_id);
 
@@ -242,6 +276,7 @@ class Home extends BaseController
             'bookingId' => $booking_id,
             'result' => $update_booking_result,
             'sendBookingReceipt' => $send_receipt,
+            'createBookingSchedule' => $create_booking_schedule_result,
         ];
 
         return view('templates/confirmation');
