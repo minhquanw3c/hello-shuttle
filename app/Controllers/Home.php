@@ -227,7 +227,7 @@ class Home extends BaseController
         }
 
         $update_booking_data = [
-            // 'payment_status' => 'pmst-paid',
+            'payment_status' => 'pmst-paid',
             'checkout_session_id' => $session_checkout_id,
             'booking_updated_at' => Time::now('UTC'),
         ];
