@@ -12,9 +12,12 @@ class BookingModel extends Model
 	protected $allowedFields = [
         'booking_id',
 		'booking_data',
+        'booking_status',
         'payment_link',
+        'payment_link_id',
         'payment_status',
         'checkout_session_id',
+        'cancel_session_id',
         'booking_created_at',
         'booking_updated_at',
 	];
@@ -31,6 +34,7 @@ class BookingModel extends Model
         $get_booking_query = $this->select([
             'bookings.booking_id AS bookingId',
             'bookings.booking_data AS bookingData',
+            'bookings.payment_link_id AS bookingPaymentLinkId',
             'bookings.payment_status AS bookingPaymentStatus',
             'bookings.checkout_session_id AS bookingCheckoutSessionId',
         ])

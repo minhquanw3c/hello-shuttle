@@ -10,6 +10,6 @@
     <p>Thank you for choosing us!</p>
     <p>You can find booking receipt and related information in the pdf attached file.</p>
     <p>In case of unexpected events, you can also cancel the booking using the link below, and you will be refund automatically based on our policy.</p>
-    <a href="" target="_blank"></a>
+    <a href="<?= $cancelBookingLink ?>" target="_blank">Click here to cancel booking</a>
 </body>
 </html>

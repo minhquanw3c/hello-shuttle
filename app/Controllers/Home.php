@@ -11,7 +11,7 @@ class Home extends BaseController
 {
     public function index()
     {
-        $booking_id = now() . random_string();
+        $booking_id = now() . random_string('alnum', 10);
 
         $data = [
             'bookingId' => $booking_id,
@@ -73,13 +73,17 @@ class Home extends BaseController
             'totalPrice' => $booking_data->bookingRequirements->review->prices->total,
         ];
 
-        $payment_link = $this->testStripePayment($payment_data);
+        $payment_link_data = (object) $this->testStripePayment($payment_data);
+        $payment_link = $payment_link_data->url;
+        $payment_link_id = $payment_link_data->id;
 
         $data = [
             'booking_id' => $booking_id,
             'booking_data' => json_encode($booking_data->bookingRequirements),
             'payment_link' => $payment_link,
+            'payment_link_id' => $payment_link_id,
             'payment_status' => 'pmst-pending',
+            'booking_status' => 'bk-sts-inprs',
             'checkout_session_id' => 'n/a',
             'booking_created_at' => Time::now('UTC'),
             'booking_updated_at' => Time::now('UTC'),
@@ -109,6 +113,23 @@ class Home extends BaseController
 
     public function cancelBooking()
     {
+        $booking_id = filter_var($this->request->getVar('booking_id'), FILTER_SANITIZE_STRING);
+        $cancel_session_id = filter_var($this->request->getVar('cancel_session_id'), FILTER_SANITIZE_STRING);
+
+        $booking_model = model(BookingModel::class);
+
+        $booking = $booking_model->getBookingById($booking_id);
+
+        if (count($booking) == 0) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
+        }
+
+        $booking = $booking[0];
+
+        if ($booking['bookingPaymentStatus'] != 'pmst-paid') {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
+        }
+
 
     }
 
@@ -172,9 +193,23 @@ class Home extends BaseController
 
     }
 
-    public function generateBookingCancelLink($booking_id)
+    private function generateBookingCancelLink($booking_id)
     {
+        $string_length = 20;
+        $cancel_session_id = random_string('alnum', $string_length);
 
+        $cancel_booking_link = base_url('/cancel?booking_id=' . $booking_id . '&cancel_session_id=' . $cancel_session_id);
+
+        $booking_model = model(BookingModel::class);
+
+        $save_booking_cancel_session = $booking_model->updateBookingById(
+            $booking_id,
+            [
+                'cancel_session_id' => $cancel_session_id,
+            ]
+        );
+
+        return $cancel_booking_link;
     }
 
     public function sendBookingReceiptEmail($booking_data, $booking_id)
@@ -232,6 +267,8 @@ class Home extends BaseController
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
         }
 
+        $this->disablePaymentLink($booking['bookingPaymentLinkId']);
+
         $update_booking_data = [
             'payment_status' => 'pmst-paid',
             'checkout_session_id' => $session_checkout_id,
@@ -280,6 +317,18 @@ class Home extends BaseController
         ];
 
         return view('templates/confirmation');
+    }
+
+    private function disablePaymentLink($payment_link_id)
+    {
+        require_once(APPPATH . 'Libraries/stripe/init.php');
+
+        $stripe = new \Stripe\StripeClient('sk_test_51N5oaiL3WCB4PP1wjgWKk5DIYSyCBHDV9YcnNqFaozUV8qoDeHyqeH6CQ2tgq7VlF7EYckPUYlQ72H64bj7wmtjC00LuWcpiNA');
+
+        $stripe->paymentLinks->update(
+            $payment_link_id,
+            ['active' => false]
+        );
     }
 
     public function testStripePayment($booking_data)
@@ -335,7 +384,10 @@ class Home extends BaseController
         ];
 
         // return $this->response->setJSON($response);
-        return $payment_link->url;
+        return [
+            'url' => $payment_link->url,
+            'id' => $payment_link->id,
+        ];
     }
 
     public function testClickSend()
