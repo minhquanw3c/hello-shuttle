@@ -316,7 +316,7 @@ class Home extends BaseController
             'createBookingSchedule' => $create_booking_schedule_result,
         ];
 
-        return view('templates/confirmation');
+        return view('templates/confirmation', $response);
     }
 
     private function disablePaymentLink($payment_link_id)
