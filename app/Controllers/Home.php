@@ -153,10 +153,10 @@ class Home extends BaseController
         $email->setSubject($email_subject);
         $email->setMessage($message);
 
-        $send_email_result = $email->send();
+        $send_email_result = $email->send(false);
 
         $response['result'] = $send_email_result;
-        $response['message'] = $send_email_result ? 'Email sent successfully.' : 'There are errors during sending email.';
+        $response['message'] = $send_email_result ? 'Email sent successfully.' : $email->printDebugger();
 
         return $response;
     }
