@@ -29,19 +29,22 @@ class Email extends BaseConfig
      * SMTP Server Address
      */
     # public string $SMTPHost = 'smtp.gmail.com';
-    public string $SMTPHost = 'mail.dpcorp.a2hosted.com';
+    # public string $SMTPHost = 'mail.dpcorp.a2hosted.com';
+    public string $SMTPHost = 'mail.websity.us';
 
     /**
      * SMTP Username
      */
     # public string $SMTPUser = 'minhquanw3c@gmail.com';
-    public string $SMTPUser = 'dpcorpah';
+    # public string $SMTPUser = 'dpcorpah';
+    public string $SMTPUser = 'mail@websity.us';
 
     /**
      * SMTP Password
      */
     # public string $SMTPPass = 'jmdk oval hkpf zqyw';
-    public string $SMTPPass = '@Cy3i7UYk5;t0H';
+    # public string $SMTPPass = '@Cy3i7UYk5;t0H';
+    public string $SMTPPass = 'PtNf}YsvCmYL';
 
     /**
      * SMTP Port
