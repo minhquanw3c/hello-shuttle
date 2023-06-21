@@ -230,7 +230,7 @@ class Home extends BaseController
 
         $this->generateBookingReceipt($pdf_content, $booking_id);
 
-        $receiptsPath = WRITEPATH . '\/receipts/pdf/' .$booking_id . '.pdf';
+        $receiptsPath = WRITEPATH . 'receipts/pdf/' .$booking_id . '.pdf';
 
         $email = \Config\Services::email();
 
