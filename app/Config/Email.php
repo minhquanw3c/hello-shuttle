@@ -28,17 +28,20 @@ class Email extends BaseConfig
     /**
      * SMTP Server Address
      */
-    public string $SMTPHost = 'smtp.gmail.com';
+    # public string $SMTPHost = 'smtp.gmail.com';
+    public string $SMTPHost = 'mail.dpcorp.a2hosted.com';
 
     /**
      * SMTP Username
      */
-    public string $SMTPUser = 'minhquanw3c@gmail.com';
+    # public string $SMTPUser = 'minhquanw3c@gmail.com';
+    public string $SMTPUser = 'dpcorpah';
 
     /**
      * SMTP Password
      */
-    public string $SMTPPass = 'jmdk oval hkpf zqyw';
+    # public string $SMTPPass = 'jmdk oval hkpf zqyw';
+    public string $SMTPPass = '@Cy3i7UYk5;t0H';
 
     /**
      * SMTP Port
