@@ -48,7 +48,10 @@ class ConfigModel extends Model
             'configurations.config_name AS configName',
             'configurations.config_value AS configValue',
         ])
-        ->where('configurations.config_active', 1)
+        ->where([
+            'configurations.config_active' => 1,
+            'configurations.config_id' => 'cfg-email-sdr',
+        ])
         ->first();
 
         return $get_sender_query;
