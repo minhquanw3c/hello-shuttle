@@ -6,6 +6,7 @@ use App\Models\BookingModel;
 use \TCPDF as TCPDF;
 
 use CodeIgniter\I18n\Time;
+use DateTime;
 
 class Home extends BaseController
 {
@@ -83,7 +84,7 @@ class Home extends BaseController
             'payment_link' => $payment_link,
             'payment_link_id' => $payment_link_id,
             'payment_status' => 'pmst-pending',
-            'booking_status' => 'bk-sts-inprs',
+            'booking_status' => 'bk-sts-prsng',
             'checkout_session_id' => 'n/a',
             'booking_created_at' => Time::now('UTC'),
             'booking_updated_at' => Time::now('UTC'),
@@ -111,6 +112,29 @@ class Home extends BaseController
         return $this->response->setJSON($response);
     }
 
+    private function checkBookingIsRefunded($checkout_id)
+    {
+        require_once(APPPATH . 'Libraries/stripe/init.php');
+
+        $refunded = true;
+
+        $stripe = new \Stripe\StripeClient('sk_test_51N5oaiL3WCB4PP1wjgWKk5DIYSyCBHDV9YcnNqFaozUV8qoDeHyqeH6CQ2tgq7VlF7EYckPUYlQ72H64bj7wmtjC00LuWcpiNA');
+
+        $checkout_session_data = $stripe->checkout->sessions->retrieve(
+            $checkout_id,
+            []
+        );
+
+        $payment_intent = $checkout_session_data->payment_intent;
+
+        $payment_intent_object = $stripe->paymentIntents->retrieve(
+            $payment_intent,
+            []
+        );
+
+        return $payment_intent_object->status == "requires_payment_method" ? !$refunded : $refunded;
+    }
+
     public function cancelBooking()
     {
         $booking_id = filter_var($this->request->getVar('booking_id'), FILTER_SANITIZE_STRING);
@@ -124,13 +148,163 @@ class Home extends BaseController
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
         }
 
-        $booking = $booking[0];
+        $booking = (object) $booking[0];
+        $booking_data = json_decode($booking->bookingData);
 
-        if ($booking['bookingPaymentStatus'] != 'pmst-paid') {
+        if (!($booking->bookingPaymentStatus == 'pmst-paid')) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
         }
 
+        if (!($booking->bookingStatusId == 'bk-sts-prsng')) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
+        }
 
+        $is_booking_already_refunded = $this->checkBookingIsRefunded($booking->bookingCheckoutSessionId);
+
+        if ($is_booking_already_refunded) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
+        }
+
+        $config_model = model(ConfigModel::class);
+        $valid_full_refund_hours = $config_model->getConfigById('cfg-rfd-tm')[0]['configValue'];
+        $invalid_full_refund_percentage = $config_model->getConfigById('cfg-ivld-frd')[0]['configValue'];
+
+        $has_purchased_booking_insurance = [
+            'one-way' => $this->checkPurchasedInsurance($booking_data->chooseOptions->oneWayTrip->protection),
+            'round-trip' => $this->checkPurchasedInsurance($booking_data->chooseOptions->roundTrip->protection),
+        ];
+
+        $cancel_booking_request_time = Time::now('UTC');
+
+        $is_full_refund_eligible = [
+            'one-way' => $this->checkEligibleRefundTime(
+                $cancel_booking_request_time,
+                $booking->bookingCreatedAt,
+                $valid_full_refund_hours,
+            ),
+            'round-trip' => $this->checkEligibleRefundTime(
+                $cancel_booking_request_time,
+                $booking->bookingCreatedAt,
+                $valid_full_refund_hours,
+            ),
+        ];
+
+        $refund_amount_one_way = 0;
+        $refund_amount_round_trip = 0;
+
+        if ($has_purchased_booking_insurance['one-way'] || $is_full_refund_eligible['one-way']) {
+            $refund_amount_one_way = $booking_data->review->prices->oneWayTrip;
+        } else {
+            $refund_amount_one_way = $booking_data->review->prices->oneWayTrip * ($invalid_full_refund_percentage / 100);
+        }
+
+        if ($booking_data->reservation->tripType == 'round-trip') {
+            if ($has_purchased_booking_insurance['round-trip'] || $is_full_refund_eligible['round-trip']) {
+                $refund_amount_round_trip = $booking_data->review->prices->roundTrip;
+            } else {
+                $refund_amount_round_trip = $booking_data->review->prices->roundTrip * ($invalid_full_refund_percentage / 100);
+            }
+        }
+
+        $total_refund_amount = (int) ($refund_amount_one_way + $refund_amount_round_trip) * 100;
+
+        $refund_result = $this->refundBooking($booking->bookingCheckoutSessionId, $total_refund_amount);
+
+        $notify_email_result = $this->notifyCustomerRefundStatus($booking_data->review->customer->contact->email, $booking_id);
+
+        $response = [
+            'result' => $refund_result,
+            'sendRefundEmail' => $notify_email_result
+        ];
+
+        return view('templates/confirmation', $response);
+    }
+
+    private function notifyCustomerRefundStatus($recipient, $booking_id)
+    {
+        $config_model = model(ConfigModel::class);
+
+        $config = $config_model->getEmailSender();
+        $sender = $config['configValue'];
+
+        $email_subject = 'Refund for booking: ' . $booking_id;
+
+        $message = view('templates/mail/refund_confirmation');
+
+        $email = \Config\Services::email();
+
+        $email->setFrom($sender);
+        $email->setTo($recipient);
+        $email->setSubject($email_subject);
+        $email->setMessage($message);
+
+        $send_email_result = $email->send(false);
+
+        $response['result'] = $send_email_result;
+        $response['message'] = $send_email_result ? 'Email sent successfully.' : $email->printDebugger();
+
+        return $response;
+    }
+
+    private function refundBooking($checkout_id, $refund_amount)
+    {
+        require_once(APPPATH . 'Libraries/stripe/init.php');
+
+        $stripe = new \Stripe\StripeClient('sk_test_51N5oaiL3WCB4PP1wjgWKk5DIYSyCBHDV9YcnNqFaozUV8qoDeHyqeH6CQ2tgq7VlF7EYckPUYlQ72H64bj7wmtjC00LuWcpiNA');
+
+        $checkout_session_data = $stripe->checkout->sessions->retrieve(
+            $checkout_id,
+            []
+        );
+
+        $payment_intent = $checkout_session_data->payment_intent;
+
+        $refund_result = $stripe->refunds->create([
+            'payment_intent' => $payment_intent,
+            'amount' => $refund_amount,
+        ]);
+
+        $payment_intent_object = $stripe->paymentIntents->retrieve([
+            $payment_intent
+        ]);
+
+        $payment_intent_object->cancel();
+
+        return $refund_result->status == 'succeeded' ? true : false;
+    }
+
+    private function checkEligibleRefundTime($request_time, $booking_created_time, $valid_hours)
+    {
+        $is_eligible = true;
+
+        $dateString1 = $booking_created_time;
+        $dateString2 = $request_time;
+        $durationInMinutes = $valid_hours * 60;
+
+        $dateTime1 = new DateTime($dateString1);
+        $dateTime2 = new DateTime($dateString2);
+
+        $interval = $dateTime1->diff($dateTime2);
+        $duration = ($interval->h * 60) + $interval->i; // Calculate duration in minutes
+
+        if ($duration > $durationInMinutes) {
+            $is_eligible = false;
+        }
+
+        return $is_eligible;
+    }
+
+    private function checkPurchasedInsurance($trip_data)
+    {
+        $purchased_insurance = false;
+
+        foreach($trip_data as $option) {
+            if ($option->configId == 'bk-insurance') {
+                $purchased_insurance = true;
+            }
+        }
+
+        return $purchased_insurance;
     }
 
     public function sendBookingPaymentLinkEmail($payment_data)
@@ -345,7 +519,7 @@ class Home extends BaseController
         ]);
 
         $price = $stripe->prices->create([
-            'unit_amount' => $booking_data['totalPrice'],
+            'unit_amount' => $booking_data['totalPrice'] * 100,
             'currency' => 'usd',
             'product' => $product->id,
         ]);

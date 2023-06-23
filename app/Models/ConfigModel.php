@@ -56,4 +56,25 @@ class ConfigModel extends Model
 
         return $get_sender_query;
     }
+
+    public function getConfigById($config_id)
+    {
+        $get_config_query = $this->select([
+            'configurations.config_id AS configId',
+            'configurations.config_name AS configName',
+            'configurations.config_value AS configValue',
+            'configurations.config_active AS configActive',
+            'configurations.config_editable AS configEditable',
+            'config_types.config_type_id AS configTypeId',
+            'config_types.config_type_desc AS configTypeName',
+            'config_groups.config_group_id AS configGroupId',
+            'config_groups.config_group_desc AS configGroupName',
+        ])
+        ->join('config_types', 'config_types.config_type_id = configurations.config_type_code')
+        ->join('config_groups', 'config_groups.config_group_id = configurations.config_group_code')
+        ->where('configurations.config_id', $config_id)
+        ->findAll();
+
+        return $get_config_query;
+    }
 }

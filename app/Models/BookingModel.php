@@ -34,9 +34,11 @@ class BookingModel extends Model
         $get_booking_query = $this->select([
             'bookings.booking_id AS bookingId',
             'bookings.booking_data AS bookingData',
+            'bookings.booking_status AS bookingStatusId',
             'bookings.payment_link_id AS bookingPaymentLinkId',
             'bookings.payment_status AS bookingPaymentStatus',
             'bookings.checkout_session_id AS bookingCheckoutSessionId',
+            'bookings.booking_created_at AS bookingCreatedAt',
         ])
         ->where('booking_id', $booking_id)
         ->findAll();
