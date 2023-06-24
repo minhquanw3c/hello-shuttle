@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\ConfigModel;
 use App\Models\BookingModel;
 use \TCPDF as TCPDF;
+use Ramsey\Uuid\Uuid;
 
 use CodeIgniter\I18n\Time;
 use DateTime;
@@ -68,6 +69,21 @@ class Home extends BaseController
         $booking_id = $booking_data->bookingId;
 
         $booking_model = model(BookingModel::class);
+        $customer_model = model(CustomerModel::class);
+
+        $customer_uuid = Uuid::uuid4()->toString();
+
+        $customer_data = [
+            'customer_id' => $customer_uuid,
+            'first_name' => $booking_data->bookingRequirements->review->customer->firstName,
+            'last_name' => $booking_data->bookingRequirements->review->customer->lastName,
+            'phone' => $booking_data->bookingRequirements->review->customer->contact->mobileNumber,
+            'email' => $booking_data->bookingRequirements->review->customer->contact->email,
+            'created_at' => Time::now('UTC'),
+            'updated_at' => Time::now('UTC'),
+        ];
+
+        $customer_model->createCustomer($customer_data);
 
         $payment_data = [
             'bookingId' => $booking_id,
@@ -88,6 +104,7 @@ class Home extends BaseController
             'checkout_session_id' => 'n/a',
             'booking_created_at' => Time::now('UTC'),
             'booking_updated_at' => Time::now('UTC'),
+            'booked_by_customer' => $customer_uuid,
         ];
 
         $save_booking_query = $booking_model->saveBooking($data);

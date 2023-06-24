@@ -20,6 +20,7 @@ class BookingModel extends Model
         'cancel_session_id',
         'booking_created_at',
         'booking_updated_at',
+        'booked_by_customer',
 	];
 
     public function saveBooking($data)
