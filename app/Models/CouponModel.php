@@ -42,22 +42,21 @@ class CouponModel extends Model
         return $get_coupons_query;
     }
 
-    // public function getBookingById($booking_id)
-    // {
-    //     $get_booking_query = $this->select([
-    //         'bookings.booking_id AS bookingId',
-    //         'bookings.booking_data AS bookingData',
-    //         'bookings.booking_status AS bookingStatusId',
-    //         'bookings.payment_link_id AS bookingPaymentLinkId',
-    //         'bookings.payment_status AS bookingPaymentStatus',
-    //         'bookings.checkout_session_id AS bookingCheckoutSessionId',
-    //         'bookings.booking_created_at AS bookingCreatedAt',
-    //     ])
-    //     ->where('booking_id', $booking_id)
-    //     ->findAll();
+    public function getCoupon($coupon_code)
+    {
+        $get_coupon_query = $this->select([
+            'coupons.coupon_id AS couponId',
+            'coupons.coupon_code AS couponCode',
+            'coupons.discount_amount AS couponDiscountAmount',
+            'coupons.is_percentage AS couponIsPercentage',
+            'coupons.start_date AS couponStartDate',
+            'coupons.end_date AS couponEndDate',
+        ])
+        ->where('coupon_code', $coupon_code)
+        ->findAll();
 
-    //     return $get_booking_query;
-    // }
+        return $get_coupon_query;
+    }
 
     public function updateCouponById($coupon_id, $data)
     {

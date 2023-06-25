@@ -1,5 +1,4 @@
 Vue.use(window.vuelidate.default);
-Vue.component('multiselect', window.VueMultiselect.default);
 const { required, requiredIf, minLength, email, minValue } = window.validators;
 // import placePredictions from "../mixins/placePrediction";
 
@@ -95,6 +94,7 @@ var app = new Vue({
                             total: 0,
                         },
                         agreeTermsConditions: null,
+                        appliedCoupons: [],
                     },
                 },
             },
@@ -148,14 +148,15 @@ var app = new Vue({
             transformedConfigs: {},
             dropdowns: {
                 oneWayTrip: {
-                    origin: false, 
+                    origin: false,
                     destination: false,
                 },
                 roundTrip: {
-                    origin: false, 
+                    origin: false,
                     destination: false,
                 },
             },
+            coupon: null,
         }
     },
     mounted: async function () {
@@ -375,6 +376,7 @@ var app = new Vue({
                     variant: variantType,
                     solid: true,
                     noCloseButton: true,
+                    appendToast: true,
                 }
             );
         },
@@ -448,12 +450,12 @@ var app = new Vue({
             var milesPrice = 0;
             var passengersPrice = 0;
             var adminFee = 0;
-            
+
             var pricePassengersGT4 = parseFloat(self.transformedConfigs['cfg-psr-gt-4']);
             var priceMilesLT30 = parseFloat(self.transformedConfigs['cfg-pr-ml']);
             var priceMilesGT30 = parseFloat(self.transformedConfigs['cfg-pr-ml-gt-30']);
             var priceAdmin = 0.50;
-            
+
             var parsedCarPrice = parseFloat(carPrice);
 
             passengersPrice = passengers <= 4 ? parsedCarPrice : parsedCarPrice + ((passengers - 4) * pricePassengersGT4);
@@ -461,8 +463,51 @@ var app = new Vue({
             adminFee = priceAdmin * miles;
 
             totalPrice = passengersPrice + milesPrice + adminFee;
-            
+
             return totalPrice;
+        },
+        applyCoupon: function () {
+            const self = this;
+
+            if (_.isEmpty(self.coupon)) {
+                self.showToastNotification(type = 'error', message = 'Invalid coupon');
+                return;
+            }
+
+            var payload = {
+                couponCode: self.coupon
+            }
+
+            axios
+                .post(baseURL + '/api/coupons/validate', payload)
+                .then(res => {
+                    var toastType = res.data.result ? 'success' : 'error';
+                    self.showToastNotification(toastType, res.data.message);
+
+                    if (res.data.result) {
+                        const couponObject = res.data.coupon;
+
+                        self.form.bookingRequirements.review.appliedCoupons.push(couponObject);
+                        self.coupon = null;
+                    }
+                })
+                .catch(error => {
+                    self.showToastNotification(type = 'error');
+                });
+        },
+        calculateDiscountAmount: function (coupons, totalPrice) {
+            const self = this;
+            let discountAmount = 0;
+
+            coupons.forEach(coupon => {
+                if (coupon.couponIsPercentage === 'yes') {
+                    discountAmount += totalPrice * (parseFloat(coupon.couponDiscountAmount) / 100);
+                } else {
+                    discountAmount += parseFloat(coupon.couponDiscountAmount);
+                }
+            });
+
+            return discountAmount;
         },
     },
     computed: {
@@ -503,14 +548,14 @@ var app = new Vue({
         oneWayTripOrigin: function () {
             const self = this;
             return self.form.bookingRequirements.reservation.oneWayTrip.origin && self.form.bookingRequirements.reservation.oneWayTrip.origin.description ?
-                    self.form.bookingRequirements.reservation.oneWayTrip.origin.description :
-                    'Not provided';
+                self.form.bookingRequirements.reservation.oneWayTrip.origin.description :
+                'Not provided';
         },
         oneWayTripDestination: function () {
             const self = this;
             return self.form.bookingRequirements.reservation.oneWayTrip.destination && self.form.bookingRequirements.reservation.oneWayTrip.destination.description ?
-                    self.form.bookingRequirements.reservation.oneWayTrip.destination.description :
-                    'Not provided';
+                self.form.bookingRequirements.reservation.oneWayTrip.destination.description :
+                'Not provided';
         },
         oneWayTripRouteMiles: function () {
             const self = this;
@@ -523,11 +568,11 @@ var app = new Vue({
             const self = this;
 
             return self.form.bookingRequirements.reservation.oneWayTrip.pickup ?
-            moment(
-                self.form.bookingRequirements.reservation.oneWayTrip.pickup.date + ' ' + self.form.bookingRequirements.reservation.oneWayTrip.pickup.time,
-                'YYYY-MM-DD hh:mm'
+                moment(
+                    self.form.bookingRequirements.reservation.oneWayTrip.pickup.date + ' ' + self.form.bookingRequirements.reservation.oneWayTrip.pickup.time,
+                    'YYYY-MM-DD hh:mm'
                 ).format('LLLL') :
-            'Not provided';
+                'Not provided';
         },
         oneWayTripVehicle: function () {
             const self = this;
@@ -544,25 +589,25 @@ var app = new Vue({
             const self = this;
 
             return self.form.bookingRequirements.reservation.roundTrip.pickup ?
-            moment(
-                self.form.bookingRequirements.reservation.roundTrip.pickup.date + ' ' + self.form.bookingRequirements.reservation.roundTrip.pickup.time,
-                'YYYY-MM-DD hh:mm'
+                moment(
+                    self.form.bookingRequirements.reservation.roundTrip.pickup.date + ' ' + self.form.bookingRequirements.reservation.roundTrip.pickup.time,
+                    'YYYY-MM-DD hh:mm'
                 ).format('LLLL') :
-            'Not provided';
+                'Not provided';
         },
         roundTripOrigin: function () {
             const self = this;
 
             return self.form.bookingRequirements.reservation.roundTrip.origin && self.form.bookingRequirements.reservation.roundTrip.origin.description ?
-            self.form.bookingRequirements.reservation.roundTrip.origin.description :
-            'Not provided';
+                self.form.bookingRequirements.reservation.roundTrip.origin.description :
+                'Not provided';
         },
         roundTripDestination: function () {
             const self = this;
 
             return self.form.bookingRequirements.reservation.roundTrip.destination && self.form.bookingRequirements.reservation.roundTrip.destination.description ?
-                    self.form.bookingRequirements.reservation.roundTrip.destination.description :
-                    'Not provided';
+                self.form.bookingRequirements.reservation.roundTrip.destination.description :
+                'Not provided';
         },
         roundTripRouteMiles: function () {
             const self = this;
@@ -585,19 +630,25 @@ var app = new Vue({
         totalRoutesPrice: function () {
             const self = this;
 
-            var price = 0;
+            let price = 0;
+            let discountAmount = 0;
 
-            
-            price = parseFloat(self.form.bookingRequirements.review.prices.oneWayTrip);
-            
+            price += parseFloat(self.form.bookingRequirements.review.prices.oneWayTrip);
+
 
             if (self.form.bookingRequirements.reservation.tripType === 'round-trip') {
                 price += parseFloat(self.form.bookingRequirements.review.prices.roundTrip);
             }
 
-            self.form.bookingRequirements.review.prices.total = parseInt(price);
-            
-            return price.toFixed(2);
+            if (self.form.bookingRequirements.review.appliedCoupons.length > 0) {
+                discountAmount = self.calculateDiscountAmount([...self.form.bookingRequirements.review.appliedCoupons], price);
+            }
+
+            self.form.bookingRequirements.review.prices.total = (price - discountAmount) <= 0 ? 0 : (price - discountAmount).toFixed(2);
+            self.form.bookingRequirements.review.prices.totalNotDiscount = price;
+            self.form.bookingRequirements.review.prices.discountAmount = discountAmount;
+
+            return self.form.bookingRequirements.review.prices.total;
         },
     },
     validations: {
@@ -706,7 +757,8 @@ var app = new Vue({
                     },
                     agreeTermsConditions: {
                         required: required,
-                    }
+                    },
+                    appliedCoupons: {}
                 }
             },
         },

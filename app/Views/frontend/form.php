@@ -1019,6 +1019,54 @@
                                         </section>
                                     </div>
 
+                                    <!-- Apply coupon -->
+                                    <div class="bg-white p-4 mt-3">
+                                        <section>
+                                            <div class="row">
+                                                <div class="col-10">
+                                                    <h5 class="danny--group-title">Coupon</h5>
+                                                </div>
+                                                
+                                                <div class="col-12">
+                                                    <b-form-group>
+                                                        <b-input-group>
+                                                            <b-form-input
+                                                                autocomplete="off"
+                                                                type="text"
+                                                                v-model="coupon">
+                                                            </b-form-input>
+                                                            <b-input-group-append>
+                                                                <b-button @click="applyCoupon">Apply</b-button>
+                                                            </b-input-group-append>
+                                                        </b-input-group>
+                                                    </b-form-group>
+                                                </div>
+
+                                                <div class="col-12" v-if="form.bookingRequirements.review.appliedCoupons.length > 0">
+                                                    <b-form-group label="Applied coupons">
+                                                        <b-form-tags
+                                                            v-model="form.bookingRequirements.review.appliedCoupons"
+                                                            no-outer-focus>
+                                                            <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
+                                                                <div class="d-inline-block" style="font-size: 1.5rem;">
+                                                                    <b-form-tag
+                                                                        v-for="tag in tags"
+                                                                        @remove="removeTag(tag)"
+                                                                        :key="JSON.parse(tag).couponId"
+                                                                        :title="'Remove' + JSON.parse(tag).couponCode"
+                                                                        variant="primary"
+                                                                        class="mr-1">
+                                                                        {{ JSON.parse(tag).couponCode }}
+                                                                    </b-form-tag>
+                                                                </div>
+                                                            </template>
+                                                        </b-form-tags>
+                                                    </b-form-group>
+                                                </div>
+                                            </div>
+                                        </section>
+                                    </div>
+
                                     <!-- Payment -->
                                     <div class="bg-white p-4 mt-3">
                                         <section>
@@ -1284,7 +1332,6 @@
 <script src="<?= base_url('static/js/vendors/bootstrap.min.js') ?>" type="text/javascript"></script>
 <script src="<?= base_url('static/js/vendors/lodash.min.js') ?>" type="text/javascript"></script>
 <script src="<?= base_url('static/js/vendors/vue.min.js') ?>" type="text/javascript"></script>
-<script src="<?= base_url('static/js/vendors/vue-multiselect.min.js') ?>" type="text/javascript"></script>
 <script src="<?= base_url('static/js/vendors/portal-vue.umd.js') ?>" type="text/javascript"></script>
 <script src="<?= base_url('static/js/vendors/bootstrap-vue.min.js') ?>" type="text/javascript"></script>
 <script src="<?= base_url('static/js/vendors/bootstrap-vue-icons.min.js') ?>" type="text/javascript"></script>
