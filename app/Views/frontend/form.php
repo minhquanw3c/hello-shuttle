@@ -134,11 +134,28 @@
 
     <!-- CAR DEALER FORM AREA START -->
     <div class="ltn__car-dealer-form-area" id="main-app" v-cloak>
+        <b-overlay fixed no-wrap :show="showCheckoutNotice" z-index="1000" variant="dark">
+            <template #overlay>
+                <div class="card">
+                    <div class="card-header">Notes</div>
+                    <div class="card-body">
+                        We are processing your booking!
+                        <ul class="line-height-normal">
+                            <li>You will be redirected to Stripe payment gateway shortly.</li>
+                            <li>In case you accidentally close the window, we have sent an email to provided email address that contains payment link.</li>
+                            <li class="text-danger">After the payment is completed, do not close the window, you will be redirected to the confirmation screen afterward. And a receipt will be sent to your mailbox.</li>
+                            <li>You can also cancel the booking using the link in the receipt email.</li>
+                        </ul>
+                    </div>
+                </div>
+            </template>
+        </b-overlay>
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
                 <b-tabs class="danny--form-step" nav-class="mb-4 danny--nav-tabs" v-model="formActiveTab">
-                    <b-tab active>
+                    <!-- reservation -->
+                    <b-tab>
                         <template #title>
                             <span>1.</span> <span class="tab-heading">Make a reservation</span>
                         </template>
@@ -291,7 +308,7 @@
                                                 label-for="one-way-passengers"
                                                 label-cols="3"
                                                 content-cols="9"
-                                                :invalid-feedback="errorMessages.required"
+                                                :invalid-feedback="'Minimum passengers is 1'"
                                                 :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.passengers)">
                                                 <b-input-group>
                                                     <b-input-group-prepend>
@@ -300,6 +317,7 @@
                                                         </div>
                                                     </b-input-group-prepend>
                                                     <b-form-input
+                                                        no-wheel
                                                         id="one-way-passengers"
                                                         min="0"
                                                         type="number"
@@ -429,7 +447,7 @@
                                                     label-for="round-trip-passengers"
                                                     label-cols="3"
                                                     content-cols="9"
-                                                    :invalid-feedback="errorMessages.required"
+                                                    :invalid-feedback="'Minimum passengers is 1'"
                                                     :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.passengers)">
                                                     <b-input-group>
                                                         <b-input-group-prepend>
@@ -438,6 +456,7 @@
                                                             </div>
                                                         </b-input-group-prepend>
                                                         <b-form-input
+                                                            no-wheel
                                                             id="round-trip-passengers"
                                                             min="0"
                                                             type="number"
@@ -462,7 +481,8 @@
                         </b-form>
                     </b-tab>
 
-                    <b-tab>
+                    <!-- selectCar -->
+                    <b-tab :disabled="completedTabs.selectCar === false">
                         <template #title>
                             <span>2.</span> <span class="tab-heading">Select your car</span>
                         </template>
@@ -541,7 +561,8 @@
                         </section>
                     </b-tab>
 
-                    <b-tab>
+                    <!-- chooseOptions -->
+                    <b-tab :disabled="completedTabs.chooseOptions === false">
                         <template #title>
                             <span>3.</span> <span class="tab-heading">Choose your options</span>
                         </template>
@@ -676,7 +697,8 @@
                         </section>
                     </b-tab>
 
-                    <b-tab>
+                    <!-- review -->
+                    <b-tab :disabled="completedTabs.review === false">
                         <template #title>
                             <span>4.</span> <span class="tab-heading">Information & Review</span>
                         </template>

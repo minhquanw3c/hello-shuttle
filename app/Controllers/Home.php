@@ -151,7 +151,14 @@ class Home extends BaseController
             []
         );
 
-        return $payment_intent_object->status == "requires_payment_method" ? !$refunded : $refunded;
+        $latest_charge = $payment_intent_object->latest_charge;
+
+        $charge_object = $stripe->charges->retrieve(
+            $latest_charge,
+            []
+        );
+
+        return $charge_object->refunded == true ? $refunded : !$refunded;
     }
 
     public function cancelBooking()
@@ -164,6 +171,7 @@ class Home extends BaseController
         $booking = $booking_model->getBookingById($booking_id);
 
         if (count($booking) == 0) {
+            var_dump('no booking found');
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
         }
 
@@ -208,8 +216,8 @@ class Home extends BaseController
             ),
         ];
 
-        $refund_amount_one_way = 0;
-        $refund_amount_round_trip = 0;
+        $refund_amount_one_way = 0.00;
+        $refund_amount_round_trip = 0.00;
 
         if ($has_purchased_booking_insurance['one-way'] || $is_full_refund_eligible['one-way']) {
             $refund_amount_one_way = $booking_data->review->prices->oneWayTrip;
@@ -225,7 +233,11 @@ class Home extends BaseController
             }
         }
 
-        $total_refund_amount = (int) ($refund_amount_one_way + $refund_amount_round_trip) * 100;
+        $refund_amount_one_way = round($refund_amount_one_way, 2);
+        $refund_amount_round_trip = round($refund_amount_round_trip, 2);
+        $discount_amount = round($booking_data->review->prices->discountAmount, 2);
+
+        $total_refund_amount = (($refund_amount_one_way + $refund_amount_round_trip) - $discount_amount) * 100;
 
         $refund_result = $this->refundBooking($booking->bookingCheckoutSessionId, $total_refund_amount);
 
@@ -282,12 +294,6 @@ class Home extends BaseController
             'payment_intent' => $payment_intent,
             'amount' => $refund_amount,
         ]);
-
-        $payment_intent_object = $stripe->paymentIntents->retrieve([
-            $payment_intent
-        ]);
-
-        $payment_intent_object->cancel();
 
         return $refund_result->status == 'succeeded' ? true : false;
     }
@@ -458,6 +464,9 @@ class Home extends BaseController
         if ($booking['bookingPaymentStatus'] != 'pmst-pending') {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
         }
+
+        // TO-DO
+        // Check if Strip checkout session id is valid, and payment_status is paid
 
         $this->disablePaymentLink($booking['bookingPaymentLinkId']);
 

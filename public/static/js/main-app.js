@@ -35,24 +35,24 @@ var app = new Vue({
                             destination: null,
                             miles: 0,
                             pickup: {
-                                date: "2023-06-03",
-                                time: "12:00:00",
+                                date: null,
+                                time: null,
                             },
                             originSearch: null,
                             destinationSearch: null,
-                            passengers: 4,
+                            passengers: 0,
                         },
                         roundTrip: {
                             origin: null,
                             destination: null,
                             miles: 0,
                             pickup: {
-                                date: "2023-06-03",
-                                time: "12:00:00",
+                                date: null,
+                                time: null,
                             },
                             originSearch: null,
                             destinationSearch: null,
-                            passengers: 5,
+                            passengers: 0,
                         },
                         tripType: 'one-way',
                     },
@@ -104,6 +104,12 @@ var app = new Vue({
             originList: [],
             destinationList: [],
             formActiveTab: 0,
+            completedTabs: {
+                reservation: true,
+                selectCar: false,
+                chooseOptions: false,
+                review: false,
+            },
             vehicles: {
                 oneWayTrip: [],
                 roundTrip: [],
@@ -157,6 +163,8 @@ var app = new Vue({
                 },
             },
             coupon: null,
+            skipValidation: true,
+            showCheckoutNotice: false,
         }
     },
     mounted: async function () {
@@ -226,11 +234,6 @@ var app = new Vue({
 
             return input.$dirty ? !input.$invalid : null;
         },
-        checkout: function () {
-            const self = this;
-
-            self.formActiveTab = 2;
-        },
         saveReservation: function () {
             const self = this;
 
@@ -247,8 +250,12 @@ var app = new Vue({
                 return;
             }
 
-            self.formActiveTab = 1;
+            self.completedTabs.selectCar = true;
             self.getAvailableCars();
+
+            setTimeout(() => {
+                self.formActiveTab = 1;
+            }, 500);
         },
         getAvailableCars: function () {
             const self = this;
@@ -288,8 +295,12 @@ var app = new Vue({
                 return;
             }
 
+            self.completedTabs.chooseOptions = true;
             self.getOptionsList();
-            self.formActiveTab = 2;
+
+            setTimeout(() => {
+                self.formActiveTab = 2;
+            }, 500);
         },
         getOptionsList: function () {
             const self = this;
@@ -314,9 +325,12 @@ var app = new Vue({
         saveChooseOptions: function () {
             const self = this;
 
-            console.log(self.form.bookingRequirements.chooseOptions);
             self.computeRoutes();
-            self.formActiveTab = 3;
+            self.completedTabs.review = true;
+
+            setTimeout(() => {
+                self.formActiveTab = 3;
+            }, 500);
         },
         submitBooking: function () {
             const self = this;
@@ -334,6 +348,8 @@ var app = new Vue({
                 return;
             }
 
+            self.showCheckoutNotice = true;
+
             var payload = {
                 form: { ...self.form }
             }
@@ -346,7 +362,9 @@ var app = new Vue({
                     self.showToastNotification(toastType);
 
                     if (res.data.result === true) {
-                        window.location.href = res.data.paymentLink;
+                        setTimeout(() => {
+                            window.location.href = res.data.paymentLink;
+                        }, 5000);
                     }
                 })
                 .catch(error => {
@@ -499,7 +517,9 @@ var app = new Vue({
             const self = this;
             let discountAmount = 0;
 
-            coupons.forEach(coupon => {
+            coupons.forEach(couponItem => {
+                let coupon = _.isString(couponItem) ? JSON.parse(couponItem) : couponItem;
+
                 if (coupon.couponIsPercentage === 'yes') {
                     discountAmount += totalPrice * (parseFloat(coupon.couponDiscountAmount) / 100);
                 } else {
@@ -641,12 +661,12 @@ var app = new Vue({
             }
 
             if (self.form.bookingRequirements.review.appliedCoupons.length > 0) {
-                discountAmount = self.calculateDiscountAmount([...self.form.bookingRequirements.review.appliedCoupons], price);
+                discountAmount = self.calculateDiscountAmount(self.form.bookingRequirements.review.appliedCoupons, price);
             }
 
             self.form.bookingRequirements.review.prices.total = (price - discountAmount) <= 0 ? 0 : (price - discountAmount).toFixed(2);
-            self.form.bookingRequirements.review.prices.totalNotDiscount = price;
-            self.form.bookingRequirements.review.prices.discountAmount = discountAmount;
+            self.form.bookingRequirements.review.prices.totalNotDiscount = price.toFixed(2);
+            self.form.bookingRequirements.review.prices.discountAmount = discountAmount.toFixed(2);
 
             return self.form.bookingRequirements.review.prices.total;
         },
@@ -677,6 +697,7 @@ var app = new Vue({
                         destinationSearch: {},
                         passengers: {
                             required: required,
+                            minValue: minValue(1),
                         },
                     },
                     roundTrip: {
@@ -705,7 +726,16 @@ var app = new Vue({
                         originSearch: {},
                         destinationSearch: {},
                         passengers: {
-                            required: required,
+                            requiredIf: requiredIf(function () {
+                                return this.form.bookingRequirements.reservation.tripType === 'round-trip';
+                            }),
+                            minValue: function (value) {
+                                if (!(this.form.bookingRequirements.reservation.tripType === 'round-trip')) {
+                                    return this.skipValidation;
+                                };
+
+                                return parseInt(value) > 0;
+                            },
                         },
                     },
                 },
