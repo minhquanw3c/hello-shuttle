@@ -7,7 +7,8 @@ use CodeIgniter\Model;
 class BookingScheduleModel extends Model
 {
 	protected $table = 'booking_schedules';
-	protected $primaryKey = 'booking_id';
+	protected $primaryKey = 'schedule_id';
+    protected $useAutoIncrement = true;
 
 	protected $allowedFields = [
         'booking_id',

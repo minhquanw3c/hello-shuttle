@@ -241,11 +241,22 @@ class Home extends BaseController
 
         $refund_result = $this->refundBooking($booking->bookingCheckoutSessionId, $total_refund_amount);
 
+        $update_booking_status = $booking_model->updateBookingById(
+            $booking_id,
+            [
+                'booking_status' => 'bk-sts-cnl',
+                'payment_status' => 'pmst-refunded',
+                'booking_updated_at' => Time::now('UTC'),
+            ]
+        );
+
         $notify_email_result = $this->notifyCustomerRefundStatus($booking_data->review->customer->contact->email, $booking_id);
 
         $response = [
             'result' => $refund_result,
-            'sendRefundEmail' => $notify_email_result
+            'sendRefundEmail' => $notify_email_result,
+            'refund' => $refund_result,
+            'updateBooking' => $update_booking_status,
         ];
 
         return view('templates/confirmation', $response);
