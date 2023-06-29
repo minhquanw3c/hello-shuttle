@@ -549,21 +549,37 @@ var app = new Vue({
             //     return 'Number of passengers must be greater than 0';
             // }
         },
-        routeMapPreview: function () {
-            // const self = this;
+        pickingUpMapPreview: function () {
+            const self = this;
 
-            // var markers = 'https://www.google.com/maps/embed/v1/directions?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y';
+            var markers = 'https://www.google.com/maps/embed/v1/directions?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y';
 
-            // if (
-            //     !_.isNil(self.form.bookingRequirements.oneWayTrip.origin) && !_.isNil(self.form.bookingRequirements.oneWayTrip.destination) &&
-            //     !_.isNil(self.form.bookingRequirements.oneWayTrip.origin.place_id) && !_.isNil(self.form.bookingRequirements.oneWayTrip.destination.place_id)
-            // ) {
-            //     markers += '&origin=place_id:' + self.form.bookingRequirements.oneWayTrip.origin.place_id + '&destination=place_id:' + self.form.bookingRequirements.oneWayTrip.destination.place_id;
-            // } else {
-            //     markers = null;
-            // }
+            if (
+                !_.isNil(self.form.bookingRequirements.reservation.oneWayTrip.origin) && !_.isNil(self.form.bookingRequirements.reservation.oneWayTrip.destination) &&
+                !_.isNil(self.form.bookingRequirements.reservation.oneWayTrip.origin.place_id) && !_.isNil(self.form.bookingRequirements.reservation.oneWayTrip.destination.place_id)
+            ) {
+                markers += '&origin=place_id:' + self.form.bookingRequirements.reservation.oneWayTrip.origin.place_id + '&destination=place_id:' + self.form.bookingRequirements.reservation.oneWayTrip.destination.place_id;
+            } else {
+                markers = 'https://www.google.com/maps/embed/v1/place?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y&q=United+States';
+            }
 
-            // return markers;
+            return markers;
+        },
+        returnMapPreview: function () {
+            const self = this;
+
+            var markers = 'https://www.google.com/maps/embed/v1/directions?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y';
+
+            if (
+                !_.isNil(self.form.bookingRequirements.reservation.roundTrip.origin) && !_.isNil(self.form.bookingRequirements.reservation.roundTrip.destination) &&
+                !_.isNil(self.form.bookingRequirements.reservation.roundTrip.origin.place_id) && !_.isNil(self.form.bookingRequirements.reservation.roundTrip.destination.place_id)
+            ) {
+                markers += '&origin=place_id:' + self.form.bookingRequirements.reservation.roundTrip.origin.place_id + '&destination=place_id:' + self.form.bookingRequirements.reservation.roundTrip.destination.place_id;
+            } else {
+                markers = 'https://www.google.com/maps/embed/v1/place?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y&q=United+States';
+            }
+
+            return markers;
         },
         oneWayTripOrigin: function () {
             const self = this;

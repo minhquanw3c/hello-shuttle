@@ -41,7 +41,7 @@
 <div class="body-wrapper">
 
     <!-- HEADER AREA START (header-4) -->
-    <header class="ltn__header-area ltn__header-4 ltn__header-6 ltn__header-transparent gradient-color-2">
+    <header class="ltn__header-area ltn__header-4 ltn__header-6 ltn__header-transparent">
         <!-- ltn__header-top-area start -->
         <div class="ltn__header-top-area top-area-color-white">
             <div class="container">
@@ -49,8 +49,7 @@
                     <div class="col-md-7">
                         <div class="ltn__top-bar-menu">
                             <ul>
-                                <li><a href="javascript:void(0)"><i class="icon-mail"></i> info@webmail.com</a></li>
-                                <li><a href="javascript:void(0)"><i class="icon-placeholder"></i> 15/A, Nest Tower, NYC</a></li>
+                                <li><a href="javascript:void(0)"><i class="icon-mail"></i> info@helloshuttle.com</a></li>
                             </ul>
                         </div>
                     </div>
@@ -171,7 +170,9 @@
                                                 :options="tripTypes"
                                                 text-field="text"
                                                 value-field="value"
-                                                v-model="$v.form.bookingRequirements.reservation.tripType.$model">
+                                                v-model="$v.form.bookingRequirements.reservation.tripType.$model"
+                                                buttons
+                                                button-variant="outline-primary">
                                             </b-form-radio-group>
                                         </b-form-group>
 
@@ -193,6 +194,26 @@
                             <template v-if="form.bookingRequirements.reservation.tripType">
                                 <!-- First Origin -->
                                 <section>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <iframe
+                                                width="100%"
+                                                height="300"
+                                                frameborder="0"
+                                                style="border:0"
+                                                referrerpolicy="no-referrer-when-downgrade"
+                                                :src="pickingUpMapPreview"
+                                                allowfullscreen>
+                                            </iframe>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h5 class="danny--group-title">picking-up</h5>
+                                        </div>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-12 col-lg-6">
                                             <b-form-group
@@ -332,6 +353,26 @@
                                 <template v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
                                     <!-- Second Origin -->
                                     <section class="mt-5">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <iframe
+                                                    width="100%"
+                                                    height="300"
+                                                    frameborder="0"
+                                                    style="border:0"
+                                                    referrerpolicy="no-referrer-when-downgrade"
+                                                    :src="returnMapPreview"
+                                                    allowfullscreen>
+                                                </iframe>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h5 class="danny--group-title">return</h5>
+                                            </div>
+                                        </div>
+
                                         <div class="row">
                                             <div class="col-12 col-lg-6">
                                                 <b-form-group
@@ -512,7 +553,9 @@
                                         :disabled="vehicle.availableCars === '0'"
                                         v-model="$v.form.bookingRequirements.selectCar.oneWayTrip.vehicle.$model"
                                         name="one-way-vehicle"
-                                        :value="vehicle">
+                                        :value="vehicle"
+                                        button
+                                        button-variant="outline-primary">
                                         Select
                                     </b-form-radio>
                                 </div>
@@ -544,7 +587,9 @@
                                         :disabled="vehicle.availableCars === '0'"
                                         v-model="$v.form.bookingRequirements.selectCar.roundTrip.vehicle.$model"
                                         name="round-trip-vehicle"
-                                        :value="vehicle">
+                                        :value="vehicle"
+                                        button
+                                        button-variant="outline-primary">
                                         Select
                                     </b-form-radio>
                                 </div>
@@ -569,6 +614,9 @@
 
                         <section>
                             <div class="row">
+                                <div class="col-12">
+                                    <h5 class="danny--group-title">picking-up</h5>
+                                </div>
                                 <div class="col-12 col-md-6">
                                     <div class="bg-white p-3 h-100">
                                         <h5 class="danny--group-title">Extras</h5>
@@ -630,6 +678,9 @@
                             class="mt-4"
                             v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
                             <div class="row">
+                                <div class="col-12">
+                                    <h5 class="danny--group-title">return</h5>
+                                </div>
                                 <div class="col-12 col-md-6">
                                     <div class="bg-white p-3 h-100">
                                         <h5 class="danny--group-title">Extras</h5>
@@ -828,7 +879,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-12 col-md-3">
-                                                    From:
+                                                    <span class="danny--font-weight-bold">From:</span>
                                                 </div>
                                                 <div class="col-12 col-md-9">
                                                     {{
@@ -838,7 +889,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-12 col-md-3">
-                                                    To:
+                                                    <span class="danny--font-weight-bold">To:</span>
                                                 </div>
                                                 <div class="col-12 col-md-9">
                                                     {{
@@ -848,7 +899,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-12 col-md-3">
-                                                    Miles:
+                                                    <span class="danny--font-weight-bold">Miles:</span>
                                                 </div>
                                                 <div class="col-12 col-md-9">
                                                     {{
@@ -858,7 +909,7 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-12 col-md-3">
-                                                    Pickup time:
+                                                    <span class="danny--font-weight-bold">Pickup time:</span>
                                                 </div>
                                                 <div class="col-12 col-md-9">
                                                     <span class="danny--review-pickup-time">{{ oneWayTripPickup }}</span>
@@ -946,7 +997,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-12 col-md-3">
-                                                        From:
+                                                        <span class="danny--font-weight-bold">From:</span>
                                                     </div>
                                                     <div class="col-12 col-md-9">
                                                         {{
@@ -956,7 +1007,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-12 col-md-3">
-                                                        To:
+                                                        <span class="danny--font-weight-bold">To:</span>
                                                     </div>
                                                     <div class="col-12 col-md-9">
                                                         {{
@@ -966,7 +1017,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-12 col-md-3">
-                                                        Miles:
+                                                        <span class="danny--font-weight-bold">Miles:</span>
                                                     </div>
                                                     <div class="col-12 col-md-9">
                                                         {{
@@ -976,7 +1027,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-12 col-md-3">
-                                                        Pickup time:
+                                                        <span class="danny--font-weight-bold">Pickup time:</span>
                                                     </div>
                                                     <div class="col-12 col-md-9">
                                                         <span class="danny--review-pickup-time">{{ roundTripPickup }}</span>

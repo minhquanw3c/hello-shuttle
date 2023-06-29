@@ -2,6 +2,15 @@
     display: none;
 }
 
+.ltn__header-transparent {
+    background-color: var(--ltn__heading-color);
+}
+
+.danny--font-weight-bold {
+    color: #262626;
+    font-weight: bold;
+}
+
 .line-height-normal {
     line-height: normal !important;
 }
