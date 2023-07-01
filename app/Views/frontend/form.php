@@ -85,7 +85,7 @@
                         <div class="site-logo-wrap">
                             <div class="site-logo">
                                 <a href="<?= base_url('/') ?>">
-                                    <img src="<?= base_url('static/images/logo/hello-shuttle-white.png') ?>" alt="hello-shuttle-logo">
+                                    <img src="<?= base_url('static/images/logo/hello-shuttle-white-02.png') ?>" alt="hello-shuttle-logo">
                                 </a>
                             </div>
                             <div class="get-support clearfix get-support-color-white">
@@ -1351,7 +1351,7 @@
                         <div class="site-logo-wrap">
                             <div class="site-logo">
                                 <a href="<?= base_url('/') ?>">
-                                    <img src="<?= base_url('static/images/logo/hello-shuttle-white.png') ?>" alt="hello-shuttle-logo">
+                                    <img src="<?= base_url('static/images/logo/hello-shuttle-white-02.png') ?>" alt="hello-shuttle-logo">
                                 </a>
                             </div>
                             <div class="get-support ltn__copyright-design clearfix">
@@ -1416,7 +1416,7 @@
 
 <script
     defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y&libraries=places&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s&libraries=places&callback=initMap">
 </script>
 
 <script>

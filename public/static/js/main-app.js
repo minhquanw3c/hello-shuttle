@@ -552,7 +552,7 @@ var app = new Vue({
         pickingUpMapPreview: function () {
             const self = this;
 
-            var markers = 'https://www.google.com/maps/embed/v1/directions?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y';
+            var markers = 'https://www.google.com/maps/embed/v1/directions?key=AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s';
 
             if (
                 !_.isNil(self.form.bookingRequirements.reservation.oneWayTrip.origin) && !_.isNil(self.form.bookingRequirements.reservation.oneWayTrip.destination) &&
@@ -560,7 +560,7 @@ var app = new Vue({
             ) {
                 markers += '&origin=place_id:' + self.form.bookingRequirements.reservation.oneWayTrip.origin.place_id + '&destination=place_id:' + self.form.bookingRequirements.reservation.oneWayTrip.destination.place_id;
             } else {
-                markers = 'https://www.google.com/maps/embed/v1/place?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y&q=United+States';
+                markers = 'https://www.google.com/maps/embed/v1/place?key=AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s&q=United+States';
             }
 
             return markers;
@@ -568,7 +568,7 @@ var app = new Vue({
         returnMapPreview: function () {
             const self = this;
 
-            var markers = 'https://www.google.com/maps/embed/v1/directions?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y';
+            var markers = 'https://www.google.com/maps/embed/v1/directions?key=AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s';
 
             if (
                 !_.isNil(self.form.bookingRequirements.reservation.roundTrip.origin) && !_.isNil(self.form.bookingRequirements.reservation.roundTrip.destination) &&
@@ -576,7 +576,7 @@ var app = new Vue({
             ) {
                 markers += '&origin=place_id:' + self.form.bookingRequirements.reservation.roundTrip.origin.place_id + '&destination=place_id:' + self.form.bookingRequirements.reservation.roundTrip.destination.place_id;
             } else {
-                markers = 'https://www.google.com/maps/embed/v1/place?key=AIzaSyDhZhOO-TmrRvA14aAtwV19fVDMZYzes8Y&q=United+States';
+                markers = 'https://www.google.com/maps/embed/v1/place?key=AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s&q=United+States';
             }
 
             return markers;
