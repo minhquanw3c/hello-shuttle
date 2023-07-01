@@ -372,7 +372,7 @@ class Home extends BaseController
         $send_email_result = $email->send(false);
 
         $response['result'] = $send_email_result;
-        $response['message'] = $send_email_result ? 'Email sent successfully.' : $email->printDebugger();
+        $response['message'] = $send_email_result ? $email->printDebugger() : $email->printDebugger();
 
         return $response;
     }
