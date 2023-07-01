@@ -137,7 +137,10 @@ class Home extends BaseController
 
         $refunded = true;
 
-        $stripe = new \Stripe\StripeClient('sk_test_51N5oaiL3WCB4PP1wjgWKk5DIYSyCBHDV9YcnNqFaozUV8qoDeHyqeH6CQ2tgq7VlF7EYckPUYlQ72H64bj7wmtjC00LuWcpiNA');
+        $config_model = model(ConfigModel::class);
+        $stripe_payment_key = $config_model->getConfigById('cfg-stripe-key')[0]['configValue'];
+
+        $stripe = new \Stripe\StripeClient($stripe_payment_key);
 
         $checkout_session_data = $stripe->checkout->sessions->retrieve(
             $checkout_id,
@@ -292,7 +295,10 @@ class Home extends BaseController
     {
         require_once(APPPATH . 'Libraries/stripe/init.php');
 
-        $stripe = new \Stripe\StripeClient('sk_test_51N5oaiL3WCB4PP1wjgWKk5DIYSyCBHDV9YcnNqFaozUV8qoDeHyqeH6CQ2tgq7VlF7EYckPUYlQ72H64bj7wmtjC00LuWcpiNA');
+        $config_model = model(ConfigModel::class);
+        $stripe_payment_key = $config_model->getConfigById('cfg-stripe-key')[0]['configValue'];
+
+        $stripe = new \Stripe\StripeClient($stripe_payment_key);
 
         $checkout_session_data = $stripe->checkout->sessions->retrieve(
             $checkout_id,
@@ -535,7 +541,10 @@ class Home extends BaseController
     {
         require_once(APPPATH . 'Libraries/stripe/init.php');
 
-        $stripe = new \Stripe\StripeClient('sk_test_51N5oaiL3WCB4PP1wjgWKk5DIYSyCBHDV9YcnNqFaozUV8qoDeHyqeH6CQ2tgq7VlF7EYckPUYlQ72H64bj7wmtjC00LuWcpiNA');
+        $config_model = model(ConfigModel::class);
+        $stripe_payment_key = $config_model->getConfigById('cfg-stripe-key')[0]['configValue'];
+
+        $stripe = new \Stripe\StripeClient($stripe_payment_key);
 
         $stripe->paymentLinks->update(
             $payment_link_id,
@@ -550,7 +559,10 @@ class Home extends BaseController
         $booking_id = $booking_data['bookingId'];
         $payment_successful_redirect_url = base_url('/');
 
-        $stripe = new \Stripe\StripeClient('sk_test_51N5oaiL3WCB4PP1wjgWKk5DIYSyCBHDV9YcnNqFaozUV8qoDeHyqeH6CQ2tgq7VlF7EYckPUYlQ72H64bj7wmtjC00LuWcpiNA');
+        $config_model = model(ConfigModel::class);
+        $stripe_payment_key = $config_model->getConfigById('cfg-stripe-key')[0]['configValue'];
+
+        $stripe = new \Stripe\StripeClient($stripe_payment_key);
 
         $product = $stripe->products->create([
             'name' => 'Car booking No ' . $booking_id,
