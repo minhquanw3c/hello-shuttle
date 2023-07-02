@@ -2,6 +2,8 @@ Vue.use(window.vuelidate.default);
 const { required, requiredIf, minLength, email, minValue } = window.validators;
 // import placePredictions from "../mixins/placePrediction";
 
+const windowScope = window;
+
 var app = new Vue({
     el: '#main-app',
     data: function () {
@@ -101,8 +103,6 @@ var app = new Vue({
             errorMessages: {
                 required: 'This field is required',
             },
-            originList: [],
-            destinationList: [],
             formActiveTab: 0,
             completedTabs: {
                 reservation: true,
@@ -154,12 +154,28 @@ var app = new Vue({
             transformedConfigs: {},
             dropdowns: {
                 oneWayTrip: {
-                    origin: false,
-                    destination: false,
+                    origin: {
+                        show: false,
+                        sessionToken: null,
+                    },
+                    destination: {
+                        show: false,
+                        sessionToken: null,
+                    },
+                    origins: [],
+                    destinations: [],
                 },
                 roundTrip: {
-                    origin: false,
-                    destination: false,
+                    origin: {
+                        show: false,
+                        sessionToken: null,
+                    },
+                    destination: {
+                        show: false,
+                        sessionToken: null,
+                    },
+                    origins: [],
+                    destinations: [],
                 },
             },
             coupon: null,
@@ -168,47 +184,46 @@ var app = new Vue({
         }
     },
     mounted: async function () {
+        const self = this;
         console.log('app mounted');
 
         this.form.bookingId = bookingId;
 
-        this.originList = originPredictions;
-        this.destinationList = destinationPredictions;
-
-        // this.form.bookingRequirements.reservation.oneWayTrip.origin = originPredictions[3];
-        // this.form.bookingRequirements.reservation.oneWayTrip.destination = destinationPredictions[4];
-
-        // this.form.bookingRequirements.reservation.roundTrip.origin = originPredictions[3];
-        // this.form.bookingRequirements.reservation.roundTrip.destination = destinationPredictions[4];
+        setTimeout(() => {
+            self.dropdowns.oneWayTrip.origin.sessionToken = self.generateSearchSessionToken();
+            self.dropdowns.oneWayTrip.destination.sessionToken = self.generateSearchSessionToken();
+            self.dropdowns.roundTrip.origin.sessionToken = self.generateSearchSessionToken();
+            self.dropdowns.roundTrip.destination.sessionToken = self.generateSearchSessionToken();
+        }, 2000);
     },
     methods: {
-        updateSearchResult: function (location, tripType, place) {
+        generateSearchSessionToken: function () {
             const self = this;
 
-            self.form.bookingRequirements.reservation[tripType][place] = location;
-            self.form.bookingRequirements.reservation[tripType][place + 'Search'] = location.description;
-            self.dropdowns[tripType][place] = false;
+            const uniqueString = new windowScope.google.maps.places.AutocompleteSessionToken;
+
+            return uniqueString;
         },
-        fetchSearchResultFromGoogle: function (type) {
+        updateSearchResult: function (location, tripType, placeType) {
             const self = this;
 
-            var userSearch = "camping";
-            var options = {
-                types: [
-                    'airport',
-                    'bank',
-                    'pharmacy',
-                    'school',
-                    'establishment'
-                ],
+            self.form.bookingRequirements.reservation[tripType][placeType] = location;
+            self.form.bookingRequirements.reservation[tripType][placeType + 'Search'] = location.description;
+            self.dropdowns[tripType][placeType].show = false;
+
+            self.dropdowns[tripType][placeType].sessionToken = self.generateSearchSessionToken();
+        },
+        fetchSearchResultFromGoogle: function (value, tripType, placeType) {
+            const self = this;
+
+            self.dropdowns[tripType][placeType].show = true;
+
+            var sessionToken = self.dropdowns[tripType][placeType].sessionToken;
+            var userSearch = value;
+            const options = {
                 componentRestrictions: {
                     country: 'us'
                 },
-                fields: [
-                    'place_id',
-                    'name',
-                    'geometry',
-                ],
             };
 
             const displaySuggestions = function (predictions, status) {
@@ -218,16 +233,33 @@ var app = new Vue({
                     return;
                 }
 
-                if (type === 'origin') {
-                    self.originList = predictions;
+                if (tripType === 'oneWayTrip') {
+                    if (placeType === 'origin') {
+                        self.dropdowns.oneWayTrip.origins = predictions;
+                    }
+
+                    if (placeType === 'destination') {
+                        self.dropdowns.oneWayTrip.destinations = predictions;
+                    }
                 }
 
-                if (type === 'destination') {
-                    self.destinationList = predictions;
+                if (tripType === 'roundTrip') {
+                    if (placeType === 'origin') {
+                        self.dropdowns.roundTrip.origins = predictions;
+                    }
+
+                    if (placeType === 'destination') {
+                        self.dropdowns.roundTrip.destinations = predictions;
+                    }
                 }
             };
 
-            placesService.getPlacePredictions({ input: userSearch, options }, displaySuggestions);
+            autocompleteService.getPlacePredictions({
+                input: userSearch,
+                componentRestrictions: options.componentRestrictions,
+                sessionToken: sessionToken
+            }, displaySuggestions
+            );
         },
         validateInputField: function (input) {
             const self = this;
@@ -251,6 +283,7 @@ var app = new Vue({
             }
 
             self.completedTabs.selectCar = true;
+            self.fetchRoutesData();
             self.getAvailableCars();
 
             setTimeout(() => {
@@ -410,13 +443,105 @@ var app = new Vue({
                 });
             }
         },
-        computeRoutes: function () {
+        fetchRoutesData: async function () {
             const self = this;
 
+            const routeUrl = 'https://routes.googleapis.com/directions/v2:computeRoutes?key=AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s'
             const oneMeterPerMile = 0.000621371;
             var tripType = self.form.bookingRequirements.reservation.tripType;
 
-            self.form.bookingRequirements.review.routes.oneWayTrip.miles = parseFloat(oneMeterPerMile * parseInt(routeMatrix.routes[0].distanceMeters)).toFixed(0);
+            let oneWayTripRouteMiles = 0;
+            let roundTripRouteMiles = 0;
+
+            const oneWayTripPayload = {
+                origin: {
+                    placeId: self.form.bookingRequirements.reservation.oneWayTrip.origin.place_id
+                },
+                destination: {
+                    placeId: self.form.bookingRequirements.reservation.oneWayTrip.destination.place_id
+                },
+                travelMode: "DRIVE",
+                // transitPreferences: {
+                //     allowedTravelModes: [
+                //         "LIGHT_RAIL",
+                //         "RAIL",
+                //     ]
+                // },
+                computeAlternativeRoutes: false,
+                languageCode: "en-US",
+                units: "IMPERIAL",
+            };
+
+            await axios
+                .post(
+                    routeUrl,
+                    oneWayTripPayload,
+                    {
+                        headers: {
+                            'X-Goog-FieldMask': 'routes.distanceMeters'
+                        }
+                    }
+                )
+                .then((res) => {
+                    console.log(res.data);
+                    if (res.data.routes) {
+                        oneWayTripRouteMiles = res.data.routes[0].distanceMeters;
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+
+            self.form.bookingRequirements.review.routes.oneWayTrip.miles = parseFloat(oneMeterPerMile * parseInt(oneWayTripRouteMiles)).toFixed(0);
+
+            if (tripType === 'round-trip') {
+
+                const roundTripPayload = {
+                    origin: {
+                        placeId: self.form.bookingRequirements.reservation.roundTrip.origin.place_id
+                    },
+                    destination: {
+                        placeId: self.form.bookingRequirements.reservation.roundTrip.destination.place_id
+                    },
+                    travelMode: "DRIVE",
+                    // transitPreferences: {
+                    //     allowedTravelModes: [
+                    //         "LIGHT_RAIL",
+                    //         "RAIL",
+                    //     ]
+                    // },
+                    computeAlternativeRoutes: false,
+                    languageCode: "en-US",
+                    units: "IMPERIAL",
+                };
+
+                await axios
+                    .post(
+                        routeUrl,
+                        roundTripPayload,
+                        {
+                            headers: {
+                                'X-Goog-FieldMask': 'routes.distanceMeters'
+                            }
+                        }
+                    )
+                    .then((res) => {
+                        console.log(res.data);
+                        if (res.data.routes) {
+                            roundTripRouteMiles = res.data.routes[0].distanceMeters;
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+
+                self.form.bookingRequirements.review.routes.roundTrip.miles = parseFloat(oneMeterPerMile * parseInt(roundTripRouteMiles)).toFixed(0);
+            }
+        },
+        computeRoutes: function () {
+            const self = this;
+
+            var tripType = self.form.bookingRequirements.reservation.tripType;
 
             var oneWayTripRouteMiles = self.form.bookingRequirements.review.routes.oneWayTrip.miles;
             var oneWayTripPassengers = self.form.bookingRequirements.reservation.oneWayTrip.passengers;
@@ -425,8 +550,6 @@ var app = new Vue({
             self.form.bookingRequirements.review.prices.oneWayTrip = self.calculateRoutePrice(oneWayTripRouteMiles, oneWayTripPassengers, oneWayTripCarPrice);
 
             if (tripType === 'round-trip') {
-                self.form.bookingRequirements.review.routes.roundTrip.miles = parseFloat(oneMeterPerMile * parseInt(routeMatrix.routes[0].distanceMeters)).toFixed(0);
-
                 var roundTripRouteMiles = self.form.bookingRequirements.review.routes.roundTrip.miles;
                 var roundTripPassengers = self.form.bookingRequirements.reservation.roundTrip.passengers;
                 var roundTripCarPrice = self.form.bookingRequirements.selectCar.roundTrip.vehicle.carStartPrice;

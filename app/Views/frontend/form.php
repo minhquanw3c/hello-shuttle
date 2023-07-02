@@ -236,12 +236,12 @@
                                                         placeholder="ZIP, City, Airport or Address"
                                                         type="text"
                                                         v-model="form.bookingRequirements.reservation.oneWayTrip.originSearch"
-                                                        @input="() => { dropdowns.oneWayTrip.origin = true }">
+                                                        @input="fetchSearchResultFromGoogle($event, 'oneWayTrip', 'origin')">
                                                     </b-form-input>
-                                                    <ul class="dropdown-menu" :class="dropdowns.oneWayTrip.origin === true ? 'show' : ''">
+                                                    <ul class="dropdown-menu" :class="dropdowns.oneWayTrip.origin.show === true ? 'show' : ''">
                                                         <li
                                                             @click="updateSearchResult(location, 'oneWayTrip', 'origin')"
-                                                            v-for="location in originList"
+                                                            v-for="location in dropdowns.oneWayTrip.origins"
                                                             class="dropdown-item">
                                                             {{ location.description }}
                                                         </li>
@@ -271,12 +271,12 @@
                                                         placeholder="ZIP, City, Airport or Address"
                                                         type="text"
                                                         v-model="form.bookingRequirements.reservation.oneWayTrip.destinationSearch"
-                                                        @input="() => { dropdowns.oneWayTrip.destination = true }">
+                                                        @input="fetchSearchResultFromGoogle($event, 'oneWayTrip', 'destination')">
                                                     </b-form-input>
-                                                    <ul class="dropdown-menu" :class="dropdowns.oneWayTrip.destination === true ? 'show' : ''">
+                                                    <ul class="dropdown-menu" :class="dropdowns.oneWayTrip.destination.show === true ? 'show' : ''">
                                                         <li
                                                             @click="updateSearchResult(location, 'oneWayTrip', 'destination')"
-                                                            v-for="location in destinationList"
+                                                            v-for="location in dropdowns.oneWayTrip.destinations"
                                                             class="dropdown-item">
                                                             {{ location.description }}
                                                         </li>
@@ -395,12 +395,12 @@
                                                             placeholder="ZIP, City, Airport or Address"
                                                             type="text"
                                                             v-model="form.bookingRequirements.reservation.roundTrip.originSearch"
-                                                            @input="() => { dropdowns.roundTrip.origin = true }">
+                                                            @input="fetchSearchResultFromGoogle($event, 'roundTrip', 'origin')">
                                                         </b-form-input>
-                                                        <ul class="dropdown-menu" :class="dropdowns.roundTrip.origin === true ? 'show' : ''">
+                                                        <ul class="dropdown-menu" :class="dropdowns.roundTrip.origin.show === true ? 'show' : ''">
                                                             <li
                                                                 @click="updateSearchResult(location, 'roundTrip', 'origin')"
-                                                                v-for="location in originList"
+                                                                v-for="location in dropdowns.roundTrip.origins"
                                                                 class="dropdown-item">
                                                                 {{ location.description }}
                                                             </li>
@@ -430,12 +430,12 @@
                                                             placeholder="ZIP, City, Airport or Address"
                                                             type="text"
                                                             v-model="form.bookingRequirements.reservation.roundTrip.destinationSearch"
-                                                            @input="() => { dropdowns.roundTrip.destination = true }">
+                                                            @input="fetchSearchResultFromGoogle($event, 'roundTrip', 'destination')">
                                                         </b-form-input>
-                                                        <ul class="dropdown-menu" :class="dropdowns.roundTrip.destination === true ? 'show' : ''">
+                                                        <ul class="dropdown-menu" :class="dropdowns.roundTrip.destination.show === true ? 'show' : ''">
                                                             <li
                                                                 @click="updateSearchResult(location, 'roundTrip', 'destination')"
-                                                                v-for="location in destinationList"
+                                                                v-for="location in dropdowns.roundTrip.destinations"
                                                                 class="dropdown-item">
                                                                 {{ location.description }}
                                                             </li>
@@ -1421,10 +1421,10 @@
 
 <script>
 
-    let placesService;
+    let autocompleteService;
 
     function initMap() {
-        placesService = new google.maps.places.AutocompleteService();
+        autocompleteService = new google.maps.places.AutocompleteService();
     }
 </script>
 
