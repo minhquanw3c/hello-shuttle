@@ -85,7 +85,7 @@
                         <div class="site-logo-wrap">
                             <div class="site-logo">
                                 <a href="<?= base_url('/') ?>">
-                                    <img src="<?= base_url('static/images/logo/hello-shuttle-white-02.png') ?>" alt="hello-shuttle-logo">
+                                    <img src="<?= base_url('static/images/logo/hello-shuttle-white-03.png') ?>" alt="hello-shuttle-logo">
                                 </a>
                             </div>
                             <div class="get-support clearfix get-support-color-white">
@@ -138,7 +138,10 @@
                 <div class="card">
                     <div class="card-header">Notes</div>
                     <div class="card-body">
-                        We are processing your booking!
+                        <div class="d-flex align-items-center">
+                            <b-spinner label="Loading"></b-spinner>
+                            <p class="mb-0 ml-2">We are processing your booking...</p>
+                        </div>
                         <ul class="line-height-normal">
                             <li>You will be redirected to Stripe payment gateway shortly.</li>
                             <li>In case you accidentally close the window, we have sent an email to provided email address that contains payment link.</li>
@@ -152,207 +155,48 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                <b-tabs class="danny--form-step" nav-class="mb-4 danny--nav-tabs" v-model="formActiveTab">
-                    <!-- reservation -->
-                    <b-tab>
-                        <template #title>
-                            <span>1.</span> <span class="tab-heading">Make a reservation</span>
-                        </template>
+                    <b-tabs class="danny--form-step" nav-class="mb-4 danny--nav-tabs" v-model="formActiveTab">
+                        <!-- reservation -->
+                        <b-tab>
+                            <template #title>
+                                <span>1.</span> <span class="tab-heading">Make a reservation</span>
+                            </template>
 
-                        <b-form @submit.prevent="saveReservation">
-                            <section>
-                                <div class="row">
-                                    <div class="col-6 offset-6 text-right">
-                                        <b-form-group
-                                            :state="validateInputField($v.form.bookingRequirements.reservation.tripType)"
-                                            :invalid-feedback="errorMessages.required">
-                                            <b-form-radio-group
-                                                :options="tripTypes"
-                                                text-field="text"
-                                                value-field="value"
-                                                v-model="$v.form.bookingRequirements.reservation.tripType.$model"
-                                                buttons
-                                                button-variant="outline-primary">
-                                            </b-form-radio-group>
-                                        </b-form-group>
-
-                                        <!-- <b-form-group
-                                            label="How many luggages do you have?"
-                                            :state="validateInputField($v.form.bookingRequirements.reservation.luggagesCount)"
-                                            :invalid-feedback="errorMessages.required"
-                                            description="Type 0 if you have no luggages.">
-                                            <b-form-input
-                                                min="0"
-                                                type="number"
-                                                v-model="$v.form.bookingRequirements.reservation.luggagesCount.$model">
-                                            </b-form-input>
-                                        </b-form-group> -->
-                                    </div>
-                                </div>
-                            </section>
-
-                            <template v-if="form.bookingRequirements.reservation.tripType">
-                                <!-- First Origin -->
+                            <b-form @submit.prevent="saveReservation">
                                 <section>
                                     <div class="row">
-                                        <div class="col-12">
-                                            <iframe
-                                                width="100%"
-                                                height="300"
-                                                frameborder="0"
-                                                style="border:0"
-                                                referrerpolicy="no-referrer-when-downgrade"
-                                                :src="pickingUpMapPreview"
-                                                allowfullscreen>
-                                            </iframe>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <h5 class="danny--group-title">picking-up</h5>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12 col-lg-6">
+                                        <div class="col-6 offset-6 text-right">
                                             <b-form-group
-                                                class="danny--form-group"
-                                                label="Picking up"
-                                                label-for="one-way-picking-up"
-                                                label-cols="3"
-                                                content-cols="9"
+                                                :state="validateInputField($v.form.bookingRequirements.reservation.tripType)"
+                                                :invalid-feedback="errorMessages.required">
+                                                <b-form-radio-group
+                                                    :options="tripTypes"
+                                                    text-field="text"
+                                                    value-field="value"
+                                                    v-model="$v.form.bookingRequirements.reservation.tripType.$model"
+                                                    buttons
+                                                    button-variant="outline-primary">
+                                                </b-form-radio-group>
+                                            </b-form-group>
+
+                                            <!-- <b-form-group
+                                                label="How many luggages do you have?"
+                                                :state="validateInputField($v.form.bookingRequirements.reservation.luggagesCount)"
                                                 :invalid-feedback="errorMessages.required"
-                                                :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.origin)">
-                                                <b-input-group>
-                                                    <b-input-group-prepend>
-                                                        <div class="btn pr-2">
-                                                            <b-icon icon="geo-alt"></b-icon>
-                                                        </div>
-                                                    </b-input-group-prepend>
-                                                    <b-form-input
-                                                        autocomplete="off"
-                                                        id="one-way-picking-up"
-                                                        placeholder="ZIP, City, Airport or Address"
-                                                        type="text"
-                                                        v-model="form.bookingRequirements.reservation.oneWayTrip.originSearch"
-                                                        @input="fetchSearchResultFromGoogle($event, 'oneWayTrip', 'origin')">
-                                                    </b-form-input>
-                                                    <ul class="dropdown-menu" :class="dropdowns.oneWayTrip.origin.show === true ? 'show' : ''">
-                                                        <li
-                                                            @click="updateSearchResult(location, 'oneWayTrip', 'origin')"
-                                                            v-for="location in dropdowns.oneWayTrip.origins"
-                                                            class="dropdown-item">
-                                                            {{ location.description }}
-                                                        </li>
-                                                    </ul>
-                                                </b-input-group>
-                                            </b-form-group>
-                                        </div>
-
-                                        <div class="col-12 col-lg-6">
-                                            <b-form-group
-                                                class="danny--form-group"
-                                                label="Destination"
-                                                label-for="one-way-destination"
-                                                label-cols="3"
-                                                content-cols="9"
-                                                :invalid-feedback="errorMessages.required"
-                                                :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.destination)">
-                                                <b-input-group>
-                                                    <b-input-group-prepend>
-                                                        <div class="btn pr-2">
-                                                            <b-icon icon="geo-alt"></b-icon>
-                                                        </div>
-                                                    </b-input-group-prepend>
-                                                    <b-form-input
-                                                        autocomplete="off"
-                                                        id="one-way-destination"
-                                                        placeholder="ZIP, City, Airport or Address"
-                                                        type="text"
-                                                        v-model="form.bookingRequirements.reservation.oneWayTrip.destinationSearch"
-                                                        @input="fetchSearchResultFromGoogle($event, 'oneWayTrip', 'destination')">
-                                                    </b-form-input>
-                                                    <ul class="dropdown-menu" :class="dropdowns.oneWayTrip.destination.show === true ? 'show' : ''">
-                                                        <li
-                                                            @click="updateSearchResult(location, 'oneWayTrip', 'destination')"
-                                                            v-for="location in dropdowns.oneWayTrip.destinations"
-                                                            class="dropdown-item">
-                                                            {{ location.description }}
-                                                        </li>
-                                                    </ul>
-                                                </b-input-group>
-                                            </b-form-group>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12 col-lg-6">
-                                            <b-form-group
-                                                class="danny--form-group"
-                                                label="Pickup date"
-                                                label-for="one-way-pickup-date"
-                                                label-cols="3"
-                                                content-cols="9"
-                                                :invalid-feedback="errorMessages.required"
-                                                :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.pickup.date)">
-                                                <b-form-datepicker
-                                                    id="one-way-pickup-date"
-                                                    :min="new Date()"
-                                                    v-model="$v.form.bookingRequirements.reservation.oneWayTrip.pickup.date.$model">
-                                                </b-form-datepicker>
-                                            </b-form-group>
-                                        </div>
-
-                                        <div class="col-12 col-lg-6">
-                                            <b-form-group
-                                                class="danny--form-group"
-                                                label="Pickup time"
-                                                label-for="one-way-pickup-time"
-                                                label-cols="3"
-                                                content-cols="9"
-                                                :invalid-feedback="errorMessages.required"
-                                                :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.pickup.time)">
-                                                <b-form-timepicker
-                                                    id="one-way-pickup-time"
-                                                    v-model="$v.form.bookingRequirements.reservation.oneWayTrip.pickup.time.$model">
-                                                </b-form-timepicker>
-                                            </b-form-group>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12 col-lg-6">
-                                            <b-form-group
-                                                class="danny--form-group"
-                                                label="Passengers"
-                                                label-for="one-way-passengers"
-                                                label-cols="3"
-                                                content-cols="9"
-                                                :invalid-feedback="'Minimum passengers is 1'"
-                                                :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.passengers)">
-                                                <b-input-group>
-                                                    <b-input-group-prepend>
-                                                        <div class="btn pr-2">
-                                                            <b-icon icon="people"></b-icon>
-                                                        </div>
-                                                    </b-input-group-prepend>
-                                                    <b-form-input
-                                                        no-wheel
-                                                        id="one-way-passengers"
-                                                        min="0"
-                                                        type="number"
-                                                        v-model="$v.form.bookingRequirements.reservation.oneWayTrip.passengers.$model">
-                                                    </b-form-input>
-                                                </b-input-group>
-                                            </b-form-group>
+                                                description="Type 0 if you have no luggages.">
+                                                <b-form-input
+                                                    min="0"
+                                                    type="number"
+                                                    v-model="$v.form.bookingRequirements.reservation.luggagesCount.$model">
+                                                </b-form-input>
+                                            </b-form-group> -->
                                         </div>
                                     </div>
                                 </section>
 
-                                <template v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
-                                    <!-- Second Origin -->
-                                    <section class="mt-5">
+                                <template v-if="form.bookingRequirements.reservation.tripType">
+                                    <!-- First Origin -->
+                                    <section>
                                         <div class="row">
                                             <div class="col-12">
                                                 <iframe
@@ -361,7 +205,7 @@
                                                     frameborder="0"
                                                     style="border:0"
                                                     referrerpolicy="no-referrer-when-downgrade"
-                                                    :src="returnMapPreview"
+                                                    :src="pickingUpMapPreview"
                                                     allowfullscreen>
                                                 </iframe>
                                             </div>
@@ -369,7 +213,7 @@
 
                                         <div class="row">
                                             <div class="col-12">
-                                                <h5 class="danny--group-title">return</h5>
+                                                <h5 class="danny--group-title">picking-up</h5>
                                             </div>
                                         </div>
 
@@ -378,11 +222,11 @@
                                                 <b-form-group
                                                     class="danny--form-group"
                                                     label="Picking up"
-                                                    label-for="round-trip-picking-up"
+                                                    label-for="one-way-picking-up"
                                                     label-cols="3"
                                                     content-cols="9"
                                                     :invalid-feedback="errorMessages.required"
-                                                    :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.origin)">
+                                                    :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.origin)">
                                                     <b-input-group>
                                                         <b-input-group-prepend>
                                                             <div class="btn pr-2">
@@ -391,16 +235,16 @@
                                                         </b-input-group-prepend>
                                                         <b-form-input
                                                             autocomplete="off"
-                                                            id="round-trip-picking-up"
+                                                            id="one-way-picking-up"
                                                             placeholder="ZIP, City, Airport or Address"
                                                             type="text"
-                                                            v-model="form.bookingRequirements.reservation.roundTrip.originSearch"
-                                                            @input="fetchSearchResultFromGoogle($event, 'roundTrip', 'origin')">
+                                                            v-model="form.bookingRequirements.reservation.oneWayTrip.originSearch"
+                                                            @input="fetchSearchResultFromGoogle($event, 'oneWayTrip', 'origin')">
                                                         </b-form-input>
-                                                        <ul class="dropdown-menu" :class="dropdowns.roundTrip.origin.show === true ? 'show' : ''">
+                                                        <ul class="dropdown-menu" :class="dropdowns.oneWayTrip.origin.show === true ? 'show' : ''">
                                                             <li
-                                                                @click="updateSearchResult(location, 'roundTrip', 'origin')"
-                                                                v-for="location in dropdowns.roundTrip.origins"
+                                                                @click="updateSearchResult(location, 'oneWayTrip', 'origin')"
+                                                                v-for="location in dropdowns.oneWayTrip.origins"
                                                                 class="dropdown-item">
                                                                 {{ location.description }}
                                                             </li>
@@ -413,11 +257,11 @@
                                                 <b-form-group
                                                     class="danny--form-group"
                                                     label="Destination"
-                                                    label-for="round-trip-destination"
+                                                    label-for="one-way-destination"
                                                     label-cols="3"
                                                     content-cols="9"
                                                     :invalid-feedback="errorMessages.required"
-                                                    :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.destination)">
+                                                    :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.destination)">
                                                     <b-input-group>
                                                         <b-input-group-prepend>
                                                             <div class="btn pr-2">
@@ -426,16 +270,16 @@
                                                         </b-input-group-prepend>
                                                         <b-form-input
                                                             autocomplete="off"
-                                                            id="round-trip-destination"
+                                                            id="one-way-destination"
                                                             placeholder="ZIP, City, Airport or Address"
                                                             type="text"
-                                                            v-model="form.bookingRequirements.reservation.roundTrip.destinationSearch"
-                                                            @input="fetchSearchResultFromGoogle($event, 'roundTrip', 'destination')">
+                                                            v-model="form.bookingRequirements.reservation.oneWayTrip.destinationSearch"
+                                                            @input="fetchSearchResultFromGoogle($event, 'oneWayTrip', 'destination')">
                                                         </b-form-input>
-                                                        <ul class="dropdown-menu" :class="dropdowns.roundTrip.destination.show === true ? 'show' : ''">
+                                                        <ul class="dropdown-menu" :class="dropdowns.oneWayTrip.destination.show === true ? 'show' : ''">
                                                             <li
-                                                                @click="updateSearchResult(location, 'roundTrip', 'destination')"
-                                                                v-for="location in dropdowns.roundTrip.destinations"
+                                                                @click="updateSearchResult(location, 'oneWayTrip', 'destination')"
+                                                                v-for="location in dropdowns.oneWayTrip.destinations"
                                                                 class="dropdown-item">
                                                                 {{ location.description }}
                                                             </li>
@@ -450,15 +294,15 @@
                                                 <b-form-group
                                                     class="danny--form-group"
                                                     label="Pickup date"
-                                                    label-for="round-trip-pickup-date"
+                                                    label-for="one-way-pickup-date"
                                                     label-cols="3"
                                                     content-cols="9"
                                                     :invalid-feedback="errorMessages.required"
-                                                    :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.pickup.date)">
+                                                    :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.pickup.date)">
                                                     <b-form-datepicker
-                                                        id="round-trip-pickup-date"
+                                                        id="one-way-pickup-date"
                                                         :min="new Date()"
-                                                        v-model="$v.form.bookingRequirements.reservation.roundTrip.pickup.date.$model">
+                                                        v-model="$v.form.bookingRequirements.reservation.oneWayTrip.pickup.date.$model">
                                                     </b-form-datepicker>
                                                 </b-form-group>
                                             </div>
@@ -467,14 +311,14 @@
                                                 <b-form-group
                                                     class="danny--form-group"
                                                     label="Pickup time"
-                                                    label-for="round-trip-pickup-time"
+                                                    label-for="one-way-pickup-time"
                                                     label-cols="3"
                                                     content-cols="9"
                                                     :invalid-feedback="errorMessages.required"
-                                                    :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.pickup.time)">
+                                                    :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.pickup.time)">
                                                     <b-form-timepicker
-                                                        id="round-trip-pickup-time"
-                                                        v-model="$v.form.bookingRequirements.reservation.roundTrip.pickup.time.$model">
+                                                        id="one-way-pickup-time"
+                                                        v-model="$v.form.bookingRequirements.reservation.oneWayTrip.pickup.time.$model">
                                                     </b-form-timepicker>
                                                 </b-form-group>
                                             </div>
@@ -485,11 +329,11 @@
                                                 <b-form-group
                                                     class="danny--form-group"
                                                     label="Passengers"
-                                                    label-for="round-trip-passengers"
+                                                    label-for="one-way-passengers"
                                                     label-cols="3"
                                                     content-cols="9"
                                                     :invalid-feedback="'Minimum passengers is 1'"
-                                                    :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.passengers)">
+                                                    :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.passengers)">
                                                     <b-input-group>
                                                         <b-input-group-prepend>
                                                             <div class="btn pr-2">
@@ -498,472 +342,532 @@
                                                         </b-input-group-prepend>
                                                         <b-form-input
                                                             no-wheel
-                                                            id="round-trip-passengers"
+                                                            id="one-way-passengers"
                                                             min="0"
                                                             type="number"
-                                                            v-model="$v.form.bookingRequirements.reservation.roundTrip.passengers.$model">
+                                                            v-model="$v.form.bookingRequirements.reservation.oneWayTrip.passengers.$model">
                                                         </b-form-input>
                                                     </b-input-group>
                                                 </b-form-group>
                                             </div>
                                         </div>
                                     </section>
+
+                                    <template v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
+                                        <!-- Second Origin -->
+                                        <section class="mt-5">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <iframe
+                                                        width="100%"
+                                                        height="300"
+                                                        frameborder="0"
+                                                        style="border:0"
+                                                        referrerpolicy="no-referrer-when-downgrade"
+                                                        :src="returnMapPreview"
+                                                        allowfullscreen>
+                                                    </iframe>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h5 class="danny--group-title">return</h5>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        class="danny--form-group"
+                                                        label="Picking up"
+                                                        label-for="round-trip-picking-up"
+                                                        label-cols="3"
+                                                        content-cols="9"
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.origin)">
+                                                        <b-input-group>
+                                                            <b-input-group-prepend>
+                                                                <div class="btn pr-2">
+                                                                    <b-icon icon="geo-alt"></b-icon>
+                                                                </div>
+                                                            </b-input-group-prepend>
+                                                            <b-form-input
+                                                                autocomplete="off"
+                                                                id="round-trip-picking-up"
+                                                                placeholder="ZIP, City, Airport or Address"
+                                                                type="text"
+                                                                v-model="form.bookingRequirements.reservation.roundTrip.originSearch"
+                                                                @input="fetchSearchResultFromGoogle($event, 'roundTrip', 'origin')">
+                                                            </b-form-input>
+                                                            <ul class="dropdown-menu" :class="dropdowns.roundTrip.origin.show === true ? 'show' : ''">
+                                                                <li
+                                                                    @click="updateSearchResult(location, 'roundTrip', 'origin')"
+                                                                    v-for="location in dropdowns.roundTrip.origins"
+                                                                    class="dropdown-item">
+                                                                    {{ location.description }}
+                                                                </li>
+                                                            </ul>
+                                                        </b-input-group>
+                                                    </b-form-group>
+                                                </div>
+
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        class="danny--form-group"
+                                                        label="Destination"
+                                                        label-for="round-trip-destination"
+                                                        label-cols="3"
+                                                        content-cols="9"
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.destination)">
+                                                        <b-input-group>
+                                                            <b-input-group-prepend>
+                                                                <div class="btn pr-2">
+                                                                    <b-icon icon="geo-alt"></b-icon>
+                                                                </div>
+                                                            </b-input-group-prepend>
+                                                            <b-form-input
+                                                                autocomplete="off"
+                                                                id="round-trip-destination"
+                                                                placeholder="ZIP, City, Airport or Address"
+                                                                type="text"
+                                                                v-model="form.bookingRequirements.reservation.roundTrip.destinationSearch"
+                                                                @input="fetchSearchResultFromGoogle($event, 'roundTrip', 'destination')">
+                                                            </b-form-input>
+                                                            <ul class="dropdown-menu" :class="dropdowns.roundTrip.destination.show === true ? 'show' : ''">
+                                                                <li
+                                                                    @click="updateSearchResult(location, 'roundTrip', 'destination')"
+                                                                    v-for="location in dropdowns.roundTrip.destinations"
+                                                                    class="dropdown-item">
+                                                                    {{ location.description }}
+                                                                </li>
+                                                            </ul>
+                                                        </b-input-group>
+                                                    </b-form-group>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        class="danny--form-group"
+                                                        label="Pickup date"
+                                                        label-for="round-trip-pickup-date"
+                                                        label-cols="3"
+                                                        content-cols="9"
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.pickup.date)">
+                                                        <b-form-datepicker
+                                                            id="round-trip-pickup-date"
+                                                            :min="new Date()"
+                                                            v-model="$v.form.bookingRequirements.reservation.roundTrip.pickup.date.$model">
+                                                        </b-form-datepicker>
+                                                    </b-form-group>
+                                                </div>
+
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        class="danny--form-group"
+                                                        label="Pickup time"
+                                                        label-for="round-trip-pickup-time"
+                                                        label-cols="3"
+                                                        content-cols="9"
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.pickup.time)">
+                                                        <b-form-timepicker
+                                                            id="round-trip-pickup-time"
+                                                            v-model="$v.form.bookingRequirements.reservation.roundTrip.pickup.time.$model">
+                                                        </b-form-timepicker>
+                                                    </b-form-group>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        class="danny--form-group"
+                                                        label="Passengers"
+                                                        label-for="round-trip-passengers"
+                                                        label-cols="3"
+                                                        content-cols="9"
+                                                        :invalid-feedback="'Minimum passengers is 1'"
+                                                        :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.passengers)">
+                                                        <b-input-group>
+                                                            <b-input-group-prepend>
+                                                                <div class="btn pr-2">
+                                                                    <b-icon icon="people"></b-icon>
+                                                                </div>
+                                                            </b-input-group-prepend>
+                                                            <b-form-input
+                                                                no-wheel
+                                                                id="round-trip-passengers"
+                                                                min="0"
+                                                                type="number"
+                                                                v-model="$v.form.bookingRequirements.reservation.roundTrip.passengers.$model">
+                                                            </b-form-input>
+                                                        </b-input-group>
+                                                    </b-form-group>
+                                                </div>
+                                            </div>
+                                        </section>
+                                    </template>
                                 </template>
+
+                                <!-- Buttons -->
+                                <section class="mt-4 pt-4 border-top border-secondary">
+                                    <div class="row">
+                                        <div class="col-12 text-right">
+                                            <button class="danny--btn" @click.prevent="saveReservation">Save & Next</button>
+                                        </div>
+                                    </div>
+                                </section>
+                            </b-form>
+                        </b-tab>
+
+                        <!-- selectCar -->
+                        <b-tab :disabled="completedTabs.selectCar === false">
+                            <template #title>
+                                <span>2.</span> <span class="tab-heading">Select your car</span>
                             </template>
+
+                            <section v-if="vehicles.oneWayTrip.length > 0">
+                                <h5 class="danny--group-title">Picking-up</h5>
+                                <div
+                                    class="row align-items-center p-4 mb-3"
+                                    :class="vehicle.availableCars === '0' ? 'bg-white' : 'bg-white'"
+                                    v-for="vehicle in vehicles.oneWayTrip">
+                                    <div class="col-12 col-md-3">
+                                        <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <p class="danny--car-name">
+                                            {{ vehicle.carName }}
+                                        </p>
+                                        <p :class="{ 'danny--car-availability': true, 'text-danger': vehicle.availableCars === '0' }">
+                                            {{ vehicle.availableCars === '0' ? 'Out of service' : 'Available' }}
+                                        </p>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <p class="danny--car-price">&dollar;{{ vehicle.carStartPrice }}</p>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <b-form-radio
+                                            :disabled="vehicle.availableCars === '0'"
+                                            v-model="$v.form.bookingRequirements.selectCar.oneWayTrip.vehicle.$model"
+                                            name="one-way-vehicle"
+                                            :value="vehicle"
+                                            button
+                                            button-variant="outline-primary">
+                                            Select
+                                        </b-form-radio>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section v-if="vehicles.roundTrip.length > 0">
+                                <h5 class="danny--group-title">Return</h5>
+                                <div
+                                    class="row align-items-center p-4 mb-3"
+                                    :class="vehicle.availableCars === '0' ? 'bg-white' : 'bg-white'"
+                                    v-for="vehicle in vehicles.roundTrip">
+                                    <div class="col-12 col-md-3">
+                                        <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <p class="danny--car-name">
+                                            {{ vehicle.carName }}
+                                        </p>
+                                        <p :class="{ 'danny--car-availability': true, 'text-danger': vehicle.availableCars === '0' }">
+                                            {{ vehicle.availableCars === '0' ? 'Out of service' : 'Available' }}
+                                        </p>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <p class="danny--car-price">&dollar;{{ vehicle.carStartPrice }}</p>
+                                    </div>
+                                    <div class="col-12 col-md-3">
+                                        <b-form-radio
+                                            :disabled="vehicle.availableCars === '0'"
+                                            v-model="$v.form.bookingRequirements.selectCar.roundTrip.vehicle.$model"
+                                            name="round-trip-vehicle"
+                                            :value="vehicle"
+                                            button
+                                            button-variant="outline-primary">
+                                            Select
+                                        </b-form-radio>
+                                    </div>
+                                </div>
+                            </section>
 
                             <!-- Buttons -->
                             <section class="mt-4 pt-4 border-top border-secondary">
                                 <div class="row">
                                     <div class="col-12 text-right">
-                                        <button class="danny--btn" @click.prevent="saveReservation">Save & Next</button>
+                                        <button class="danny--btn" @click.prevent="saveSelectCar">Save & Next</button>
                                     </div>
                                 </div>
                             </section>
-                        </b-form>
-                    </b-tab>
+                        </b-tab>
 
-                    <!-- selectCar -->
-                    <b-tab :disabled="completedTabs.selectCar === false">
-                        <template #title>
-                            <span>2.</span> <span class="tab-heading">Select your car</span>
-                        </template>
+                        <!-- chooseOptions -->
+                        <b-tab :disabled="completedTabs.chooseOptions === false">
+                            <template #title>
+                                <span>3.</span> <span class="tab-heading">Choose your options</span>
+                            </template>
 
-                        <section v-if="vehicles.oneWayTrip.length > 0">
-                            <h5 class="danny--group-title">Picking-up</h5>
-                            <div
-                                class="row align-items-center p-4 mb-3"
-                                :class="vehicle.availableCars === '0' ? 'bg-white' : 'bg-white'"
-                                v-for="vehicle in vehicles.oneWayTrip">
-                                <div class="col-12 col-md-3">
-                                    <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
-                                </div>
-                                <div class="col-12 col-md-3">
-                                    <p class="danny--car-name">
-                                        {{ vehicle.carName }}
-                                    </p>
-                                    <p class="danny--car-availability">
-                                        {{ vehicle.availableCars === '0' ? 'Unavailable' : 'Available' }}
-                                    </p>
-                                </div>
-                                <div class="col-12 col-md-3">
-                                    <p class="danny--car-price">&dollar;{{ vehicle.carStartPrice }}</p>
-                                </div>
-                                <div class="col-12 col-md-3">
-                                    <b-form-radio
-                                        :disabled="vehicle.availableCars === '0'"
-                                        v-model="$v.form.bookingRequirements.selectCar.oneWayTrip.vehicle.$model"
-                                        name="one-way-vehicle"
-                                        :value="vehicle"
-                                        button
-                                        button-variant="outline-primary">
-                                        Select
-                                    </b-form-radio>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section v-if="vehicles.roundTrip.length > 0">
-                            <h5 class="danny--group-title">Return</h5>
-                            <div
-                                class="row align-items-center p-4 mb-3"
-                                :class="vehicle.availableCars === '0' ? 'bg-white' : 'bg-white'"
-                                v-for="vehicle in vehicles.roundTrip">
-                                <div class="col-12 col-md-3">
-                                    <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
-                                </div>
-                                <div class="col-12 col-md-3">
-                                    <p class="danny--car-name">
-                                        {{ vehicle.carName }}
-                                    </p>
-                                    <p class="danny--car-availability">
-                                        {{ vehicle.availableCars === '0' ? 'Unavailable' : 'Available' }}
-                                    </p>
-                                </div>
-                                <div class="col-12 col-md-3">
-                                    <p class="danny--car-price">&dollar;{{ vehicle.carStartPrice }}</p>
-                                </div>
-                                <div class="col-12 col-md-3">
-                                    <b-form-radio
-                                        :disabled="vehicle.availableCars === '0'"
-                                        v-model="$v.form.bookingRequirements.selectCar.roundTrip.vehicle.$model"
-                                        name="round-trip-vehicle"
-                                        :value="vehicle"
-                                        button
-                                        button-variant="outline-primary">
-                                        Select
-                                    </b-form-radio>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- Buttons -->
-                        <section class="mt-4 pt-4 border-top border-secondary">
-                            <div class="row">
-                                <div class="col-12 text-right">
-                                    <button class="danny--btn" @click.prevent="saveSelectCar">Save & Next</button>
-                                </div>
-                            </div>
-                        </section>
-                    </b-tab>
-
-                    <!-- chooseOptions -->
-                    <b-tab :disabled="completedTabs.chooseOptions === false">
-                        <template #title>
-                            <span>3.</span> <span class="tab-heading">Choose your options</span>
-                        </template>
-
-                        <section>
-                            <div class="row">
-                                <div class="col-12">
-                                    <h5 class="danny--group-title">picking-up</h5>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="bg-white p-3 h-100">
-                                        <h5 class="danny--group-title">Extras</h5>
-                                        <b-form-group
-                                            :state="validateInputField($v.form.bookingRequirements.chooseOptions.oneWayTrip.extras)"
-                                            :invalid-feedback="errorMessages.required">
-                                            <b-checkbox-group
-                                                stacked
-                                                v-model="$v.form.bookingRequirements.chooseOptions.oneWayTrip.extras.$model"
-                                                name="otpions-extras">
-                                                <div class="row" v-for="option in options.extras">
-                                                    <div class="col-8">
-                                                        <b-form-checkbox
-                                                            :value="option">
-                                                            {{ option.configName }}
-                                                        </b-form-checkbox>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <span class="danny--car-option-price">
-                                                            &dollar;{{ option.configValue }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </b-checkbox-group>
-                                        </b-form-group>
+                            <section>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h5 class="danny--group-title">picking-up</h5>
                                     </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="bg-white p-3 h-100">
-                                        <h5 class="danny--group-title">Protection</h5>
-                                        <b-form-group
-                                            :state="validateInputField($v.form.bookingRequirements.chooseOptions.oneWayTrip.protection)"
-                                            :invalid-feedback="errorMessages.required">
-                                            <b-checkbox-group
-                                                stacked
-                                                v-model="$v.form.bookingRequirements.chooseOptions.oneWayTrip.protection.$model"
-                                                name="otpions-protection">
-                                                <div class="row" v-for="option in options.protection">
-                                                    <div class="col-8">
-                                                        <b-form-checkbox
-                                                            :value="option">
-                                                            {{ option.configName }}
-                                                        </b-form-checkbox>
+                                    <div class="col-12 col-md-6">
+                                        <div class="bg-white p-3 h-100">
+                                            <h5 class="danny--group-title">Extras</h5>
+                                            <b-form-group
+                                                :state="validateInputField($v.form.bookingRequirements.chooseOptions.oneWayTrip.extras)"
+                                                :invalid-feedback="errorMessages.required">
+                                                <b-checkbox-group
+                                                    stacked
+                                                    v-model="$v.form.bookingRequirements.chooseOptions.oneWayTrip.extras.$model"
+                                                    name="otpions-extras">
+                                                    <div class="row" v-for="option in options.extras">
+                                                        <div class="col-8">
+                                                            <b-form-checkbox
+                                                                :value="option">
+                                                                {{ option.configName }}
+                                                            </b-form-checkbox>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <span class="danny--car-option-price">
+                                                                &dollar;{{ option.configValue }}
+                                                            </span>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-4">
-                                                        <span class="danny--car-option-price">
-                                                            &dollar;{{ option.configValue }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </b-checkbox-group>
-                                        </b-form-group>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section
-                            class="mt-4"
-                            v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
-                            <div class="row">
-                                <div class="col-12">
-                                    <h5 class="danny--group-title">return</h5>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="bg-white p-3 h-100">
-                                        <h5 class="danny--group-title">Extras</h5>
-                                        <b-form-group
-                                            :state="validateInputField($v.form.bookingRequirements.chooseOptions.roundTrip.extras)"
-                                            :invalid-feedback="errorMessages.required">
-                                            <b-checkbox-group
-                                                stacked
-                                                v-model="$v.form.bookingRequirements.chooseOptions.roundTrip.extras.$model"
-                                                name="round-trip-otpions-extras">
-                                                <div class="row" v-for="option in options.extras">
-                                                    <div class="col-8">
-                                                        <b-form-checkbox
-                                                            :value="option">
-                                                            {{ option.configName }}
-                                                        </b-form-checkbox>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <span class="danny--car-option-price">
-                                                            &dollar;{{ option.configValue }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </b-checkbox-group>
-                                        </b-form-group>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <div class="bg-white p-3 h-100">
-                                        <h5 class="danny--group-title">Protection</h5>
-                                        <b-form-group
-                                            :state="validateInputField($v.form.bookingRequirements.chooseOptions.roundTrip.protection)"
-                                            :invalid-feedback="errorMessages.required">
-                                            <b-checkbox-group
-                                                stacked
-                                                v-model="$v.form.bookingRequirements.chooseOptions.roundTrip.protection.$model"
-                                                name="round-trip-otpions-protection">
-                                                <div class="row" v-for="option in options.protection">
-                                                    <div class="col-8">
-                                                        <b-form-checkbox
-                                                            :value="option">
-                                                            {{ option.configName }}
-                                                        </b-form-checkbox>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <span class="danny--car-option-price">
-                                                            &dollar;{{ option.configValue }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </b-checkbox-group>
-                                        </b-form-group>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <!-- Buttons -->
-                        <section class="mt-4 pt-4 border-top border-secondary">
-                            <div class="row">
-                                <div class="col-12 text-right">
-                                    <button class="danny--btn" @click.prevent="saveChooseOptions">Save & Next</button>
-                                </div>
-                            </div>
-                        </section>
-                    </b-tab>
-
-                    <!-- review -->
-                    <b-tab :disabled="completedTabs.review === false">
-                        <template #title>
-                            <span>4.</span> <span class="tab-heading">Information & Review</span>
-                        </template>
-
-                        <b-form @submit.prevent="submitBooking">
-                            <div class="row">
-                                <div class="col-12 col-md-6">
-                                    <!-- Contact information -->
-                                    <section class="mb-5">
-                                        <h5 class="danny--group-title">Personal info</h5>
-                                        <div class="row">
-                                            <div class="col-12 col-lg-6">
-                                                <b-form-group
-                                                    :invalid-feedback="errorMessages.required"
-                                                    :state="validateInputField($v.form.bookingRequirements.review.customer.firstName)">
-                                                    <b-form-input
-                                                        placeholder="First name"
-                                                        type="text"
-                                                        v-model="$v.form.bookingRequirements.review.customer.firstName.$model">
-                                                    </b-form-input>
-                                                </b-form-group>
-                                            </div>
-
-                                            <div class="col-12 col-lg-6">
-                                                <b-form-group
-                                                    :invalid-feedback="errorMessages.required"
-                                                    :state="validateInputField($v.form.bookingRequirements.review.customer.lastName)">
-                                                    <b-form-input
-                                                        placeholder="Last name"
-                                                        type="text"
-                                                        v-model="$v.form.bookingRequirements.review.customer.lastName.$model">
-                                                    </b-form-input>
-                                                </b-form-group>
-                                            </div>
+                                                </b-checkbox-group>
+                                            </b-form-group>
                                         </div>
-
-                                        <div class="row">
-                                            <div class="col-12 col-lg-6">
-                                                <b-form-group
-                                                    :invalid-feedback="errorMessages.required"
-                                                    :state="validateInputField($v.form.bookingRequirements.review.customer.contact.mobileNumber)">
-                                                    <b-form-input
-                                                        placeholder="Mobile number"
-                                                        type="text"
-                                                        v-model="$v.form.bookingRequirements.review.customer.contact.mobileNumber.$model">
-                                                    </b-form-input>
-                                                </b-form-group>
-                                            </div>
-
-                                            <div class="col-12 col-lg-6">
-                                                <b-form-group
-                                                    :invalid-feedback="errorMessageEmail"
-                                                    :state="validateInputField($v.form.bookingRequirements.review.customer.contact.email)">
-                                                    <b-form-input
-                                                        placeholder="Email address"
-                                                        type="text"
-                                                        v-model="$v.form.bookingRequirements.review.customer.contact.email.$model">
-                                                    </b-form-input>
-                                                </b-form-group>
-                                            </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="bg-white p-3 h-100">
+                                            <h5 class="danny--group-title">Protection</h5>
+                                            <b-form-group
+                                                :state="validateInputField($v.form.bookingRequirements.chooseOptions.oneWayTrip.protection)"
+                                                :invalid-feedback="errorMessages.required">
+                                                <b-checkbox-group
+                                                    stacked
+                                                    v-model="$v.form.bookingRequirements.chooseOptions.oneWayTrip.protection.$model"
+                                                    name="otpions-protection">
+                                                    <div class="row" v-for="option in options.protection">
+                                                        <div class="col-8">
+                                                            <b-form-checkbox
+                                                                :value="option">
+                                                                {{ option.configName }}
+                                                            </b-form-checkbox>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <span class="danny--car-option-price">
+                                                                &dollar;{{ option.configValue }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </b-checkbox-group>
+                                            </b-form-group>
                                         </div>
-                                    </section>
-
-                                    <!-- Airline information -->
-                                    <section>
-                                        <h5 class="danny--group-title">Airline info</h5>
-                                        <div class="row">
-                                            <div class="col-12 col-lg-6">
-                                                <b-form-group
-                                                    :invalid-feedback="errorMessages.required"
-                                                    :state="validateInputField($v.form.bookingRequirements.review.airline.brand)">
-                                                    <b-form-select
-                                                        id="airline-brand"
-                                                        :options="airlineBrands"
-                                                        v-model="$v.form.bookingRequirements.review.airline.brand.$model">
-                                                    </b-form-select>
-                                                </b-form-group>
-                                            </div>
-
-                                            <div class="col-12 col-lg-6">
-                                                <b-form-group
-                                                    :invalid-feedback="errorMessages.required"
-                                                    :state="validateInputField($v.form.bookingRequirements.review.airline.flightNumber)">
-                                                    <b-form-input
-                                                        placeholder="Flight number"
-                                                        type="text"
-                                                        id="airline-flight-number"
-                                                        v-model="$v.form.bookingRequirements.review.airline.flightNumber.$model">
-                                                    </b-form-input>
-                                                </b-form-group>
-                                            </div>
-                                        </div>
-                                    </section>
+                                    </div>
                                 </div>
-                                <div class="col-12 col-md-6">
-                                    <!-- One-way trip -->
-                                    <div class="bg-white p-4 mt-3">
-                                        <section>
+                            </section>
+
+                            <section
+                                class="mt-4"
+                                v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h5 class="danny--group-title">return</h5>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="bg-white p-3 h-100">
+                                            <h5 class="danny--group-title">Extras</h5>
+                                            <b-form-group
+                                                :state="validateInputField($v.form.bookingRequirements.chooseOptions.roundTrip.extras)"
+                                                :invalid-feedback="errorMessages.required">
+                                                <b-checkbox-group
+                                                    stacked
+                                                    v-model="$v.form.bookingRequirements.chooseOptions.roundTrip.extras.$model"
+                                                    name="round-trip-otpions-extras">
+                                                    <div class="row" v-for="option in options.extras">
+                                                        <div class="col-8">
+                                                            <b-form-checkbox
+                                                                :value="option">
+                                                                {{ option.configName }}
+                                                            </b-form-checkbox>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <span class="danny--car-option-price">
+                                                                &dollar;{{ option.configValue }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </b-checkbox-group>
+                                            </b-form-group>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="bg-white p-3 h-100">
+                                            <h5 class="danny--group-title">Protection</h5>
+                                            <b-form-group
+                                                :state="validateInputField($v.form.bookingRequirements.chooseOptions.roundTrip.protection)"
+                                                :invalid-feedback="errorMessages.required">
+                                                <b-checkbox-group
+                                                    stacked
+                                                    v-model="$v.form.bookingRequirements.chooseOptions.roundTrip.protection.$model"
+                                                    name="round-trip-otpions-protection">
+                                                    <div class="row" v-for="option in options.protection">
+                                                        <div class="col-8">
+                                                            <b-form-checkbox
+                                                                :value="option">
+                                                                {{ option.configName }}
+                                                            </b-form-checkbox>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <span class="danny--car-option-price">
+                                                                &dollar;{{ option.configValue }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </b-checkbox-group>
+                                            </b-form-group>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- Buttons -->
+                            <section class="mt-4 pt-4 border-top border-secondary">
+                                <div class="row">
+                                    <div class="col-12 text-right">
+                                        <button class="danny--btn" @click.prevent="saveChooseOptions">Save & Next</button>
+                                    </div>
+                                </div>
+                            </section>
+                        </b-tab>
+
+                        <!-- review -->
+                        <b-tab :disabled="completedTabs.review === false">
+                            <template #title>
+                                <span>4.</span> <span class="tab-heading">Information & Review</span>
+                            </template>
+
+                            <b-form @submit.prevent="submitBooking">
+                                <div class="row">
+                                    <div class="col-12 col-md-6">
+                                        <!-- Contact information -->
+                                        <section class="mb-5">
+                                            <h5 class="danny--group-title">Personal info</h5>
                                             <div class="row">
-                                                <div class="col-10">
-                                                    <h5 class="danny--group-title">Vehicle</h5>
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.review.customer.firstName)">
+                                                        <b-form-input
+                                                            placeholder="First name"
+                                                            type="text"
+                                                            v-model="$v.form.bookingRequirements.review.customer.firstName.$model">
+                                                        </b-form-input>
+                                                    </b-form-group>
                                                 </div>
-                                                <div class="col-2">
-                                                    <button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 1 }">
-                                                        <b-icon icon="pencil-square"></b-icon>
-                                                    </button>
+
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.review.customer.lastName)">
+                                                        <b-form-input
+                                                            placeholder="Last name"
+                                                            type="text"
+                                                            v-model="$v.form.bookingRequirements.review.customer.lastName.$model">
+                                                        </b-form-input>
+                                                    </b-form-group>
                                                 </div>
                                             </div>
+
                                             <div class="row">
-                                                <div class="col-12 text-center my-3">
-                                                    <img :src="oneWayTripVehicle" class="img-fluid" />
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.review.customer.contact.mobileNumber)">
+                                                        <b-form-input
+                                                            placeholder="Mobile number"
+                                                            type="text"
+                                                            v-model="$v.form.bookingRequirements.review.customer.contact.mobileNumber.$model">
+                                                        </b-form-input>
+                                                    </b-form-group>
+                                                </div>
+
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        :invalid-feedback="errorMessageEmail"
+                                                        :state="validateInputField($v.form.bookingRequirements.review.customer.contact.email)">
+                                                        <b-form-input
+                                                            placeholder="Email address"
+                                                            type="text"
+                                                            v-model="$v.form.bookingRequirements.review.customer.contact.email.$model">
+                                                        </b-form-input>
+                                                    </b-form-group>
                                                 </div>
                                             </div>
                                         </section>
 
-                                        <!-- Booking -->
+                                        <!-- Airline information -->
                                         <section>
+                                            <h5 class="danny--group-title">Airline info</h5>
                                             <div class="row">
-                                                <div class="col-10">
-                                                    <h5 class="danny--group-title">Pick-up</h5>
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.review.airline.brand)">
+                                                        <b-form-select
+                                                            id="airline-brand"
+                                                            :options="airlineBrands"
+                                                            v-model="$v.form.bookingRequirements.review.airline.brand.$model">
+                                                        </b-form-select>
+                                                    </b-form-group>
                                                 </div>
-                                                <div class="col-2">
-                                                    <button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 0 }">
-                                                        <b-icon icon="pencil-square"></b-icon>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12 col-md-3">
-                                                    <span class="danny--font-weight-bold">From:</span>
-                                                </div>
-                                                <div class="col-12 col-md-9">
-                                                    {{
-                                                        oneWayTripOrigin
-                                                    }}
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12 col-md-3">
-                                                    <span class="danny--font-weight-bold">To:</span>
-                                                </div>
-                                                <div class="col-12 col-md-9">
-                                                    {{
-                                                        oneWayTripDestination
-                                                    }}
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12 col-md-3">
-                                                    <span class="danny--font-weight-bold">Miles:</span>
-                                                </div>
-                                                <div class="col-12 col-md-9">
-                                                    {{
-                                                        oneWayTripRouteMiles
-                                                    }}
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-12 col-md-3">
-                                                    <span class="danny--font-weight-bold">Pickup time:</span>
-                                                </div>
-                                                <div class="col-12 col-md-9">
-                                                    <span class="danny--review-pickup-time">{{ oneWayTripPickup }}</span>
-                                                </div>
-                                            </div>
 
-                                            <!-- Chosen options -->
-                                            <section
-                                                class="mt-5"
-                                                v-if="form.bookingRequirements.chooseOptions.oneWayTrip.extras.length || form.bookingRequirements.chooseOptions.oneWayTrip.protection.length">
-                                                <section>
-                                                    <div class="row">
-                                                        <div class="col-10">
-                                                            <h5 class="danny--group-title">Chosen options</h5>
-                                                        </div>
-                                                        <div class="col-2">
-                                                            <button class="btn" title="Edit chosen options" @click="() => { formActiveTab = 2 }">
-                                                                <b-icon icon="pencil-square"></b-icon>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </section>
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.review.airline.flightNumber)">
+                                                        <b-form-input
+                                                            placeholder="Flight number"
+                                                            type="text"
+                                                            id="airline-flight-number"
+                                                            v-model="$v.form.bookingRequirements.review.airline.flightNumber.$model">
+                                                        </b-form-input>
+                                                    </b-form-group>
+                                                </div>
+                                            </div>
+                                        </section>
 
-                                                <section v-if="form.bookingRequirements.chooseOptions.oneWayTrip.extras.length > 0">
-                                                    <div
-                                                        class="row"
-                                                        v-for="option in form.bookingRequirements.chooseOptions.oneWayTrip.extras">
-                                                        <div class="col-8">
-                                                            {{ option.configName }}
-                                                        </div>
-                                                        <div class="col-4">
-                                                            <span class="danny--car-option-price">&dollar;{{ option.configValue }}</span>
-                                                        </div>
-                                                    </div>
-                                                </section>
-
-                                                <section v-if="form.bookingRequirements.chooseOptions.oneWayTrip.protection.length > 0">
-                                                    <div
-                                                        class="row"
-                                                        v-for="option in form.bookingRequirements.chooseOptions.oneWayTrip.protection">
-                                                        <div class="col-8">
-                                                            {{ option.configName }}
-                                                        </div>
-                                                        <div class="col-4">
-                                                            <span class="danny--car-option-price">&dollar;{{ option.configValue }}</span>
-                                                        </div>
-                                                    </div>
-                                                </section>
-                                            </section>
+                                        <!-- Additional information -->
+                                        <section>
+                                            <h5 class="danny--group-title">Additional info</h5>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <b-form-group
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.review.additionalNotes)">
+                                                        <b-form-textarea
+                                                            rows="4"
+                                                            max-rows="5"
+                                                            id="customer-additional-notes"
+                                                            v-model="$v.form.bookingRequirements.review.additionalNotes.$model">
+                                                        </b-form-textarea>
+                                                    </b-form-group>
+                                                </div>
+                                            </div>
                                         </section>
                                     </div>
-
-                                    <!-- Round trip -->
-                                    <template v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
+                                    <div class="col-12 col-md-6">
+                                        <!-- One-way trip -->
                                         <div class="bg-white p-4 mt-3">
                                             <section>
                                                 <div class="row">
@@ -978,7 +882,7 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-12 text-center my-3">
-                                                        <img :src="roundTripVehicle" class="img-fluid" />
+                                                        <img :src="oneWayTripVehicle" class="img-fluid" />
                                                     </div>
                                                 </div>
                                             </section>
@@ -987,7 +891,7 @@
                                             <section>
                                                 <div class="row">
                                                     <div class="col-10">
-                                                        <h5 class="danny--group-title">Return</h5>
+                                                        <h5 class="danny--group-title">Pick-up</h5>
                                                     </div>
                                                     <div class="col-2">
                                                         <button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 0 }">
@@ -1001,7 +905,7 @@
                                                     </div>
                                                     <div class="col-12 col-md-9">
                                                         {{
-                                                            roundTripOrigin
+                                                            oneWayTripOrigin
                                                         }}
                                                     </div>
                                                 </div>
@@ -1011,7 +915,7 @@
                                                     </div>
                                                     <div class="col-12 col-md-9">
                                                         {{
-                                                            roundTripDestination
+                                                            oneWayTripDestination
                                                         }}
                                                     </div>
                                                 </div>
@@ -1021,7 +925,7 @@
                                                     </div>
                                                     <div class="col-12 col-md-9">
                                                         {{
-                                                            roundTripRouteMiles
+                                                            oneWayTripRouteMiles
                                                         }}
                                                     </div>
                                                 </div>
@@ -1030,14 +934,14 @@
                                                         <span class="danny--font-weight-bold">Pickup time:</span>
                                                     </div>
                                                     <div class="col-12 col-md-9">
-                                                        <span class="danny--review-pickup-time">{{ roundTripPickup }}</span>
+                                                        <span class="danny--review-pickup-time">{{ oneWayTripPickup }}</span>
                                                     </div>
                                                 </div>
 
                                                 <!-- Chosen options -->
                                                 <section
                                                     class="mt-5"
-                                                    v-if="form.bookingRequirements.chooseOptions.roundTrip.extras.length || form.bookingRequirements.chooseOptions.roundTrip.protection.length">
+                                                    v-if="form.bookingRequirements.chooseOptions.oneWayTrip.extras.length || form.bookingRequirements.chooseOptions.oneWayTrip.protection.length">
                                                     <section>
                                                         <div class="row">
                                                             <div class="col-10">
@@ -1051,10 +955,10 @@
                                                         </div>
                                                     </section>
 
-                                                    <section v-if="form.bookingRequirements.chooseOptions.roundTrip.extras.length > 0">
+                                                    <section v-if="form.bookingRequirements.chooseOptions.oneWayTrip.extras.length > 0">
                                                         <div
                                                             class="row"
-                                                            v-for="option in form.bookingRequirements.chooseOptions.roundTrip.extras">
+                                                            v-for="option in form.bookingRequirements.chooseOptions.oneWayTrip.extras">
                                                             <div class="col-8">
                                                                 {{ option.configName }}
                                                             </div>
@@ -1064,10 +968,10 @@
                                                         </div>
                                                     </section>
 
-                                                    <section v-if="form.bookingRequirements.chooseOptions.roundTrip.protection.length > 0">
+                                                    <section v-if="form.bookingRequirements.chooseOptions.oneWayTrip.protection.length > 0">
                                                         <div
                                                             class="row"
-                                                            v-for="option in form.bookingRequirements.chooseOptions.roundTrip.protection">
+                                                            v-for="option in form.bookingRequirements.chooseOptions.oneWayTrip.protection">
                                                             <div class="col-8">
                                                                 {{ option.configName }}
                                                             </div>
@@ -1079,194 +983,251 @@
                                                 </section>
                                             </section>
                                         </div>
-                                    </template>
 
-                                    <!-- Order -->
-                                    <div class="bg-white p-4 mt-3">
-                                        <section>
-                                            <div class="row">
-                                                <div class="col-10">
-                                                    <h5 class="danny--group-title">Your order</h5>
-                                                </div>
-                                            </div>
-                                        </section>
-                                    </div>
+                                        <!-- Round trip -->
+                                        <template v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
+                                            <div class="bg-white p-4 mt-3">
+                                                <section>
+                                                    <div class="row">
+                                                        <div class="col-10">
+                                                            <h5 class="danny--group-title">Vehicle</h5>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 1 }">
+                                                                <b-icon icon="pencil-square"></b-icon>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12 text-center my-3">
+                                                            <img :src="roundTripVehicle" class="img-fluid" />
+                                                        </div>
+                                                    </div>
+                                                </section>
 
-                                    <!-- Apply coupon -->
-                                    <div class="bg-white p-4 mt-3">
-                                        <section>
-                                            <div class="row">
-                                                <div class="col-10">
-                                                    <h5 class="danny--group-title">Coupon</h5>
-                                                </div>
-                                                
-                                                <div class="col-12">
-                                                    <b-form-group>
-                                                        <b-input-group>
-                                                            <b-form-input
-                                                                autocomplete="off"
-                                                                type="text"
-                                                                v-model="coupon">
-                                                            </b-form-input>
-                                                            <b-input-group-append>
-                                                                <b-button @click="applyCoupon">Apply</b-button>
-                                                            </b-input-group-append>
-                                                        </b-input-group>
-                                                    </b-form-group>
-                                                </div>
+                                                <!-- Booking -->
+                                                <section>
+                                                    <div class="row">
+                                                        <div class="col-10">
+                                                            <h5 class="danny--group-title">Return</h5>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 0 }">
+                                                                <b-icon icon="pencil-square"></b-icon>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12 col-md-3">
+                                                            <span class="danny--font-weight-bold">From:</span>
+                                                        </div>
+                                                        <div class="col-12 col-md-9">
+                                                            {{
+                                                                roundTripOrigin
+                                                            }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12 col-md-3">
+                                                            <span class="danny--font-weight-bold">To:</span>
+                                                        </div>
+                                                        <div class="col-12 col-md-9">
+                                                            {{
+                                                                roundTripDestination
+                                                            }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12 col-md-3">
+                                                            <span class="danny--font-weight-bold">Miles:</span>
+                                                        </div>
+                                                        <div class="col-12 col-md-9">
+                                                            {{
+                                                                roundTripRouteMiles
+                                                            }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12 col-md-3">
+                                                            <span class="danny--font-weight-bold">Pickup time:</span>
+                                                        </div>
+                                                        <div class="col-12 col-md-9">
+                                                            <span class="danny--review-pickup-time">{{ roundTripPickup }}</span>
+                                                        </div>
+                                                    </div>
 
-                                                <div class="col-12" v-if="form.bookingRequirements.review.appliedCoupons.length > 0">
-                                                    <b-form-group label="Applied coupons">
-                                                        <b-form-tags
-                                                            v-model="form.bookingRequirements.review.appliedCoupons"
-                                                            no-outer-focus>
-                                                            <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
-                                                                <div class="d-inline-block" style="font-size: 1.5rem;">
-                                                                    <b-form-tag
-                                                                        v-for="tag in tags"
-                                                                        @remove="removeTag(tag)"
-                                                                        :key="JSON.parse(tag).couponId"
-                                                                        :title="'Remove' + JSON.parse(tag).couponCode"
-                                                                        variant="primary"
-                                                                        class="mr-1">
-                                                                        {{ JSON.parse(tag).couponCode }}
-                                                                    </b-form-tag>
+                                                    <!-- Chosen options -->
+                                                    <section
+                                                        class="mt-5"
+                                                        v-if="form.bookingRequirements.chooseOptions.roundTrip.extras.length || form.bookingRequirements.chooseOptions.roundTrip.protection.length">
+                                                        <section>
+                                                            <div class="row">
+                                                                <div class="col-10">
+                                                                    <h5 class="danny--group-title">Chosen options</h5>
                                                                 </div>
-                                                            </template>
-                                                        </b-form-tags>
-                                                    </b-form-group>
-                                                </div>
-                                            </div>
-                                        </section>
-                                    </div>
+                                                                <div class="col-2">
+                                                                    <button class="btn" title="Edit chosen options" @click="() => { formActiveTab = 2 }">
+                                                                        <b-icon icon="pencil-square"></b-icon>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </section>
 
-                                    <!-- Payment -->
-                                    <div class="bg-white p-4 mt-3">
-                                        <section>
+                                                        <section v-if="form.bookingRequirements.chooseOptions.roundTrip.extras.length > 0">
+                                                            <div
+                                                                class="row"
+                                                                v-for="option in form.bookingRequirements.chooseOptions.roundTrip.extras">
+                                                                <div class="col-8">
+                                                                    {{ option.configName }}
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <span class="danny--car-option-price">&dollar;{{ option.configValue }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </section>
+
+                                                        <section v-if="form.bookingRequirements.chooseOptions.roundTrip.protection.length > 0">
+                                                            <div
+                                                                class="row"
+                                                                v-for="option in form.bookingRequirements.chooseOptions.roundTrip.protection">
+                                                                <div class="col-8">
+                                                                    {{ option.configName }}
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <span class="danny--car-option-price">&dollar;{{ option.configValue }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </section>
+                                                    </section>
+                                                </section>
+                                            </div>
+                                        </template>
+
+                                        <!-- Order -->
+                                        <!-- <div class="bg-white p-4 mt-3">
                                             <section>
                                                 <div class="row">
-                                                    <div class="col-12">
-                                                        <h5 class="danny--group-title">Payment method</h5>
+                                                    <div class="col-10">
+                                                        <h5 class="danny--group-title">Your order</h5>
                                                     </div>
                                                 </div>
                                             </section>
-                                            
-                                            <section class="mb-4">
+                                        </div> -->
+
+                                        <!-- Apply coupon -->
+                                        <div class="bg-white p-4 mt-3">
+                                            <section>
                                                 <div class="row">
-                                                    <div class="col-8">
-                                                        <span class="danny--review-payment-total-text">
-                                                            Estimated total
-                                                        </span>
+                                                    <div class="col-10">
+                                                        <h5 class="danny--group-title">Coupon</h5>
                                                     </div>
-                                                    <div class="col-4">
-                                                        <span class="danny--review-payment-total-price">
-                                                            &dollar;{{ totalRoutesPrice }}
-                                                        </span>
+                                                    
+                                                    <div class="col-12">
+                                                        <b-form-group>
+                                                            <b-input-group>
+                                                                <b-form-input
+                                                                    autocomplete="off"
+                                                                    type="text"
+                                                                    v-model="coupon">
+                                                                </b-form-input>
+                                                                <b-input-group-append>
+                                                                    <b-button @click="applyCoupon">Apply</b-button>
+                                                                </b-input-group-append>
+                                                            </b-input-group>
+                                                        </b-form-group>
+                                                    </div>
+
+                                                    <div class="col-12" v-if="form.bookingRequirements.review.appliedCoupons.length > 0">
+                                                        <b-form-group label="Applied coupons">
+                                                            <b-form-tags
+                                                                v-model="form.bookingRequirements.review.appliedCoupons"
+                                                                no-outer-focus>
+                                                                <template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
+                                                                    <div class="d-inline-block" style="font-size: 1.5rem;">
+                                                                        <b-form-tag
+                                                                            v-for="tag in tags"
+                                                                            @remove="removeTag(tag)"
+                                                                            :key="JSON.parse(tag).couponId"
+                                                                            :title="'Remove' + JSON.parse(tag).couponCode"
+                                                                            variant="primary"
+                                                                            class="mr-1">
+                                                                            {{ JSON.parse(tag).couponCode }}
+                                                                        </b-form-tag>
+                                                                    </div>
+                                                                </template>
+                                                            </b-form-tags>
+                                                        </b-form-group>
                                                     </div>
                                                 </div>
                                             </section>
+                                        </div>
 
-                                            <b-form-group
-                                                :invalid-feedback="errorMessages.required"
-                                                :state="validateInputField($v.form.bookingRequirements.review.agreeTermsConditions)">
-                                                <b-form-checkbox
-                                                    id="agree-terms-conditions"
-                                                    v-model="$v.form.bookingRequirements.review.agreeTermsConditions.$model">
-                                                    I agree with the 
-                                                    <a
-                                                        class="danny--review-payment-agree"
-                                                        href="javascript:void(0)"
-                                                        target="_blank">
-                                                        Term and Conditions
-                                                    </a>
-                                                </b-form-checkbox>
-                                            </b-form-group>
-                                        </section>
+                                        <!-- Payment -->
+                                        <div class="bg-white p-4 mt-3">
+                                            <section>
+                                                <section>
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <h5 class="danny--group-title">Payment method</h5>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                                
+                                                <section class="mb-4">
+                                                    <div class="row">
+                                                        <div class="col-8">
+                                                            <span class="danny--review-payment-total-text">
+                                                                Estimated total
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <span class="danny--review-payment-total-price">
+                                                                &dollar;{{ totalRoutesPrice }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </section>
+
+                                                <b-form-group
+                                                    :invalid-feedback="errorMessages.required"
+                                                    :state="validateInputField($v.form.bookingRequirements.review.agreeTermsConditions)">
+                                                    <b-form-checkbox
+                                                        id="agree-terms-conditions"
+                                                        v-model="$v.form.bookingRequirements.review.agreeTermsConditions.$model">
+                                                        I agree with the 
+                                                        <a
+                                                            class="danny--review-payment-agree"
+                                                            href="javascript:void(0)"
+                                                            target="_blank">
+                                                            Term and Conditions
+                                                        </a>
+                                                    </b-form-checkbox>
+                                                </b-form-group>
+                                            </section>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Buttons -->
-                            <section class="mt-4 pt-4 border-top border-secondary">
-                                <div class="row">
-                                    <div class="col-12 text-right">
-                                        <button
-                                            class="danny--btn"
-                                            type="submit">
-                                            Book it now
-                                        </button>
+                                <!-- Buttons -->
+                                <section class="mt-4 pt-4 border-top border-secondary">
+                                    <div class="row">
+                                        <div class="col-12 text-right">
+                                            <button
+                                                class="danny--btn"
+                                                type="submit">
+                                                Book it now
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            </section>
-                        </b-form>
-                    </b-tab>
-                </b-tabs>
+                                </section>
+                            </b-form>
+                        </b-tab>
+                    </b-tabs>
                 </div>
             </div>
         </div>
     </div>
     <!-- CAR DEALER FORM AREA END -->
-
-    <!-- FEATURE AREA START ( Feature - 6) -->
-    <div class="ltn__feature-area pb-90">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="section-title-area ltn__section-title-2 text-center">
-                        <h6 class="section-subtitle ltn__secondary-color">//  features  //</h6>
-                        <h1 class="section-title">Core Features<span>.</span></h1>
-                    </div>
-                </div>
-            </div>
-            <div class="row ltn__custom-gutter">
-                <div class="col-lg-3 col-sm-6 col-12">
-                    <div class="ltn__feature-item ltn__feature-item-6">
-                        <div class="ltn__feature-icon">
-                            <span><i class="icon-car-parts"></i></span>
-                        </div>
-                        <div class="ltn__feature-info">
-                            <h3><a href="javascript:void(0)">All Kind Brand</a></h3>
-                            <p>Lorem ipsum dolor sit ame it, consectetur adipisicing elit, sed do eiusmod te mp or incididunt ut labore.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-sm-6 col-12">
-                    <div class="ltn__feature-item ltn__feature-item-6 active">
-                        <div class="ltn__feature-icon">
-                            <span><i class="icon-mechanic"></i></span>
-                        </div>
-                        <div class="ltn__feature-info">
-                            <h3><a href="javascript:void(0)">Expert Mechanics</a></h3>
-                            <p>Lorem ipsum dolor sit ame it, consectetur adipisicing elit, sed do eiusmod te mp or incididunt ut labore.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-sm-6 col-12">
-                    <div class="ltn__feature-item ltn__feature-item-6">
-                        <div class="ltn__feature-icon">
-                            <span><i class="icon-repair"></i></span>
-                        </div>
-                        <div class="ltn__feature-info">
-                            <h3><a href="javascript:void(0)">Repair Vehicales</a></h3>
-                            <p>Lorem ipsum dolor sit ame it, consectetur adipisicing elit, sed do eiusmod te mp or incididunt ut labore.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-sm-6 col-12">
-                    <div class="ltn__feature-item ltn__feature-item-6">
-                        <div class="ltn__feature-icon">
-                            <span><i class="icon-car-parts-9"></i></span>
-                        </div>
-                        <div class="ltn__feature-info">
-                            <h3><a href="javascript:void(0)">Paint & Costume</a></h3>
-                            <p>Lorem ipsum dolor sit ame it, consectetur adipisicing elit, sed do eiusmod te mp or incididunt ut labore.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- FEATURE AREA END -->
 
     <!-- FOOTER AREA START (ltn__footer-2 ltn__footer-color-1) -->
     <footer class="ltn__footer-area ltn__footer-2 ltn__footer-color-1">
@@ -1287,60 +1248,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-5 col-md-7">
-                        <div class="footer-widget footer-menu-widget footer-menu-widget-2-column clearfix">
-                            <h4 class="footer-title">Services.</h4>
-                            <div class="footer-menu">
-                                <ul>
-                                    <li><a href="javascript:void(0)">Engine Diagnostics</a></li>
-                                    <li><a href="javascript:void(0)">Vehicles Damaged</a></li>
-                                    <li><a href="javascript:void(0)">Air Conditioning Evac</a></li>
-                                    <li><a href="javascript:void(0)">Anti Lock Brake Service</a></li>
-                                    <li><a href="javascript:void(0)">Computer Diagnostics</a></li>
-                                    <li><a href="javascript:void(0)">Performance Upgrades</a></li>
-                                </ul>
-                            </div>
-                            <div class="footer-menu">
-                                <ul>
-                                    <li><a href="javascript:void(0)">Car Wash & Cleaning</a></li>
-                                    <li><a href="javascript:void(0)">Choose your Repairs</a></li>
-                                    <li><a href="javascript:void(0)">Free Consultancy</a></li>
-                                    <li><a href="javascript:void(0)">Emergency Time</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6">
-                        <div class="footer-widget footer-blog-widget">
-                            <h4 class="footer-title">News Feeds.</h4>
-                            <div class="ltn__footer-blog-item">
-                                <div class="ltn__blog-meta">
-                                    <ul>
-                                        <li class="ltn__blog-date"><i class="far fa-calendar-alt"></i> June 24, 2020</li>
-                                    </ul>
-                                </div>
-                                <h4 class="ltn__blog-title"><a href="javascript:void(0)">The branch of biology that
-                                    deals with the normal.</a></h4>
-                            </div>
-                            <div class="ltn__footer-blog-item">
-                                <div class="ltn__blog-meta">
-                                    <ul>
-                                        <li class="ltn__blog-date"><i class="far fa-calendar-alt"></i> June 28, 2020</li>
-                                    </ul>
-                                </div>
-                                <h4 class="ltn__blog-title"><a href="javascript:void(0)">Electric Car Maintenance, Servicing & Repairs</a></h4>
-                            </div>
-                            <div class="ltn__footer-blog-item">
-                                <div class="ltn__blog-meta">
-                                    <ul>
-                                        <li class="ltn__blog-date"><i class="far fa-calendar-alt"></i> June 24, 2020</li>
-                                    </ul>
-                                </div>
-                                <h4 class="ltn__blog-title"><a href="javascript:void(0)">The branch of biology that
-                                    deals with the normal.</a></h4>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1351,7 +1258,7 @@
                         <div class="site-logo-wrap">
                             <div class="site-logo">
                                 <a href="<?= base_url('/') ?>">
-                                    <img src="<?= base_url('static/images/logo/hello-shuttle-white-02.png') ?>" alt="hello-shuttle-logo">
+                                    <img src="<?= base_url('static/images/logo/hello-shuttle-white-03.png') ?>" alt="hello-shuttle-logo">
                                 </a>
                             </div>
                             <div class="get-support ltn__copyright-design clearfix">

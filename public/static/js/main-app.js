@@ -97,6 +97,7 @@ var app = new Vue({
                         },
                         agreeTermsConditions: null,
                         appliedCoupons: [],
+                        additionalNotes: null,
                     },
                 },
             },
@@ -927,7 +928,8 @@ var app = new Vue({
                     agreeTermsConditions: {
                         required: required,
                     },
-                    appliedCoupons: {}
+                    appliedCoupons: {},
+                    additionalNotes: {},
                 }
             },
         },
