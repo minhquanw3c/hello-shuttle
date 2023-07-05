@@ -11,6 +11,7 @@ class BookingModel extends Model
 
 	protected $allowedFields = [
         'booking_id',
+        'booking_ref_no',
 		'booking_data',
         'booking_status',
         'payment_link',
@@ -40,6 +41,7 @@ class BookingModel extends Model
             'bookings.payment_status AS bookingPaymentStatus',
             'bookings.checkout_session_id AS bookingCheckoutSessionId',
             'bookings.booking_created_at AS bookingCreatedAt',
+            'bookings.booking_ref_no AS bookingRefNo',
         ])
         ->where('booking_id', $booking_id)
         ->findAll();
@@ -55,5 +57,12 @@ class BookingModel extends Model
         );
 
         return $update_query;
+    }
+
+    public function getColumnValueByKeys($booking_id, $column_key)
+    {
+        $retrieve_query = $this->select($column_key)->find($booking_id)[$column_key];
+
+        return $retrieve_query;
     }
 }

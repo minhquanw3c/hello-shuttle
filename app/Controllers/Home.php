@@ -268,11 +268,14 @@ class Home extends BaseController
     private function notifyCustomerRefundStatus($recipient, $booking_id)
     {
         $config_model = model(ConfigModel::class);
+        $booking_model = model(BookingModel::class);
 
         $config = $config_model->getEmailSender();
         $sender = $config['configValue'];
 
-        $email_subject = 'Refund for booking: ' . $booking_id;
+        $booking_ref_no = $booking_model->getColumnValueByKeys($booking_id, 'booking_ref_no');
+
+        $email_subject = 'Refund for booking: ' . $booking_ref_no;
 
         $message = view('templates/mail/refund_confirmation');
 
@@ -352,13 +355,17 @@ class Home extends BaseController
     public function sendBookingPaymentLinkEmail($payment_data)
     {
         $config_model = model(ConfigModel::class);
+        $booking_model = model(BookingModel::class);
 
         $config = $config_model->getEmailSender();
         $sender = $config['configValue'];
 
         $recipient = $payment_data->customer->contact->email;
 
-        $email_subject = 'Stripe payment link for booking: ' . $payment_data->bookingId;
+        $booking_ref_no = $booking_model->getColumnValueByKeys($payment_data->bookingId, 'booking_ref_no');
+        $payment_data->bookingRefNo = $booking_ref_no;
+
+        $email_subject = 'Stripe payment link for booking: ' . $booking_ref_no;
 
         $message = view('templates/mail/booking_payment_link', array('paymentData' => $payment_data));
 
@@ -430,17 +437,19 @@ class Home extends BaseController
     public function sendBookingReceiptEmail($booking_data, $booking_id)
     {
         $config_model = model(ConfigModel::class);
+        $booking_model = model(BookingModel::class);
 
         $config = $config_model->getEmailSender();
         $sender = $config['configValue'];
 
         $recipient = $booking_data->review->customer->contact->email;
+        $booking_ref_no = $booking_model->getColumnValueByKeys($booking_id, 'booking_ref_no');
 
-        $email_subject = 'Receipt for booking: ' . $booking_id;
+        $email_subject = $booking_ref_no . ' Congratulations! Your trip has been successfully booked!';
 
         $cancel_booking_link = $this->generateBookingCancelLink($booking_id);
 
-        $message = view('templates/mail/booking_receipt', array('cancelBookingLink' => $cancel_booking_link));
+        $message = view('templates/mail/booking_receipt', array('cancelBookingLink' => $cancel_booking_link, 'bookingData' => $booking_data));
         $pdf_content = view('templates/pdf/booking_info', array('bookingData' => $booking_data), ['debug' => false]);
 
         $this->generateBookingReceipt($pdf_content, $booking_id);

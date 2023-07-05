@@ -11,7 +11,7 @@
 </head>
 <body>
     <p>Thank you for choosing us!</p>
-    <p>You can click on below payment link to complete booking no: <?= $paymentData->bookingId ?>.</p>
+    <p>You can click on below payment link to complete booking no: <?= $paymentData->bookingRefNo ?>.</p>
     <ul>
         <li>
             <p>Payment link: <?= $paymentData->paymentLink ?></p>
