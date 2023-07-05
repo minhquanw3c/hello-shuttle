@@ -1,0 +1,10 @@
+@media (max-width: 768px) {
+    .danny--form-step {
+        padding: 1rem;
+    }
+
+    .danny--car-name,
+    .danny--car-availability {
+        padding-left: 0;
+    }
+}

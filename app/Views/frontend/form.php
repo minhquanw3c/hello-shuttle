@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="<?= base_url('static/css/theme/font-icons.css') ?>">
     <!-- plugins css -->
     <link rel="stylesheet" href="<?= base_url('static/css/theme/plugins.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('static/css/vendors/bootstrap.min.css') ?>">
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="<?= base_url('static/css/theme/style.css') ?>">
     <!-- Responsive css -->
@@ -23,6 +24,7 @@
     <link rel="stylesheet" href="<?= base_url('static/css/vendors/bootstrap-vue.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('static/css/vendors/bootstrap-vue-icons.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('static/css/theme-custom.css?v=' . now()) ?>">
+    <link rel="stylesheet" href="<?= base_url('static/css/theme-custom-responsive.css?v=' . now()) ?>">
 
     <script type="text/javascript">
         const baseURL = "<?= base_url('/') ?>";
@@ -152,7 +154,7 @@
                 </div>
             </template>
         </b-overlay>
-        <div class="container">
+        <div class="container-md">
             <div class="row">
                 <div class="col-lg-12">
                     <b-tabs class="danny--form-step" nav-class="mb-4 danny--nav-tabs" v-model="formActiveTab">
@@ -165,7 +167,7 @@
                             <b-form @submit.prevent="saveReservation">
                                 <section>
                                     <div class="row">
-                                        <div class="col-6 offset-6 text-right">
+                                        <div class="col-12 text-right">
                                             <b-form-group
                                                 :state="validateInputField($v.form.bookingRequirements.reservation.tripType)"
                                                 :invalid-feedback="errorMessages.required">
@@ -223,13 +225,15 @@
                                                     class="danny--form-group"
                                                     label="Picking up"
                                                     label-for="one-way-picking-up"
-                                                    label-cols="3"
-                                                    content-cols="9"
+                                                    label-cols="12"
+                                                    label-cols-sm="3"
+                                                    content-cols="12"
+                                                    content-cols-sm="9"
                                                     :invalid-feedback="errorMessages.required"
                                                     :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.origin)">
                                                     <b-input-group>
                                                         <b-input-group-prepend>
-                                                            <div class="btn pr-2">
+                                                            <div class="btn">
                                                                 <b-icon icon="geo-alt"></b-icon>
                                                             </div>
                                                         </b-input-group-prepend>
@@ -246,7 +250,14 @@
                                                                 @click="updateSearchResult(location, 'oneWayTrip', 'origin')"
                                                                 v-for="location in dropdowns.oneWayTrip.origins"
                                                                 class="dropdown-item">
-                                                                {{ location.description }}
+                                                                <div class="danny--form-group-dropdown-item">
+                                                                    <div>
+                                                                        <div class="btn px-2">
+                                                                            <b-icon icon="geo-alt"></b-icon>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div>{{ location.description }}</div>
+                                                                </div>
                                                             </li>
                                                         </ul>
                                                     </b-input-group>
@@ -258,13 +269,15 @@
                                                     class="danny--form-group"
                                                     label="Destination"
                                                     label-for="one-way-destination"
-                                                    label-cols="3"
-                                                    content-cols="9"
+                                                    label-cols="12"
+                                                    label-cols-sm="3"
+                                                    content-cols="12"
+                                                    content-cols-sm="9"
                                                     :invalid-feedback="errorMessages.required"
                                                     :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.destination)">
                                                     <b-input-group>
                                                         <b-input-group-prepend>
-                                                            <div class="btn pr-2">
+                                                            <div class="btn">
                                                                 <b-icon icon="geo-alt"></b-icon>
                                                             </div>
                                                         </b-input-group-prepend>
@@ -281,7 +294,14 @@
                                                                 @click="updateSearchResult(location, 'oneWayTrip', 'destination')"
                                                                 v-for="location in dropdowns.oneWayTrip.destinations"
                                                                 class="dropdown-item">
-                                                                {{ location.description }}
+                                                                <div class="danny--form-group-dropdown-item">
+                                                                    <div>
+                                                                        <div class="btn px-2">
+                                                                            <b-icon icon="geo-alt"></b-icon>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div>{{ location.description }}</div>
+                                                                </div>
                                                             </li>
                                                         </ul>
                                                     </b-input-group>
@@ -295,8 +315,10 @@
                                                     class="danny--form-group"
                                                     label="Pickup date"
                                                     label-for="one-way-pickup-date"
-                                                    label-cols="3"
-                                                    content-cols="9"
+                                                    label-cols="12"
+                                                    label-cols-sm="3"
+                                                    content-cols="12"
+                                                    content-cols-sm="9"
                                                     :invalid-feedback="errorMessages.required"
                                                     :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.pickup.date)">
                                                     <b-form-datepicker
@@ -312,8 +334,10 @@
                                                     class="danny--form-group"
                                                     label="Pickup time"
                                                     label-for="one-way-pickup-time"
-                                                    label-cols="3"
-                                                    content-cols="9"
+                                                    label-cols="12"
+                                                    label-cols-sm="3"
+                                                    content-cols="12"
+                                                    content-cols-sm="9"
                                                     :invalid-feedback="errorMessages.required"
                                                     :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.pickup.time)">
                                                     <b-form-timepicker
@@ -330,13 +354,15 @@
                                                     class="danny--form-group"
                                                     label="Passengers"
                                                     label-for="one-way-passengers"
-                                                    label-cols="3"
-                                                    content-cols="9"
+                                                    label-cols="12"
+                                                    label-cols-sm="3"
+                                                    content-cols="12"
+                                                    content-cols-sm="9"
                                                     :invalid-feedback="'Minimum passengers is 1'"
                                                     :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.passengers)">
                                                     <b-input-group>
                                                         <b-input-group-prepend>
-                                                            <div class="btn pr-2">
+                                                            <div class="btn">
                                                                 <b-icon icon="people"></b-icon>
                                                             </div>
                                                         </b-input-group-prepend>
@@ -382,13 +408,15 @@
                                                         class="danny--form-group"
                                                         label="Picking up"
                                                         label-for="round-trip-picking-up"
-                                                        label-cols="3"
-                                                        content-cols="9"
+                                                        label-cols="12"
+                                                        label-cols-sm="3"
+                                                        content-cols="12"
+                                                        content-cols-sm="9"
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.origin)">
                                                         <b-input-group>
                                                             <b-input-group-prepend>
-                                                                <div class="btn pr-2">
+                                                                <div class="btn">
                                                                     <b-icon icon="geo-alt"></b-icon>
                                                                 </div>
                                                             </b-input-group-prepend>
@@ -405,7 +433,14 @@
                                                                     @click="updateSearchResult(location, 'roundTrip', 'origin')"
                                                                     v-for="location in dropdowns.roundTrip.origins"
                                                                     class="dropdown-item">
-                                                                    {{ location.description }}
+                                                                    <div class="danny--form-group-dropdown-item">
+                                                                        <div>
+                                                                            <div class="btn px-2">
+                                                                                <b-icon icon="geo-alt"></b-icon>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div>{{ location.description }}</div>
+                                                                    </div>
                                                                 </li>
                                                             </ul>
                                                         </b-input-group>
@@ -417,13 +452,15 @@
                                                         class="danny--form-group"
                                                         label="Destination"
                                                         label-for="round-trip-destination"
-                                                        label-cols="3"
-                                                        content-cols="9"
+                                                        label-cols="12"
+                                                        label-cols-sm="3"
+                                                        content-cols="12"
+                                                        content-cols-sm="9"
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.destination)">
                                                         <b-input-group>
                                                             <b-input-group-prepend>
-                                                                <div class="btn pr-2">
+                                                                <div class="btn">
                                                                     <b-icon icon="geo-alt"></b-icon>
                                                                 </div>
                                                             </b-input-group-prepend>
@@ -440,7 +477,14 @@
                                                                     @click="updateSearchResult(location, 'roundTrip', 'destination')"
                                                                     v-for="location in dropdowns.roundTrip.destinations"
                                                                     class="dropdown-item">
-                                                                    {{ location.description }}
+                                                                    <div class="danny--form-group-dropdown-item">
+                                                                        <div>
+                                                                            <div class="btn px-2">
+                                                                                <b-icon icon="geo-alt"></b-icon>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div>{{ location.description }}</div>
+                                                                    </div>
                                                                 </li>
                                                             </ul>
                                                         </b-input-group>
@@ -454,8 +498,10 @@
                                                         class="danny--form-group"
                                                         label="Pickup date"
                                                         label-for="round-trip-pickup-date"
-                                                        label-cols="3"
-                                                        content-cols="9"
+                                                        label-cols="12"
+                                                        label-cols-sm="3"
+                                                        content-cols="12"
+                                                        content-cols-sm="9"
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.pickup.date)">
                                                         <b-form-datepicker
@@ -471,8 +517,10 @@
                                                         class="danny--form-group"
                                                         label="Pickup time"
                                                         label-for="round-trip-pickup-time"
-                                                        label-cols="3"
-                                                        content-cols="9"
+                                                        label-cols="12"
+                                                        label-cols-sm="3"
+                                                        content-cols="12"
+                                                        content-cols-sm="9"
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.pickup.time)">
                                                         <b-form-timepicker
@@ -489,13 +537,15 @@
                                                         class="danny--form-group"
                                                         label="Passengers"
                                                         label-for="round-trip-passengers"
-                                                        label-cols="3"
-                                                        content-cols="9"
+                                                        label-cols="12"
+                                                        label-cols-sm="3"
+                                                        content-cols="12"
+                                                        content-cols-sm="9"
                                                         :invalid-feedback="'Minimum passengers is 1'"
                                                         :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.passengers)">
                                                         <b-input-group>
                                                             <b-input-group-prepend>
-                                                                <div class="btn pr-2">
+                                                                <div class="btn">
                                                                     <b-icon icon="people"></b-icon>
                                                                 </div>
                                                             </b-input-group-prepend>
@@ -537,10 +587,10 @@
                                     class="row align-items-center p-4 mb-3"
                                     :class="vehicle.availableCars === '0' ? 'bg-white' : 'bg-white'"
                                     v-for="vehicle in vehicles.oneWayTrip">
-                                    <div class="col-12 col-md-3">
+                                    <div class="col-12 col-md-6 col-lg-3">
                                         <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
                                     </div>
-                                    <div class="col-12 col-md-3">
+                                    <div class="col-12 col-sm-6 col-md-3 col-lg-3">
                                         <p class="danny--car-name">
                                             {{ vehicle.carName }}
                                         </p>
@@ -548,10 +598,10 @@
                                             {{ vehicle.availableCars === '0' ? 'Out of service' : 'Available' }}
                                         </p>
                                     </div>
-                                    <div class="col-12 col-md-3">
+                                    <div class="col-12 col-sm-6 col-md-3 col-lg-3">
                                         <p class="danny--car-price">&dollar;{{ vehicle.carStartPrice }}</p>
                                     </div>
-                                    <div class="col-12 col-md-3">
+                                    <div class="col-12 col-lg-3 text-right">
                                         <b-form-radio
                                             :disabled="vehicle.availableCars === '0'"
                                             v-model="$v.form.bookingRequirements.selectCar.oneWayTrip.vehicle.$model"

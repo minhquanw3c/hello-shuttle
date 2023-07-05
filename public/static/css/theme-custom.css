@@ -55,6 +55,7 @@ input[type="number"] {
 
 .danny--form-group div > .input-group {
     border-left: 2px solid #6c757d;
+    align-items: center;
 }
 
 .danny--form-group .input-group input[type=text].form-control,
@@ -240,4 +241,19 @@ input[type="number"] {
     position: relative;
     top: -10rem;
     z-index: 10;
+}
+
+.danny--form-group .dropdown-menu {
+    max-width: 100%;
+}
+
+.danny--form-group .dropdown-menu .dropdown-item {
+    text-wrap: wrap;
+    margin-top: 0.5rem;
+    line-height: normal;
+}
+
+.danny--form-group .dropdown-menu .dropdown-item .danny--form-group-dropdown-item {
+    display: flex;
+    align-items: center;
 }
