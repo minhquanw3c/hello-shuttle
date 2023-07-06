@@ -1286,10 +1286,14 @@
         <div class="footer-top-area footer-top-extra-padding  section-bg-2 bg-image">
             <div class="container">
                 <div class="row">
-                    <div class="col-xl-4 col-md-5">
+                    <div class="col-12">
                         <div class="footer-widget footer-about-widget clearfix">
                             <h4 class="footer-title">About Us.</h4>
-                            <p>Professional Shuttle Services In California</p>
+                            <p>
+                                Our Shuttle services provide a reliable, comfortable, and cost-effective transportation solution for various occasions. 
+                                Whether you need transportation for a business trip, family vacation, or special event, 
+                                shuttle services offer a convenient and stress-free way to reach your destination.
+                            </p>
                             <div class="ltn__social-media-4">
                                 <ul>
                                     <li><a href="javascript:void(0)" title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
