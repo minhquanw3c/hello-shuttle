@@ -174,7 +174,6 @@ class Home extends BaseController
         $booking = $booking_model->getBookingById($booking_id);
 
         if (count($booking) == 0) {
-            var_dump('no booking found');
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
         }
 

@@ -1225,12 +1225,12 @@
                                                 
                                                 <section class="mb-4">
                                                     <div class="row">
-                                                        <div class="col-8">
+                                                        <div class="col-12 col-lg-8">
                                                             <span class="danny--review-payment-total-text">
                                                                 Estimated total
                                                             </span>
                                                         </div>
-                                                        <div class="col-4">
+                                                        <div class="col-12 col-lg-4">
                                                             <span class="danny--review-payment-total-price">
                                                                 &dollar;{{ totalRoutesPrice }}
                                                             </span>
