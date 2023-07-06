@@ -547,15 +547,19 @@ var app = new Vue({
             var oneWayTripRouteMiles = self.form.bookingRequirements.review.routes.oneWayTrip.miles;
             var oneWayTripPassengers = self.form.bookingRequirements.reservation.oneWayTrip.passengers;
             var oneWayTripCarPrice = self.form.bookingRequirements.selectCar.oneWayTrip.vehicle.carStartPrice;
+            var oneWayTripChosenOptions = [...self.form.bookingRequirements.chooseOptions.oneWayTrip.extras, ...self.form.bookingRequirements.chooseOptions.oneWayTrip.protection];
+            var oneWayTripPickupTime = self.form.bookingRequirements.reservation.oneWayTrip.pickup.time;
 
-            self.form.bookingRequirements.review.prices.oneWayTrip = self.calculateRoutePrice(oneWayTripRouteMiles, oneWayTripPassengers, oneWayTripCarPrice);
+            self.form.bookingRequirements.review.prices.oneWayTrip = self.calculateRoutePrice(oneWayTripRouteMiles, oneWayTripPassengers, oneWayTripCarPrice, oneWayTripChosenOptions, oneWayTripPickupTime);
 
             if (tripType === 'round-trip') {
                 var roundTripRouteMiles = self.form.bookingRequirements.review.routes.roundTrip.miles;
                 var roundTripPassengers = self.form.bookingRequirements.reservation.roundTrip.passengers;
                 var roundTripCarPrice = self.form.bookingRequirements.selectCar.roundTrip.vehicle.carStartPrice;
+                var roundTripChosenOptions = [...self.form.bookingRequirements.chooseOptions.roundTrip.extras, ...self.form.bookingRequirements.chooseOptions.roundTrip.protection];
+                var roundTripPickupTime = self.form.bookingRequirements.reservation.roundTrip.pickup.time;
 
-                self.form.bookingRequirements.review.prices.roundTrip = self.calculateRoutePrice(roundTripRouteMiles, roundTripPassengers, roundTripCarPrice);
+                self.form.bookingRequirements.review.prices.roundTrip = self.calculateRoutePrice(roundTripRouteMiles, roundTripPassengers, roundTripCarPrice, roundTripChosenOptions, roundTripPickupTime);
             }
         },
         constructConfigDictionary: function () {
@@ -585,26 +589,65 @@ var app = new Vue({
             console.log(newObject);
             return newObject;
         },
-        calculateRoutePrice: function (miles, passengers, carPrice) {
+        checkHourInRanges: function (hour, ranges) {
+            const [hourValue] = hour.split(':').map(Number);
+            
+            for (const range of ranges) {
+                const [start, end] = range.split('-').map(Number);
+                if (hourValue >= start && hourValue <= end) {
+                    return true;
+                }
+            }
+            
+            return false;
+        },
+        calculateRoutePrice: function (miles, passengers, carPrice, chosenOptions, pickupTime) {
             const self = this;
 
             var totalPrice = 0;
             var milesPrice = 0;
             var passengersPrice = 0;
             var adminFee = 0;
+            var optionsPrice = 0;
+
+            var trafficHoursPrice = 0;
+            var isInTrafficHours = false;
 
             var pricePassengersGT4 = parseFloat(self.transformedConfigs['cfg-psr-gt-4']);
             var priceMilesLT30 = parseFloat(self.transformedConfigs['cfg-pr-ml']);
             var priceMilesGT30 = parseFloat(self.transformedConfigs['cfg-pr-ml-gt-30']);
-            var priceAdmin = 0.50;
+            var priceAdmin = parseFloat(self.transformedConfigs['cfg-admin-fee']);
+            var trafficHoursExtra = parseFloat(self.transformedConfigs['cfg-trffh-rate']);
+
+            var nonTrafficHours = [];
+
+            nonTrafficHours.push(
+                self.transformedConfigs['cfg-rg-non-trfh-01'],
+                self.transformedConfigs['cfg-rg-non-trfh-02'],
+                self.transformedConfigs['cfg-rg-non-trfh-03']
+            );
+
+            isInTrafficHours = !self.checkHourInRanges(pickupTime, nonTrafficHours);
 
             var parsedCarPrice = parseFloat(carPrice);
 
             passengersPrice = passengers <= 4 ? parsedCarPrice : parsedCarPrice + ((passengers - 4) * pricePassengersGT4);
             milesPrice = miles <= 30 ? (priceMilesLT30 * miles) : (priceMilesLT30 * 30) + (priceMilesGT30 * (miles - 30));
             adminFee = priceAdmin * miles;
+            
+            if (chosenOptions.length > 0) {
+                chosenOptions.forEach((option) => {
+                    optionsPrice = optionsPrice + parseFloat(option.configValue);
+                });
+            }
 
-            totalPrice = passengersPrice + milesPrice + adminFee;
+            totalPrice = passengersPrice + milesPrice + adminFee + optionsPrice;
+
+            if (isInTrafficHours) {
+                trafficHoursPrice = totalPrice * (trafficHoursExtra / 100);
+            }
+
+            totalPrice = totalPrice + trafficHoursPrice;
 
             return totalPrice;
         },

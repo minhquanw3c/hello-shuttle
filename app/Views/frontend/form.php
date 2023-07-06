@@ -341,6 +341,7 @@
                                                     :invalid-feedback="errorMessages.required"
                                                     :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.pickup.time)">
                                                     <b-form-timepicker
+                                                        hours12="false"
                                                         id="one-way-pickup-time"
                                                         v-model="$v.form.bookingRequirements.reservation.oneWayTrip.pickup.time.$model">
                                                     </b-form-timepicker>
@@ -524,6 +525,7 @@
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.pickup.time)">
                                                         <b-form-timepicker
+                                                            hours12="false"
                                                             id="round-trip-pickup-time"
                                                             v-model="$v.form.bookingRequirements.reservation.roundTrip.pickup.time.$model">
                                                         </b-form-timepicker>
