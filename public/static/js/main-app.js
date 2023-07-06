@@ -135,20 +135,88 @@ var app = new Vue({
                     value: null,
                 },
                 {
-                    text: 'Delta Air Lines',
+                    text: 'American Airlines',
                     value: 1,
                 },
                 {
-                    text: 'Southwest Airlines',
+                    text: 'Southwest',
                     value: 2,
                 },
                 {
-                    text: 'United Airlines',
+                    text: 'Alaska Airlines',
                     value: 3,
                 },
                 {
-                    text: 'Alaska Airlines',
+                    text: 'United Airlines',
                     value: 4,
+                },
+                {
+                    text: 'Delta Air Lines',
+                    value: 5,
+                },
+                {
+                    text: 'Hawaiian Airlines',
+                    value: 6,
+                },
+                {
+                    text: 'JetBlue',
+                    value: 7,
+                },
+                {
+                    text: 'Spirit Airlines',
+                    value: 8,
+                },
+                {
+                    text: 'Frontier Airlines',
+                    value: 9,
+                },
+                {
+                    text: 'Allegiant Air',
+                    value: 10,
+                },
+                {
+                    text: 'Sun Country Airlines',
+                    value: 11,
+                },
+                {
+                    text: 'Alaska',
+                    value: 12,
+                },
+                {
+                    text: 'Air Canada',
+                    value: 13,
+                },
+                {
+                    text: 'Boutique Air',
+                    value: 14,
+                },
+                {
+                    text: 'EVA Air',
+                    value: 15,
+                },
+                {
+                    text: 'California Pacific Airlines',
+                    value: 16,
+                },
+                {
+                    text: 'Air California',
+                    value: 17,
+                },
+                {
+                    text: 'Air Premia',
+                    value: 18,
+                },
+                {
+                    text: 'United Express',
+                    value: 19,
+                },
+                {
+                    text: 'Advanced Air',
+                    value: 20,
+                },
+                {
+                    text: 'Contour Airlines',
+                    value: 21,
                 },
             ],
             configurations: [],
