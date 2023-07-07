@@ -83,11 +83,14 @@
         <div class="ltn__header-middle-area ltn__header-sticky ltn__sticky-bg-black">
             <div class="container">
                 <div class="row">
-                    <div class="col">
-                        <div class="site-logo-wrap">
+                    <div class="col-12 col-lg-8">
+                        <a href="<?= base_url('/') ?>">
+                            <img src="<?= base_url('static/images/logo/hello-shuttle-gold-03.png') ?>" alt="hello-shuttle-logo">
+                        </a>
+                        <!-- <div class="site-logo-wrap">
                             <div class="site-logo">
                                 <a href="<?= base_url('/') ?>">
-                                    <img src="<?= base_url('static/images/logo/hello-shuttle-white-03.png') ?>" alt="hello-shuttle-logo">
+                                    <img src="<?= base_url('static/images/logo/hello-shuttle-gold-03.png') ?>" alt="hello-shuttle-logo">
                                 </a>
                             </div>
                             <div class="get-support clearfix get-support-color-white">
@@ -95,9 +98,18 @@
                                     <i class="icon-call"></i>
                                 </div>
                                 <div class="get-support-info">
-                                    <h6>Get Support</h6>
-                                    <h4><a href="javascript:void(0)">123-456-789-10</a></h4>
+                                    <h4><a href="tel:9498005678" target="_blank">(949) 800-5678</a></h4>
                                 </div>
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="col-12 col-lg-4 mt-3 mt-lg-0">
+                        <div class="get-support get-support-color-white">
+                            <div class="get-support-icon">
+                                <i class="icon-call"></i>
+                            </div>
+                            <div class="get-support-info">
+                                <h4><a href="tel:9498005678" target="_blank">(949) 800-5678</a></h4>
                             </div>
                         </div>
                     </div>
@@ -121,7 +133,7 @@
                             <div class="col-lg-12 align-self-center">
                                 <div class="slide-item-info">
                                     <div class="slide-item-info-inner ltn__slide-animation">
-                                        <h1 class="slide-title animated ">Professional Shuttle<br>Services In California</h1>
+                                        <!-- <h1 class="slide-title animated ">Meet the best in<br>quality, safety, and professionalism</h1> -->
                                     </div>
                                 </div>
                             </div>
@@ -167,7 +179,11 @@
                             <b-form @submit.prevent="saveReservation">
                                 <section>
                                     <div class="row">
-                                        <div class="col-12 text-right">
+                                        <div class="col-12 text-center mb-1">
+                                            <p class="text-danger m-0">10% Off On Roundtrip</p>
+                                        </div>
+
+                                        <div class="col-12 text-center">
                                             <b-form-group
                                                 :state="validateInputField($v.form.bookingRequirements.reservation.tripType)"
                                                 :invalid-feedback="errorMessages.required">
@@ -1311,7 +1327,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 col-12">
-                        <div class="site-logo-wrap">
+                        <!-- <div class="site-logo-wrap">
                             <div class="site-logo">
                                 <a href="<?= base_url('/') ?>">
                                     <img src="<?= base_url('static/images/logo/hello-shuttle-white-03.png') ?>" alt="hello-shuttle-logo">
@@ -1323,6 +1339,25 @@
                                     <h4>
                                         <a href="https://www.dannythedesigner.com" target="_blank">DannyTheDesigner</a> - <span class="current-year"><?= date('Y') ?></span>
                                     </h4>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <div class="site-logo">
+                                    <a href="<?= base_url('/') ?>">
+                                        <img src="<?= base_url('static/images/logo/hello-shuttle-white-03.png') ?>" alt="hello-shuttle-logo">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 mt-4 mt-lg-0">
+                                <div class="get-support ltn__copyright-design">
+                                    <div class="get-support-info">
+                                        <h6>Copyright & Design By</h6>
+                                        <h4>
+                                            <a href="https://www.dannythedesigner.com" target="_blank">DannyTheDesigner</a> - <span class="current-year"><?= date('Y') ?></span>
+                                        </h4>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1374,9 +1409,6 @@
 <script src="<?= base_url('static/js/vendors/validators.min.js') ?>" type="text/javascript"></script>
 <script src="<?= base_url('static/js/vendors/vuelidate.min.js') ?>" type="text/javascript"></script>
 
-<script src="<?= base_url('static/mixins/placePrediction.js') ?>" type="text/javascript"></script>
-<script src="<?= base_url('static/mixins/routeMatrix.js') ?>" type="text/javascript"></script>
-
 <script
     defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s&libraries=places&callback=initMap">
@@ -1391,7 +1423,7 @@
     }
 </script>
 
-<script src="<?= base_url('static/js/main-app.js') ?>"></script>
+<script src="<?= base_url('static/js/main-app.js?v=' . now()) ?>"></script>
   
 </body>
 </html>

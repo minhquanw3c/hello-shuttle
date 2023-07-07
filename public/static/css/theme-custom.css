@@ -1,3 +1,7 @@
+:root {
+    --ltn__secondary-color: #fcc569;
+}
+
 [v-cloak] {
     display: none;
 }
@@ -25,6 +29,11 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
     /* For Firefox */
+}
+
+.get-support {
+    padding-left: 0;
+    margin-left: 0;
 }
 
 .get-support::before {
@@ -260,4 +269,26 @@ input[type="number"] {
 
 .danny--form-group > label {
     font-weight: bold;
+}
+
+body {
+    background-color: var(--ltn__heading-color);
+}
+
+.ltn__header-middle-area .get-support .get-support-info h4 {
+    margin: 0;
+    line-height: normal;
+    font-size: 2.5rem;
+}
+
+.ltn__slide-item-2 .slide-item-info {
+    max-width: fit-content;
+}
+
+.footer-top-area {
+    padding-top: 0;
+}
+
+.ltn__slide-item-2 .slide-title {
+    margin-bottom: 10%;
 }
