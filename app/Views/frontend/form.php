@@ -85,7 +85,7 @@
                 <div class="row">
                     <div class="col-12 col-lg-8">
                         <a href="<?= base_url('/') ?>">
-                            <img src="<?= base_url('static/images/logo/hello-shuttle-gold-03.png') ?>" alt="hello-shuttle-logo">
+                            <img src="<?= base_url('static/images/logo/hello-shuttle-gold-03.png') ?>" alt="hello-shuttle-logo" style="max-height: 90px;">
                         </a>
                         <!-- <div class="site-logo-wrap">
                             <div class="site-logo">
