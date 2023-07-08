@@ -1,7 +1,4 @@
-Vue.use(window.vuelidate.default);
 const { required, requiredIf, minLength, email, minValue } = window.validators;
-// import placePredictions from "../mixins/placePrediction";
-
 const windowScope = window;
 
 var app = new Vue({

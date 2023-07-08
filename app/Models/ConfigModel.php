@@ -45,16 +45,29 @@ class ConfigModel extends Model
 
     public function getEmailSender()
     {
-        $get_sender_query = $this->select([
-            'configurations.config_id AS configId',
-            'configurations.config_name AS configName',
-            'configurations.config_value AS configValue',
-        ])
-        ->where([
-            'configurations.config_active' => 1,
-            'configurations.config_id' => 'cfg-email-sdr',
-        ])
-        ->first();
+        if ($_SERVER['CI_ENVIRONMENT'] === 'production') {
+            $get_sender_query = $this->select([
+                'configurations.config_id AS configId',
+                'configurations.config_name AS configName',
+                'configurations.config_value AS configValue',
+            ])
+            ->where([
+                'configurations.config_active' => 1,
+                'configurations.config_id' => 'cfg-email-sdr',
+            ])
+            ->first();
+        } else {
+            $get_sender_query = $this->select([
+                'configurations.config_id AS configId',
+                'configurations.config_name AS configName',
+                'configurations.config_value AS configValue',
+            ])
+            ->where([
+                'configurations.config_active' => 1,
+                'configurations.config_id' => 'cfg-email-sdr-dev',
+            ])
+            ->first();
+        }
 
         return $get_sender_query;
     }
