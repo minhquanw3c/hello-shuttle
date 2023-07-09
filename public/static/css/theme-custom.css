@@ -201,7 +201,7 @@ input[type="number"] {
     position: relative;
     font-size: 25px;
     color: #262626;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .danny--review-payment-total-price {

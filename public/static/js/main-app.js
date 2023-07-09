@@ -91,6 +91,10 @@ var app = new Vue({
                             oneWayTrip: 0,
                             roundTrip: 0,
                             total: 0,
+                            totalNotDiscount: 0,
+                            discountAmount: 0,
+                            tipDriverAmountOther: null,
+                            tipDriverAmount: null,
                         },
                         agreeTermsConditions: null,
                         appliedCoupons: [],
@@ -247,6 +251,24 @@ var app = new Vue({
             coupon: null,
             skipValidation: true,
             showCheckoutNotice: false,
+            tipDriverOptions: [
+                {
+                    text: '5%',
+                    value: 0.05,
+                },
+                {
+                    text: '10%',
+                    value: 0.1,
+                },
+                {
+                    text: '15%',
+                    value: 0.15,
+                },
+                {
+                    text: 'Other',
+                    value: 'other',
+                },
+            ],
         }
     },
     mounted: async function () {
@@ -916,6 +938,18 @@ var app = new Vue({
             self.form.bookingRequirements.review.prices.totalNotDiscount = price.toFixed(2);
             self.form.bookingRequirements.review.prices.discountAmount = discountAmount.toFixed(2);
 
+            let tipDriverAmount = self.form.bookingRequirements.review.prices.tipDriverAmount;
+            if (tipDriverAmount) {
+                let subTotal = self.form.bookingRequirements.review.prices.total;
+
+                if (tipDriverAmount === 'other') {
+                    let tipAmountOther = self.form.bookingRequirements.review.prices.tipDriverAmountOther;
+                    self.form.bookingRequirements.review.prices.total = subTotal + tipAmountOther;
+                } else {
+                    self.form.bookingRequirements.review.prices.total = subTotal * tipDriverAmount;
+                }
+            }
+
             return self.form.bookingRequirements.review.prices.total;
         },
     },
@@ -1038,7 +1072,15 @@ var app = new Vue({
                     },
                     appliedCoupons: {},
                     additionalNotes: {},
-                }
+                    prices: {
+                        tipDriverAmount: {},
+                        tipDriverAmountOther: {
+                            requiredIf: requiredIf(function() {
+                                return this.form.bookingRequirements.review.prices.tipDriverAmount === 'other';
+                            })
+                        },
+                    },
+                },
             },
         },
     },

@@ -83,7 +83,7 @@
         <div class="ltn__header-middle-area ltn__header-sticky ltn__sticky-bg-black">
             <div class="container">
                 <div class="row">
-                    <div class="col-12 col-lg-8">
+                    <div class="col-12 col-lg-6">
                         <a href="<?= base_url('/') ?>">
                             <img src="<?= base_url('static/images/logo/hello-shuttle-gold-03.png') ?>" alt="hello-shuttle-logo" style="max-height: 90px;">
                         </a>
@@ -103,7 +103,7 @@
                             </div>
                         </div> -->
                     </div>
-                    <div class="col-12 col-lg-4 mt-3 mt-lg-0">
+                    <div class="col-12 col-lg-6 mt-3 mt-lg-0">
                         <div class="get-support get-support-color-white">
                             <div class="get-support-icon">
                                 <i class="icon-call"></i>
@@ -820,7 +820,7 @@
                         </b-tab>
 
                         <!-- review -->
-                        <b-tab :disabled="completedTabs.review === false">
+                        <b-tab :disabled="completedTabs.review === true">
                             <template #title>
                                 <span>4.</span> <span class="tab-heading">Information & Review</span>
                             </template>
@@ -1171,17 +1171,6 @@
                                             </div>
                                         </template>
 
-                                        <!-- Order -->
-                                        <!-- <div class="bg-white p-4 mt-3">
-                                            <section>
-                                                <div class="row">
-                                                    <div class="col-10">
-                                                        <h5 class="danny--group-title">Your order</h5>
-                                                    </div>
-                                                </div>
-                                            </section>
-                                        </div> -->
-
                                         <!-- Apply coupon -->
                                         <div class="bg-white p-4 mt-3">
                                             <section>
@@ -1230,6 +1219,41 @@
                                             </section>
                                         </div>
 
+                                        <!-- Tips driver -->
+                                        <div class="bg-white p-4 mt-3">
+                                            <section>
+                                                <div class="row">
+                                                    <div class="col-10">
+                                                        <h5 class="danny--group-title">Tip driver</h5>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <b-form-group>
+                                                            <b-form-radio-group
+                                                                name="tip-driver"
+                                                                v-model="$v.form.bookingRequirements.review.prices.tipDriverAmount.$model"
+                                                                :options="tipDriverOptions"
+                                                                buttons
+                                                                button-variant="outline-primary">
+                                                            </b-form-radio-group>
+                                                        </b-form-group>
+
+                                                        <b-form-group
+                                                            v-if="form.bookingRequirements.review.prices.tipDriverAmount === 'other'"
+                                                            label="Tip amount"
+                                                            :invalid-feedback="errorMessages.required"
+                                                            :state="validateInputField($v.form.bookingRequirements.review.prices.tipDriverAmountOther)">
+                                                            <b-form-input
+                                                                type="number"
+                                                                min="0"
+                                                                v-model="$v.form.bookingRequirements.review.prices.tipDriverAmountOther.$model">
+                                                            </b-form-input>
+                                                        </b-form-group>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+
                                         <!-- Payment -->
                                         <div class="bg-white p-4 mt-3">
                                             <section>
@@ -1249,9 +1273,34 @@
                                                             </span>
                                                         </div>
                                                         <div class="col-12 col-lg-4">
-                                                            <span class="danny--review-payment-total-price">
-                                                                &dollar;{{ totalRoutesPrice }}
+                                                            <p class="danny--review-payment-total-price m-0">
+                                                                &dollar;{{ form.bookingRequirements.review.prices.totalNotDiscount }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-12 col-lg-8">
+                                                            <span class="danny--review-payment-total-text">
+                                                                Discount
                                                             </span>
+                                                        </div>
+                                                        <div class="col-12 col-lg-4">
+                                                            <p class="danny--review-payment-total-price m-0">
+                                                                &dollar;{{ form.bookingRequirements.review.prices.discountAmount }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-12 col-lg-8">
+                                                            <span class="danny--review-payment-total-text">
+                                                                Subtotal
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-12 col-lg-4">
+                                                            <p class="danny--review-payment-total-price m-0">
+                                                                &dollar;{{ totalRoutesPrice }}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </section>
