@@ -176,7 +176,7 @@
                                 <span>1.</span> <span class="tab-heading">Make a reservation</span>
                             </template>
 
-                            <b-form @submit.prevent="saveReservation">
+                            <b-form @submit.prevent="saveReservation" novalidate>
                                 <section>
                                     <div class="row">
                                         <div class="col-12 text-center mb-1">
