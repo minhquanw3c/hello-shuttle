@@ -820,7 +820,7 @@
                         </b-tab>
 
                         <!-- review -->
-                        <b-tab :disabled="completedTabs.review === true">
+                        <b-tab :disabled="completedTabs.review === false">
                             <template #title>
                                 <span>4.</span> <span class="tab-heading">Information & Review</span>
                             </template>
@@ -1243,11 +1243,20 @@
                                                             label="Tip amount"
                                                             :invalid-feedback="errorMessages.required"
                                                             :state="validateInputField($v.form.bookingRequirements.review.prices.tipDriverAmountOther)">
-                                                            <b-form-input
-                                                                type="number"
-                                                                min="0"
-                                                                v-model="$v.form.bookingRequirements.review.prices.tipDriverAmountOther.$model">
-                                                            </b-form-input>
+                                                            <b-input-group>
+                                                                <b-form-input
+                                                                    no-wheel
+                                                                    type="number"
+                                                                    min="0"
+                                                                    max="100"
+                                                                    v-model="$v.form.bookingRequirements.review.prices.tipDriverAmountOther.$model">
+                                                                </b-form-input>
+                                                                <b-input-group-append>
+                                                                    <b-button>
+                                                                        <b-icon icon="currency-dollar"></b-icon>
+                                                                    </b-button>
+                                                                </b-input-group-append>
+                                                            </b-input-group>
                                                         </b-form-group>
                                                     </div>
                                                 </div>
@@ -1477,7 +1486,7 @@
 <?php if ($enviroment === 'production'): ?>
     <script src="<?= base_url('static/js/main-app.min.js?v=' . now()) ?>"></script>
 <?php else: ?>
-    <script src="<?= base_url('static/js/main-app.js?v=' . now()) ?>"></script>
+    <script src="<?= base_url('static/js/main-app.js') ?>"></script>
 <?php endif ?>
   
 </body>

@@ -940,17 +940,18 @@ var app = new Vue({
 
             let tipDriverAmount = self.form.bookingRequirements.review.prices.tipDriverAmount;
             if (tipDriverAmount) {
-                let subTotal = self.form.bookingRequirements.review.prices.total;
+                let subTotal = parseFloat(self.form.bookingRequirements.review.prices.total);
 
                 if (tipDriverAmount === 'other') {
                     let tipAmountOther = self.form.bookingRequirements.review.prices.tipDriverAmountOther;
-                    self.form.bookingRequirements.review.prices.total = subTotal + tipAmountOther;
+                    tipAmountOther = tipAmountOther ? parseFloat(tipAmountOther) : 0;
+                    self.form.bookingRequirements.review.prices.total = _.add(subTotal, tipAmountOther);
                 } else {
-                    self.form.bookingRequirements.review.prices.total = subTotal * tipDriverAmount;
+                    self.form.bookingRequirements.review.prices.total = _.add(subTotal, (subTotal * tipDriverAmount));
                 }
             }
 
-            return self.form.bookingRequirements.review.prices.total;
+            return parseFloat(self.form.bookingRequirements.review.prices.total).toFixed(2);
         },
     },
     validations: {
