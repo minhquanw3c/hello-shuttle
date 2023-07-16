@@ -2,6 +2,8 @@
 <head>
 </head>
 <body>
+<p>Dear <?= implode(" ", array($bookingData->review->customer->lastName, $bookingData->review->customer->firstName))  ?>,</p>
+<p>Your booking details for order: <?= $bookingRefNo ?></p>
 <p>Trip type: <?= $bookingData->reservation->tripType ?></p>
 <?php if(isset($bookingData->reservation->tripType)): ?>
     <p>Picking up</p>
@@ -80,6 +82,19 @@
         </li>
     </ul>
 <?php endif ?>
+
+<?php
+    $airlane = $bookingData->review->airline->brand ? $bookingData->review->airline->brand->text : 'N/A';
+    $flightNumber = $bookingData->review->airline->flightNumber ? $bookingData->review->airline->flightNumber : 'N/A';
+    $additionalNotes = $bookingData->review->additionalNotes ? $bookingData->review->additionalNotes : 'N/A';
+?>
+
+<p>Airline</p>
+<ul>
+    <li>Airline: <?= $airlane ?></li>
+    <li>Flight number: <?= $flightNumber ?></li>
+    <li>Additional notes: <?= $additionalNotes ?></li>
+</ul>
 
 <p>Total booking price: $<?= $bookingData->review->prices->total ?></p>
 </body>

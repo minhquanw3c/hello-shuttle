@@ -132,10 +132,6 @@ var app = new Vue({
             },
             airlineBrands: [
                 {
-                    text: 'Select airline',
-                    value: null,
-                },
-                {
                     text: 'American Airlines',
                     value: 1,
                 },
@@ -283,6 +279,10 @@ var app = new Vue({
             self.dropdowns.roundTrip.origin.sessionToken = self.generateSearchSessionToken();
             self.dropdowns.roundTrip.destination.sessionToken = self.generateSearchSessionToken();
         }, 2000);
+
+        if (window.location.origin === 'http://localhost' && env === 'development') {
+            self.form.bookingRequirements = formDataRoundTrip;
+        }
     },
     methods: {
         generateSearchSessionToken: function () {
@@ -734,9 +734,9 @@ var app = new Vue({
                 trafficHoursPrice = totalPrice * (trafficHoursExtra / 100);
             }
 
-            totalPrice = totalPrice + trafficHoursPrice;
+            totalPrice = parseFloat(totalPrice + trafficHoursPrice);
 
-            return totalPrice;
+            return totalPrice.toFixed(2);
         },
         applyCoupon: function () {
             const self = this;
@@ -923,20 +923,20 @@ var app = new Vue({
             let price = 0;
             let discountAmount = 0;
 
-            price += parseFloat(self.form.bookingRequirements.review.prices.oneWayTrip);
+            price = _.add(price, parseFloat(self.form.bookingRequirements.review.prices.oneWayTrip));
 
 
             if (self.form.bookingRequirements.reservation.tripType === 'round-trip') {
-                price += parseFloat(self.form.bookingRequirements.review.prices.roundTrip);
+                price = _.add(price, parseFloat(self.form.bookingRequirements.review.prices.roundTrip));
             }
 
             if (self.form.bookingRequirements.review.appliedCoupons.length > 0) {
                 discountAmount = self.calculateDiscountAmount(self.form.bookingRequirements.review.appliedCoupons, price);
             }
 
-            self.form.bookingRequirements.review.prices.total = (price - discountAmount) <= 0 ? 0 : (price - discountAmount).toFixed(2);
-            self.form.bookingRequirements.review.prices.totalNotDiscount = price.toFixed(2);
-            self.form.bookingRequirements.review.prices.discountAmount = discountAmount.toFixed(2);
+            self.form.bookingRequirements.review.prices.total = parseFloat(price - discountAmount) <= 0 ? 0 : parseFloat(price - discountAmount);
+            self.form.bookingRequirements.review.prices.totalNotDiscount = parseFloat(price);
+            self.form.bookingRequirements.review.prices.discountAmount = discountAmount;
 
             let tipDriverAmount = self.form.bookingRequirements.review.prices.tipDriverAmount;
             if (tipDriverAmount) {
@@ -951,7 +951,10 @@ var app = new Vue({
                 }
             }
 
-            return parseFloat(self.form.bookingRequirements.review.prices.total).toFixed(2);
+            let finalPrice = parseFloat(self.form.bookingRequirements.review.prices.total).toFixed(2);
+            self.form.bookingRequirements.review.prices.total = finalPrice;
+
+            return finalPrice;
         },
     },
     validations: {

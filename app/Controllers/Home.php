@@ -449,8 +449,16 @@ class Home extends BaseController
 
         $cancel_booking_link = $this->generateBookingCancelLink($booking_id);
 
-        $message = view('templates/mail/booking_receipt', array('cancelBookingLink' => $cancel_booking_link, 'bookingData' => $booking_data));
-        $pdf_content = view('templates/pdf/booking_info', array('bookingData' => $booking_data), ['debug' => false]);
+        $message = view('templates/mail/booking_receipt', array(
+            'cancelBookingLink' => $cancel_booking_link,
+            'bookingData' => $booking_data,
+        ));
+
+        $pdf_content = view('templates/pdf/booking_info', array(
+            'bookingData' => $booking_data,
+            'bookingRefNo' => $booking_ref_no,
+            ), ['debug' => false]
+        );
 
         $this->generateBookingReceipt($pdf_content, $booking_id);
 

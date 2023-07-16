@@ -9,15 +9,32 @@
     .m-0 {
         margin: 0;
     }
+
+    .mt-0 {
+        margin-top: 0;
+    }
 </style>
 </head>
 <body>
     <?php
+        $tripType = $bookingData->reservation->tripType;
         $customerName = $bookingData->review->customer->lastName . ' ' . $bookingData->review->customer->firstName;
+
+        $airlane = $bookingData->review->airline->brand ? $bookingData->review->airline->brand->text : 'N/A';
+        $flightNumber = $bookingData->review->airline->flightNumber ? $bookingData->review->airline->flightNumber : 'N/A';
+        $additionalNotes = $bookingData->review->additionalNotes ? $bookingData->review->additionalNotes : 'N/A';
+
         $oneWayDestination = $bookingData->reservation->oneWayTrip->destination->description;
         $oneWayPickup = $bookingData->reservation->oneWayTrip->pickup->date . ' ' . $bookingData->reservation->oneWayTrip->pickup->time;
         $oneWayPassengers = $bookingData->reservation->oneWayTrip->passengers;
         $oneWayVehicle = $bookingData->selectCar->oneWayTrip->vehicle->carName;
+
+        if ($tripType === 'round-trip') {
+            $roundTripDestination = $bookingData->reservation->roundTrip->destination->description;
+            $roundTripPickup = $bookingData->reservation->roundTrip->pickup->date . ' ' . $bookingData->reservation->roundTrip->pickup->time;
+            $roundTripPassengers = $bookingData->reservation->roundTrip->passengers;
+            $roundTripVehicle = $bookingData->selectCar->roundTrip->vehicle->carName;
+        }
     ?>
 
     <p>Dear <?= $customerName ?>,</p>
@@ -31,10 +48,27 @@
         Here are the details of your trip:
     </p>
 
-    <p class="m-0">Destination: <?= $oneWayDestination ?></p>
-    <p class="m-0">Departure Date: <?= $oneWayPickup ?></p>
-    <p class="m-0">Number of Travelers: <?= $oneWayPassengers ?></p>
-    <p class="m-0">Transportation: <?= $oneWayVehicle ?></p>
+    <ul>
+        <li>Destination: <?= $oneWayDestination ?></li>
+        <li>Departure Date: <?= $oneWayPickup ?></li>
+        <li>Number of Travelers: <?= $oneWayPassengers ?></li>
+        <li>Transportation: <?= $oneWayVehicle ?></li>
+    </ul>
+
+    <?php if($tripType === 'round-trip'): ?>
+        <ul>
+            <li>Destination: <?= $roundTripDestination ?></li>
+            <li>Departure Date: <?= $roundTripPickup ?></li>
+            <li>Number of Travelers: <?= $roundTripPassengers ?></li>
+            <li>Transportation: <?= $roundTripVehicle ?></li>
+        </ul>
+    <?php endif ?>
+
+    <ul>
+        <li>Airlane: <?= $airlane ?></li>
+        <li>Flight number: <?= $flightNumber ?></li>
+        <li>Additional notes: <?= $additionalNotes ?></li>
+    </ul>
 
     <p>
         Please take a moment to review the information provided above and let us know if you have any questions or if any changes need to be made. 
@@ -42,7 +76,7 @@
     </p>
 
     <p>
-        For any further assistance or inquiries, feel free to contact our customer support team at [Customer Support Contact Information]. 
+        For any further assistance or inquiries, feel free to contact our customer support team at (949) 800-5678. 
         Our dedicated team is available around the clock to assist you.
     </p>
 

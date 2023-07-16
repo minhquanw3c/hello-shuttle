@@ -517,10 +517,10 @@
                                     class="row align-items-center p-4 mb-3"
                                     :class="vehicle.availableCars === '0' ? 'bg-white' : 'bg-white'"
                                     v-for="vehicle in vehicles.roundTrip">
-                                    <div class="col-12 col-md-3">
+                                    <div class="col-12 col-md-6 col-lg-3">
                                         <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
                                     </div>
-                                    <div class="col-12 col-md-3">
+                                    <div class="col-12 col-sm-6 col-md-3 col-lg-3">
                                         <p class="danny--car-name">
                                             {{ vehicle.carName }}
                                         </p>
@@ -528,10 +528,10 @@
                                             {{ vehicle.availableCars === '0' ? 'Out of service' : 'Available' }}
                                         </p>
                                     </div>
-                                    <div class="col-12 col-md-3">
+                                    <div class="col-12 col-sm-6 col-md-3 col-lg-3">
                                         <p class="danny--car-price">&dollar;{{ vehicle.carStartPrice }}</p>
                                     </div>
-                                    <div class="col-12 col-md-3">
+                                    <div class="col-12 col-lg-3 text-right">
                                         <b-form-radio
                                             :disabled="vehicle.availableCars === '0'"
                                             v-model="$v.form.bookingRequirements.selectCar.roundTrip.vehicle.$model"
@@ -772,8 +772,8 @@
                                                         :state="validateInputField($v.form.bookingRequirements.review.airline.brand)">
                                                         <b-form-select
                                                             id="airline-brand"
-                                                            :options="airlineBrands"
                                                             v-model="$v.form.bookingRequirements.review.airline.brand.$model">
+                                                            <b-form-select-option v-for="brand in airlineBrands" :value="brand">{{ brand.text }}</b-form-select-option>
                                                         </b-form-select>
                                                     </b-form-group>
                                                 </div>
@@ -1237,6 +1237,7 @@
     <script type="text/javascript">
         const baseURL = "<?= base_url('/') ?>";
         const bookingId = "<?= $bookingId ?>";
+        const env = "<?= $enviroment ?>";
     </script>
 
     <script src="<?= base_url('static/js/vendors/jquery.min.js') ?>" type="text/javascript"></script>
@@ -1271,6 +1272,7 @@
     <?php if ($enviroment === 'production'): ?>
         <script src="<?= base_url('static/js/main-app.min.js?v=' . now()) ?>"></script>
     <?php else: ?>
+        <script src="<?= base_url('static/mixins/formData.js') ?>" type="text/javascript"></script>
         <script src="<?= base_url('static/js/main-app.js') ?>"></script>
     <?php endif ?>
 <?= $this->endSection() ?>
