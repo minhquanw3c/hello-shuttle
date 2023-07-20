@@ -42,6 +42,7 @@ class BookingModel extends Model
             'bookings.checkout_session_id AS bookingCheckoutSessionId',
             'bookings.booking_created_at AS bookingCreatedAt',
             'bookings.booking_ref_no AS bookingRefNo',
+            'bookings.cancel_session_id AS bookingCancelId',
         ])
         ->where('booking_id', $booking_id)
         ->findAll();

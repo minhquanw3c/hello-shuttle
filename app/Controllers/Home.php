@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\ConfigModel;
 use App\Models\BookingModel;
+use App\Models\BookingScheduleModel;
 use \TCPDF as TCPDF;
 use Ramsey\Uuid\Uuid;
 
@@ -73,6 +74,7 @@ class Home extends BaseController
 
         $booking_model = model(BookingModel::class);
         $customer_model = model(CustomerModel::class);
+        $booking_schedule_model = model(BookingScheduleModel::class);
 
         $customer_uuid = Uuid::uuid4()->toString();
 
@@ -96,6 +98,8 @@ class Home extends BaseController
         $payment_link_data = (object) $this->testStripePayment($payment_data);
         $payment_link = $payment_link_data->url;
         $payment_link_id = $payment_link_data->id;
+        $string_length = 20;
+        $cancel_session_id = random_string('alnum', $string_length);
 
         $data = [
             'booking_id' => $booking_id,
@@ -108,13 +112,17 @@ class Home extends BaseController
             'booking_created_at' => Time::now('UTC'),
             'booking_updated_at' => Time::now('UTC'),
             'booked_by_customer' => $customer_uuid,
+            'cancel_session_id' => $cancel_session_id,
         ];
 
         $save_booking_query = $booking_model->saveBooking($data);
 
+        $create_booking_schedule = $this->createBookingSchedule($booking_data->bookingRequirements, $booking_id);
+
         $response = [
             'result' => $save_booking_query,
-            'paymentLink' => $payment_link
+            'paymentLink' => $payment_link,
+            'bookingSchedules' => $create_booking_schedule,
         ];
 
         $payment_data = [
@@ -179,93 +187,117 @@ class Home extends BaseController
         }
 
         $booking = (object) $booking[0];
-        $booking_data = json_decode($booking->bookingData);
 
-        if (!($booking->bookingPaymentStatus == 'pmst-paid')) {
+        if (!(strcmp($cancel_session_id, $booking->bookingCancelId) === 0)) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
         }
+
+        $booking_data = json_decode($booking->bookingData);
 
         if (!($booking->bookingStatusId == 'bk-sts-prsng')) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
         }
 
-        $is_booking_already_refunded = $this->checkBookingIsRefunded($booking->bookingCheckoutSessionId);
+        if ($booking->bookingPaymentStatus === 'pmst-paid') {
+            $is_booking_already_refunded = $this->checkBookingIsRefunded($booking->bookingCheckoutSessionId);
 
-        if ($is_booking_already_refunded) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
-        }
-
-        $config_model = model(ConfigModel::class);
-        $valid_full_refund_hours = $config_model->getConfigById('cfg-rfd-tm')[0]['configValue'];
-        $invalid_full_refund_percentage = $config_model->getConfigById('cfg-ivld-frd')[0]['configValue'];
-
-        $has_purchased_booking_insurance = [
-            'one-way' => $this->checkPurchasedInsurance($booking_data->chooseOptions->oneWayTrip->protection),
-            'round-trip' => $this->checkPurchasedInsurance($booking_data->chooseOptions->roundTrip->protection),
-        ];
-
-        $cancel_booking_request_time = Time::now('UTC');
-
-        $is_full_refund_eligible = [
-            'one-way' => $this->checkEligibleRefundTime(
-                $cancel_booking_request_time,
-                $booking->bookingCreatedAt,
-                $valid_full_refund_hours,
-            ),
-            'round-trip' => $this->checkEligibleRefundTime(
-                $cancel_booking_request_time,
-                $booking->bookingCreatedAt,
-                $valid_full_refund_hours,
-            ),
-        ];
-
-        $refund_amount_one_way = 0.00;
-        $refund_amount_round_trip = 0.00;
-
-        if ($has_purchased_booking_insurance['one-way'] || $is_full_refund_eligible['one-way']) {
-            $refund_amount_one_way = $booking_data->review->prices->oneWayTrip;
-        } else {
-            $refund_amount_one_way = $booking_data->review->prices->oneWayTrip * ($invalid_full_refund_percentage / 100);
-        }
-
-        if ($booking_data->reservation->tripType == 'round-trip') {
-            if ($has_purchased_booking_insurance['round-trip'] || $is_full_refund_eligible['round-trip']) {
-                $refund_amount_round_trip = $booking_data->review->prices->roundTrip;
-            } else {
-                $refund_amount_round_trip = $booking_data->review->prices->roundTrip * ($invalid_full_refund_percentage / 100);
+            if ($is_booking_already_refunded) {
+                throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
             }
+
+            $config_model = model(ConfigModel::class);
+            $valid_full_refund_hours = $config_model->getConfigById('cfg-rfd-tm')[0]['configValue'];
+            $invalid_full_refund_percentage = $config_model->getConfigById('cfg-ivld-frd')[0]['configValue'];
+
+            $has_purchased_booking_insurance = [
+                'one-way' => $this->checkPurchasedInsurance($booking_data->chooseOptions->oneWayTrip->protection),
+                'round-trip' => $this->checkPurchasedInsurance($booking_data->chooseOptions->roundTrip->protection),
+            ];
+
+            $cancel_booking_request_time = Time::now('UTC');
+
+            $is_full_refund_eligible = [
+                'one-way' => $this->checkEligibleRefundTime(
+                    $cancel_booking_request_time,
+                    $booking->bookingCreatedAt,
+                    $valid_full_refund_hours,
+                ),
+                'round-trip' => $this->checkEligibleRefundTime(
+                    $cancel_booking_request_time,
+                    $booking->bookingCreatedAt,
+                    $valid_full_refund_hours,
+                ),
+            ];
+
+            $refund_amount_one_way = 0.00;
+            $refund_amount_round_trip = 0.00;
+
+            if ($has_purchased_booking_insurance['one-way'] || $is_full_refund_eligible['one-way']) {
+                $refund_amount_one_way = $booking_data->review->prices->oneWayTrip;
+            } else {
+                $refund_amount_one_way = $booking_data->review->prices->oneWayTrip * ($invalid_full_refund_percentage / 100);
+            }
+
+            if ($booking_data->reservation->tripType == 'round-trip') {
+                if ($has_purchased_booking_insurance['round-trip'] || $is_full_refund_eligible['round-trip']) {
+                    $refund_amount_round_trip = $booking_data->review->prices->roundTrip;
+                } else {
+                    $refund_amount_round_trip = $booking_data->review->prices->roundTrip * ($invalid_full_refund_percentage / 100);
+                }
+            }
+
+            $refund_amount_one_way = round($refund_amount_one_way, 2);
+            $refund_amount_round_trip = round($refund_amount_round_trip, 2);
+            $discount_amount = round($booking_data->review->prices->discountAmount, 2);
+
+            $total_refund_amount = (($refund_amount_one_way + $refund_amount_round_trip) - $discount_amount) * 100;
+
+            $refund_result = $this->refundBooking($booking->bookingCheckoutSessionId, $total_refund_amount);
+
+            $update_booking_status = $booking_model->updateBookingById(
+                $booking_id,
+                [
+                    'booking_status' => 'bk-sts-cnl',
+                    'payment_status' => 'pmst-refunded',
+                    'booking_updated_at' => Time::now('UTC'),
+                ]
+            );
+
+            $notify_email_result = $this->notifyCustomerRefundStatus($booking_data->review->customer->contact->email, $booking_id, true);
+
+            $response = [
+                'result' => $refund_result,
+                'sendRefundEmail' => $notify_email_result,
+                'refund' => $refund_result,
+                'updateBooking' => $update_booking_status,
+            ];
         }
 
-        $refund_amount_one_way = round($refund_amount_one_way, 2);
-        $refund_amount_round_trip = round($refund_amount_round_trip, 2);
-        $discount_amount = round($booking_data->review->prices->discountAmount, 2);
+        if ($booking->bookingPaymentStatus === 'pmst-pending') {
+            $update_booking_status = $booking_model->updateBookingById(
+                $booking_id,
+                [
+                    'booking_status' => 'bk-sts-cnl',
+                    'payment_status' => 'pmst-refunded',
+                    'booking_updated_at' => Time::now('UTC'),
+                ]
+            );
 
-        $total_refund_amount = (($refund_amount_one_way + $refund_amount_round_trip) - $discount_amount) * 100;
+            $notify_email_result = $this->notifyCustomerRefundStatus($booking_data->review->customer->contact->email, $booking_id, false);
 
-        $refund_result = $this->refundBooking($booking->bookingCheckoutSessionId, $total_refund_amount);
+            $response = [
+                'sendRefundEmail' => $notify_email_result,
+                'updateBooking' => $update_booking_status,
+            ];
+        }
 
-        $update_booking_status = $booking_model->updateBookingById(
-            $booking_id,
-            [
-                'booking_status' => 'bk-sts-cnl',
-                'payment_status' => 'pmst-refunded',
-                'booking_updated_at' => Time::now('UTC'),
-            ]
-        );
+        $this->disablePaymentLink($booking->bookingPaymentLinkId);
+        $this->removeBookingSchedules($booking_id);
 
-        $notify_email_result = $this->notifyCustomerRefundStatus($booking_data->review->customer->contact->email, $booking_id);
-
-        $response = [
-            'result' => $refund_result,
-            'sendRefundEmail' => $notify_email_result,
-            'refund' => $refund_result,
-            'updateBooking' => $update_booking_status,
-        ];
-
-        return view('templates/confirmation', $response);
+        return view('templates/cancel_booking', $response);
     }
 
-    private function notifyCustomerRefundStatus($recipient, $booking_id)
+    private function notifyCustomerRefundStatus($recipient, $booking_id, $is_payment_paid)
     {
         $config_model = model(ConfigModel::class);
         $booking_model = model(BookingModel::class);
@@ -275,7 +307,7 @@ class Home extends BaseController
 
         $booking_ref_no = $booking_model->getColumnValueByKeys($booking_id, 'booking_ref_no');
 
-        $email_subject = 'Refund for booking: ' . $booking_ref_no;
+        $email_subject = $is_payment_paid ? 'Refund for booking: ' . $booking_ref_no : 'Cancel confirmation for booking: ' . $booking_ref_no;
 
         $message = view('templates/mail/refund_confirmation');
 
@@ -415,21 +447,9 @@ class Home extends BaseController
         $pdf->Output($savePath . $filename, 'F');
     }
 
-    private function generateBookingCancelLink($booking_id)
+    private function generateBookingCancelLink($booking_id, $cancel_session_id)
     {
-        $string_length = 20;
-        $cancel_session_id = random_string('alnum', $string_length);
-
         $cancel_booking_link = base_url('/cancel?booking_id=' . $booking_id . '&cancel_session_id=' . $cancel_session_id);
-
-        $booking_model = model(BookingModel::class);
-
-        $save_booking_cancel_session = $booking_model->updateBookingById(
-            $booking_id,
-            [
-                'cancel_session_id' => $cancel_session_id,
-            ]
-        );
 
         return $cancel_booking_link;
     }
@@ -447,7 +467,8 @@ class Home extends BaseController
 
         $email_subject = $booking_ref_no . ' Congratulations! Your trip has been successfully booked!';
 
-        $cancel_booking_link = $this->generateBookingCancelLink($booking_id);
+        $cancel_session_id = $booking_model->getColumnValueByKeys($booking_id, 'cancel_session_id');
+        $cancel_booking_link = $this->generateBookingCancelLink($booking_id, $cancel_session_id);
 
         $message = view('templates/mail/booking_receipt', array(
             'cancelBookingLink' => $cancel_booking_link,
@@ -480,41 +501,18 @@ class Home extends BaseController
         return $response;
     }
 
-    public function confirmBookingPayment()
+    private function removeBookingSchedules($booking_id)
     {
-        $booking_id = filter_var($this->request->getVar('booking_id'), FILTER_SANITIZE_STRING);
-        $session_checkout_id = filter_var($this->request->getVar('session_id'), FILTER_SANITIZE_STRING);
-
-        $booking_model = model(BookingModel::class);
-
-        $booking = $booking_model->getBookingById($booking_id);
-
-        if (count($booking) == 0) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
-        }
-
-        $booking = $booking[0];
-
-        if ($booking['bookingPaymentStatus'] != 'pmst-pending') {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
-        }
-
-        // TO-DO
-        // Check if Strip checkout session id is valid, and payment_status is paid
-
-        $this->disablePaymentLink($booking['bookingPaymentLinkId']);
-
-        $update_booking_data = [
-            'payment_status' => 'pmst-paid',
-            'checkout_session_id' => $session_checkout_id,
-            'booking_updated_at' => Time::now('UTC'),
-        ];
-
-        $update_booking_result = $booking_model->updateBookingById($booking_id, $update_booking_data);
-
         $booking_schedule_model = model(BookingScheduleModel::class);
 
-        $receipt_data = json_decode($booking['bookingData']);
+        $remove_booking_schedule_result = $booking_schedule_model->removeBookingSchedule($booking_id);
+
+        return $remove_booking_schedule_result;
+    }
+
+    private function createBookingSchedule($receipt_data, $booking_id)
+    {
+        $booking_schedule_model = model(BookingScheduleModel::class);
 
         $trip_type = $receipt_data->reservation->tripType;
 
@@ -541,6 +539,44 @@ class Home extends BaseController
         }
 
         $create_booking_schedule_result = $booking_schedule_model->createBookingSchedule($booking_schedules);
+
+        return $create_booking_schedule_result;
+    }
+
+    public function confirmBookingPayment()
+    {
+        $booking_id = filter_var($this->request->getVar('booking_id'), FILTER_SANITIZE_STRING);
+        $session_checkout_id = filter_var($this->request->getVar('session_id'), FILTER_SANITIZE_STRING);
+
+        $booking_model = model(BookingModel::class);
+
+        $booking = $booking_model->getBookingById($booking_id);
+
+        if (count($booking) == 0) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
+        }
+
+        $booking = $booking[0];
+        $receipt_data = json_decode($booking['bookingData']);
+
+        if ($booking['bookingPaymentStatus'] != 'pmst-pending') {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
+        }
+
+        // TO-DO
+        // Check if Strip checkout session id is valid, and payment_status is paid
+
+        $this->disablePaymentLink($booking['bookingPaymentLinkId']);
+
+        $update_booking_data = [
+            'payment_status' => 'pmst-paid',
+            'checkout_session_id' => $session_checkout_id,
+            'booking_updated_at' => Time::now('UTC'),
+        ];
+
+        $update_booking_result = $booking_model->updateBookingById($booking_id, $update_booking_data);
+
+        $create_booking_schedule_result = $this->createBookingSchedule($receipt_data, $booking_id);
 
         $send_receipt = $this->sendBookingReceiptEmail($receipt_data, $booking_id);
 

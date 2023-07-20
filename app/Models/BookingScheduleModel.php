@@ -39,4 +39,11 @@ class BookingScheduleModel extends Model
 
         return $create_schedules_query;
     }
+
+    public function removeBookingSchedule($booking_id)
+    {
+        $remove_schedules_query = $this->where('booking_id', $booking_id)->delete();
+
+        return $remove_schedules_query;
+    }
 }
