@@ -278,7 +278,7 @@ class Home extends BaseController
                 $booking_id,
                 [
                     'booking_status' => 'bk-sts-cnl',
-                    'payment_status' => 'pmst-refunded',
+                    'payment_status' => 'pmst-cancelled',
                     'booking_updated_at' => Time::now('UTC'),
                 ]
             );
