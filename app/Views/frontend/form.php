@@ -480,8 +480,7 @@
                             <section v-if="vehicles.oneWayTrip.length > 0">
                                 <h5 class="danny--group-title">Picking-up</h5>
                                 <div
-                                    class="row align-items-center p-4 mb-3"
-                                    :class="vehicle.availableCars === '0' ? 'bg-white' : 'bg-white'"
+                                    class="row align-items-center p-4 mb-3 bg-white"
                                     v-for="vehicle in vehicles.oneWayTrip">
                                     <div class="col-12 col-md-6 col-lg-3">
                                         <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
@@ -490,8 +489,8 @@
                                         <p class="danny--car-name">
                                             {{ vehicle.carName }}
                                         </p>
-                                        <p :class="{ 'danny--car-availability': true, 'text-danger': vehicle.availableCars === '0' }">
-                                            {{ vehicle.availableCars === '0' ? 'Out of service' : 'Available' }}
+                                        <p :class="{ 'danny--car-availability': true, 'text-danger': parseInt(vehicle.availableCars) <= 0 }">
+                                            {{ parseInt(vehicle.availableCars) <= 0 ? 'Out of service' : 'Available' }}
                                         </p>
                                     </div>
                                     <div class="col-12 col-sm-6 col-md-3 col-lg-3">
@@ -499,7 +498,7 @@
                                     </div>
                                     <div class="col-12 col-lg-3 text-right">
                                         <b-form-radio
-                                            :disabled="vehicle.availableCars === '0'"
+                                            :disabled="parseInt(vehicle.availableCars) <= 0"
                                             v-model="$v.form.bookingRequirements.selectCar.oneWayTrip.vehicle.$model"
                                             name="one-way-vehicle"
                                             :value="vehicle"
@@ -514,8 +513,7 @@
                             <section v-if="vehicles.roundTrip.length > 0">
                                 <h5 class="danny--group-title">Return</h5>
                                 <div
-                                    class="row align-items-center p-4 mb-3"
-                                    :class="vehicle.availableCars === '0' ? 'bg-white' : 'bg-white'"
+                                    class="row align-items-center p-4 mb-3 bg-white"
                                     v-for="vehicle in vehicles.roundTrip">
                                     <div class="col-12 col-md-6 col-lg-3">
                                         <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
@@ -524,8 +522,8 @@
                                         <p class="danny--car-name">
                                             {{ vehicle.carName }}
                                         </p>
-                                        <p :class="{ 'danny--car-availability': true, 'text-danger': vehicle.availableCars === '0' }">
-                                            {{ vehicle.availableCars === '0' ? 'Out of service' : 'Available' }}
+                                        <p :class="{ 'danny--car-availability': true, 'text-danger': parseInt(vehicle.availableCars) <= 0 }">
+                                            {{ parseInt(vehicle.availableCars) <= 0 ? 'Out of service' : 'Available' }}
                                         </p>
                                     </div>
                                     <div class="col-12 col-sm-6 col-md-3 col-lg-3">
@@ -533,7 +531,7 @@
                                     </div>
                                     <div class="col-12 col-lg-3 text-right">
                                         <b-form-radio
-                                            :disabled="vehicle.availableCars === '0'"
+                                            :disabled="parseInt(vehicle.availableCars) <= 0"
                                             v-model="$v.form.bookingRequirements.selectCar.roundTrip.vehicle.$model"
                                             name="round-trip-vehicle"
                                             :value="vehicle"
@@ -569,54 +567,74 @@
                                     <div class="col-12 col-md-6">
                                         <div class="bg-white p-3 h-100">
                                             <h5 class="danny--group-title">Extras</h5>
-                                            <b-form-group
-                                                :state="validateInputField($v.form.bookingRequirements.chooseOptions.oneWayTrip.extras)"
-                                                :invalid-feedback="errorMessages.required">
-                                                <b-checkbox-group
-                                                    stacked
-                                                    v-model="$v.form.bookingRequirements.chooseOptions.oneWayTrip.extras.$model"
-                                                    name="otpions-extras">
-                                                    <div class="row" v-for="option in options.extras">
-                                                        <div class="col-8">
-                                                            <b-form-checkbox
-                                                                :value="option">
-                                                                {{ option.configName }}
-                                                            </b-form-checkbox>
-                                                        </div>
-                                                        <div class="col-4">
+                                            <b-form-group>
+                                                <div
+                                                    class="row align-items-center mb-2"
+                                                    v-for="(extraOption, extraOptionIndex) in options.oneWayTrip.extras"
+                                                    :key="`oneway-extras-${extraOptionIndex}`">
+                                                    <div class="col-6">
+                                                        <b-form-checkbox
+                                                            name="options-extras"
+                                                            v-model="form.bookingRequirements.chooseOptions.oneWayTrip.extras"
+                                                            :value="extraOption">
+                                                            {{ extraOption.configName }}
+                                                        </b-form-checkbox>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="d-flex align-items-center">
                                                             <span class="danny--car-option-price">
-                                                                &dollar;{{ option.configValue }}
+                                                                &dollar;{{ extraOption.configValue }}
                                                             </span>
+                                                            <b-form-input
+                                                                no-wheel
+                                                                step="1"
+                                                                class="ml-2"
+                                                                :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.extras, extraOption)"
+                                                                type="number"
+                                                                min="1"
+                                                                max="5"
+                                                                v-model="extraOption.quantity">
+                                                            </b-form-input>
                                                         </div>
                                                     </div>
-                                                </b-checkbox-group>
+                                                </div>
                                             </b-form-group>
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <div class="bg-white p-3 h-100">
                                             <h5 class="danny--group-title">Protection</h5>
-                                            <b-form-group
-                                                :state="validateInputField($v.form.bookingRequirements.chooseOptions.oneWayTrip.protection)"
-                                                :invalid-feedback="errorMessages.required">
-                                                <b-checkbox-group
-                                                    stacked
-                                                    v-model="$v.form.bookingRequirements.chooseOptions.oneWayTrip.protection.$model"
-                                                    name="otpions-protection">
-                                                    <div class="row" v-for="option in options.protection">
-                                                        <div class="col-8">
-                                                            <b-form-checkbox
-                                                                :value="option">
-                                                                {{ option.configName }}
-                                                            </b-form-checkbox>
-                                                        </div>
-                                                        <div class="col-4">
+                                            <b-form-group>
+                                                <div
+                                                    class="row align-items-center mb-2"
+                                                    v-for="(protectionOption, protectionOptionIndex) in options.oneWayTrip.protection"
+                                                    :key="`oneway-protection-${protectionOptionIndex}`">
+                                                    <div class="col-6">
+                                                        <b-form-checkbox
+                                                            name="options-protection"
+                                                            v-model="form.bookingRequirements.chooseOptions.oneWayTrip.protection"
+                                                            :value="protectionOption">
+                                                            {{ protectionOption.configName }}
+                                                        </b-form-checkbox>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="d-flex align-items-center">
                                                             <span class="danny--car-option-price">
-                                                                &dollar;{{ option.configValue }}
+                                                                &dollar;{{ protectionOption.configValue }}
                                                             </span>
+                                                            <b-form-input
+                                                                no-wheel
+                                                                step="1"
+                                                                class="ml-2"
+                                                                :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.protection, protectionOption)"
+                                                                type="number"
+                                                                min="1"
+                                                                max="5"
+                                                                v-model="protectionOption.quantity">
+                                                            </b-form-input>
                                                         </div>
                                                     </div>
-                                                </b-checkbox-group>
+                                                </div>
                                             </b-form-group>
                                         </div>
                                     </div>
@@ -633,54 +651,74 @@
                                     <div class="col-12 col-md-6">
                                         <div class="bg-white p-3 h-100">
                                             <h5 class="danny--group-title">Extras</h5>
-                                            <b-form-group
-                                                :state="validateInputField($v.form.bookingRequirements.chooseOptions.roundTrip.extras)"
-                                                :invalid-feedback="errorMessages.required">
-                                                <b-checkbox-group
-                                                    stacked
-                                                    v-model="$v.form.bookingRequirements.chooseOptions.roundTrip.extras.$model"
-                                                    name="round-trip-otpions-extras">
-                                                    <div class="row" v-for="option in options.extras">
-                                                        <div class="col-8">
-                                                            <b-form-checkbox
-                                                                :value="option">
-                                                                {{ option.configName }}
-                                                            </b-form-checkbox>
-                                                        </div>
-                                                        <div class="col-4">
+                                            <b-form-group>
+                                                <div
+                                                    class="row align-items-center mb-2"
+                                                    v-for="(roundTripExtraOption, roundTripExtraOptionIndex) in options.roundTrip.extras"
+                                                    :key="`roundtrip-extras-${roundTripExtraOptionIndex}`">
+                                                    <div class="col-6">
+                                                        <b-form-checkbox
+                                                            name="round-trip-options-extras"
+                                                            v-model="form.bookingRequirements.chooseOptions.roundTrip.extras"
+                                                            :value="roundTripExtraOption">
+                                                            {{ roundTripExtraOption.configName }}
+                                                        </b-form-checkbox>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="d-flex align-items-center">
                                                             <span class="danny--car-option-price">
-                                                                &dollar;{{ option.configValue }}
+                                                                &dollar;{{ roundTripExtraOption.configValue }}
                                                             </span>
+                                                            <b-form-input
+                                                                no-wheel
+                                                                step="1"
+                                                                class="ml-2"
+                                                                :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.extras, roundTripExtraOption)"
+                                                                type="number"
+                                                                min="1"
+                                                                max="5"
+                                                                v-model="roundTripExtraOption.quantity">
+                                                            </b-form-input>
                                                         </div>
                                                     </div>
-                                                </b-checkbox-group>
+                                                </div>
                                             </b-form-group>
                                         </div>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <div class="bg-white p-3 h-100">
                                             <h5 class="danny--group-title">Protection</h5>
-                                            <b-form-group
-                                                :state="validateInputField($v.form.bookingRequirements.chooseOptions.roundTrip.protection)"
-                                                :invalid-feedback="errorMessages.required">
-                                                <b-checkbox-group
-                                                    stacked
-                                                    v-model="$v.form.bookingRequirements.chooseOptions.roundTrip.protection.$model"
-                                                    name="round-trip-otpions-protection">
-                                                    <div class="row" v-for="option in options.protection">
-                                                        <div class="col-8">
-                                                            <b-form-checkbox
-                                                                :value="option">
-                                                                {{ option.configName }}
-                                                            </b-form-checkbox>
-                                                        </div>
-                                                        <div class="col-4">
+                                            <b-form-group>
+                                                <div
+                                                    class="row align-items-center mb-2"
+                                                    v-for="(roundTripProtectionOption, roundTripProtectionOptionIndex) in options.roundTrip.protection"
+                                                    :key="`roundtrip-protection-${roundTripProtectionOptionIndex}`">
+                                                    <div class="col-6">
+                                                        <b-form-checkbox
+                                                            name="round-trip-options-protection"
+                                                            v-model="form.bookingRequirements.chooseOptions.roundTrip.protection"
+                                                            :value="roundTripProtectionOption">
+                                                            {{ roundTripProtectionOption.configName }}
+                                                        </b-form-checkbox>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="d-flex align-items-center">
                                                             <span class="danny--car-option-price">
-                                                                &dollar;{{ option.configValue }}
+                                                                &dollar;{{ roundTripProtectionOption.configValue }}
                                                             </span>
+                                                            <b-form-input
+                                                                no-wheel
+                                                                step="1"
+                                                                class="ml-2"
+                                                                :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.protection, roundTripProtectionOption)"
+                                                                type="number"
+                                                                min="1"
+                                                                max="5"
+                                                                v-model="roundTripProtectionOption.quantity">
+                                                            </b-form-input>
                                                         </div>
                                                     </div>
-                                                </b-checkbox-group>
+                                                </div>
                                             </b-form-group>
                                         </div>
                                     </div>

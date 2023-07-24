@@ -127,8 +127,14 @@ var app = new Vue({
                 }
             ],
             options: {
-                extras: [],
-                protection: [],
+                oneWayTrip: {
+                    extras: [],
+                    protection: [],
+                },
+                roundTrip: {
+                    extras: [],
+                    protection: [],
+                },
             },
             airlineBrands: [
                 {
@@ -271,7 +277,8 @@ var app = new Vue({
         const self = this;
         console.log('app mounted');
 
-        this.form.bookingId = bookingId;
+        self.form.bookingId = bookingId;
+        self.getOptionsList();
 
         setTimeout(() => {
             self.dropdowns.oneWayTrip.origin.sessionToken = self.generateSearchSessionToken();
@@ -417,7 +424,6 @@ var app = new Vue({
             }
 
             self.completedTabs.chooseOptions = true;
-            self.getOptionsList();
 
             setTimeout(() => {
                 self.formActiveTab = 2;
@@ -431,8 +437,27 @@ var app = new Vue({
             axios
                 .get(baseURL + '/api/configurations/list', payload)
                 .then(res => {
-                    self.options.extras = _.filter(res.data.configs, (option) => { return option.configGroupId === 'cfg-gr-opt' });
-                    self.options.protection = _.filter(res.data.configs, (option) => { return option.configGroupId === 'cfg-gr-prt' });
+
+                    self.options.oneWayTrip.extras = _.map(
+                        _.filter(res.data.configs, (option) => { return option.configGroupId === 'cfg-gr-opt' }),
+                        (option) => { return {...option, quantity: 1} }
+                    );
+
+                    self.options.roundTrip.extras = _.map(
+                        _.filter(res.data.configs, (option) => { return option.configGroupId === 'cfg-gr-opt' }),
+                        (option) => { return {...option, quantity: 1} }
+                    );
+
+                    self.options.oneWayTrip.protection = _.map(
+                        _.filter(res.data.configs, (option) => { return option.configGroupId === 'cfg-gr-prt' }),
+                        (option) => { return {...option, quantity: 1} }
+                    );
+
+                    self.options.roundTrip.protection = _.map(
+                        _.filter(res.data.configs, (option) => { return option.configGroupId === 'cfg-gr-prt' }),
+                        (option) => { return {...option, quantity: 1} }
+                    );
+
                     self.configurations = _.filter(res.data.configs, (option) => { return option.configGroupId === 'cfg-gr-sys' });
                     self.transformedConfigs = self.constructConfigDictionary();
 
