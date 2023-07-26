@@ -749,15 +749,15 @@ var app = new Vue({
             
             if (chosenOptions.length > 0) {
                 chosenOptions.forEach((option) => {
-                    optionsPrice = optionsPrice + parseFloat(option.configValue);
+                    optionsPrice = optionsPrice + (parseFloat(option.configValue) * parseFloat(option.quantity));
                 });
             }
 
             totalPrice = passengersPrice + milesPrice + adminFee + optionsPrice;
 
-            if (isInTrafficHours) {
-                trafficHoursPrice = totalPrice * (trafficHoursExtra / 100);
-            }
+            // if (isInTrafficHours) {
+            //     trafficHoursPrice = totalPrice * (trafficHoursExtra / 100);
+            // }
 
             totalPrice = parseFloat(totalPrice + trafficHoursPrice);
 
@@ -960,7 +960,7 @@ var app = new Vue({
             }
 
             self.form.bookingRequirements.review.prices.total = parseFloat(price - discountAmount) <= 0 ? 0 : parseFloat(price - discountAmount);
-            self.form.bookingRequirements.review.prices.totalNotDiscount = parseFloat(price);
+            self.form.bookingRequirements.review.prices.totalNotDiscount = parseFloat(price).toFixed(2);
             self.form.bookingRequirements.review.prices.discountAmount = discountAmount;
 
             let tipDriverAmount = self.form.bookingRequirements.review.prices.tipDriverAmount;

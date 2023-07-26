@@ -944,10 +944,12 @@
                                                             class="row"
                                                             v-for="option in form.bookingRequirements.chooseOptions.oneWayTrip.extras">
                                                             <div class="col-8">
-                                                                {{ option.configName }}
+                                                                {{ option.configName }} (&times;{{ option.quantity }})
                                                             </div>
                                                             <div class="col-4">
-                                                                <span class="danny--car-option-price">&dollar;{{ option.configValue }}</span>
+                                                                <span class="danny--car-option-price">
+                                                                    &dollar;{{ (parseFloat(option.configValue) * parseFloat(option.quantity)).toFixed(2) }}
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </section>
@@ -957,10 +959,12 @@
                                                             class="row"
                                                             v-for="option in form.bookingRequirements.chooseOptions.oneWayTrip.protection">
                                                             <div class="col-8">
-                                                                {{ option.configName }}
+                                                                {{ option.configName }} (&times;{{ option.quantity }})
                                                             </div>
                                                             <div class="col-4">
-                                                                <span class="danny--car-option-price">&dollar;{{ option.configValue }}</span>
+                                                                <span class="danny--car-option-price">
+                                                                    &dollar;{{ (parseFloat(option.configValue) * parseFloat(option.quantity)).toFixed(2) }}
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </section>
@@ -1062,10 +1066,12 @@
                                                                 class="row"
                                                                 v-for="option in form.bookingRequirements.chooseOptions.roundTrip.extras">
                                                                 <div class="col-8">
-                                                                    {{ option.configName }}
+                                                                    {{ option.configName }} (&times;{{ option.quantity }})
                                                                 </div>
                                                                 <div class="col-4">
-                                                                    <span class="danny--car-option-price">&dollar;{{ option.configValue }}</span>
+                                                                    <span class="danny--car-option-price">
+                                                                        &dollar;{{ (parseFloat(option.configValue) * parseFloat(option.quantity)).toFixed(2) }}
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                         </section>
@@ -1075,10 +1081,12 @@
                                                                 class="row"
                                                                 v-for="option in form.bookingRequirements.chooseOptions.roundTrip.protection">
                                                                 <div class="col-8">
-                                                                    {{ option.configName }}
+                                                                    {{ option.configName }} (&times;{{ option.quantity }})
                                                                 </div>
                                                                 <div class="col-4">
-                                                                    <span class="danny--car-option-price">&dollar;{{ option.configValue }}</span>
+                                                                    <span class="danny--car-option-price">
+                                                                        &dollar;{{ (parseFloat(option.configValue) * parseFloat(option.quantity)).toFixed(2) }}
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                         </section>
