@@ -40,6 +40,7 @@ var app = new Vue({
                             originSearch: null,
                             destinationSearch: null,
                             passengers: 0,
+                            luggages: 0,
                         },
                         roundTrip: {
                             origin: null,
@@ -52,6 +53,7 @@ var app = new Vue({
                             originSearch: null,
                             destinationSearch: null,
                             passengers: 0,
+                            luggages: 0,
                         },
                         tripType: 'one-way',
                     },
@@ -254,6 +256,10 @@ var app = new Vue({
             skipValidation: true,
             showCheckoutNotice: false,
             tipDriverOptions: [
+                {
+                    text: 'None',
+                    value: null,
+                },
                 {
                     text: '5%',
                     value: 0.05,
@@ -1010,6 +1016,7 @@ var app = new Vue({
                             required: required,
                             minValue: minValue(1),
                         },
+                        luggages: {},
                     },
                     roundTrip: {
                         pickup: {
@@ -1048,6 +1055,7 @@ var app = new Vue({
                                 return parseInt(value) > 0;
                             },
                         },
+                        luggages: {},
                     },
                 },
                 selectCar: {

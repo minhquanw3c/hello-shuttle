@@ -6,6 +6,11 @@
     display: none;
 }
 
+/* Utils */
+.max-width-100 {
+    max-width: 100px !important;
+}
+
 .ltn__header-transparent {
     background-color: var(--ltn__heading-color);
 }
@@ -296,4 +301,8 @@ body {
 
 .ltn__404-area.ltn__404-area-1 {
     padding-top: 20rem;
+}
+
+.ltn__header-top-area .ltn__social-media ul li {
+    font-size: 20px;
 }

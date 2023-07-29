@@ -271,6 +271,34 @@
                                                     </b-input-group>
                                                 </b-form-group>
                                             </div>
+
+                                            <div class="col-12 col-lg-6">
+                                                <b-form-group
+                                                    class="danny--form-group"
+                                                    label="Luggages"
+                                                    label-for="one-way-luggages"
+                                                    label-cols="12"
+                                                    label-cols-sm="3"
+                                                    content-cols="12"
+                                                    content-cols-sm="9"
+                                                    :invalid-feedback="'Minimum luggages is 1'"
+                                                    :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.luggages)">
+                                                    <b-input-group>
+                                                        <b-input-group-prepend>
+                                                            <div class="btn">
+                                                                <b-icon icon="briefcase"></b-icon>
+                                                            </div>
+                                                        </b-input-group-prepend>
+                                                        <b-form-input
+                                                            no-wheel
+                                                            id="one-way-luggages"
+                                                            min="0"
+                                                            type="number"
+                                                            v-model="$v.form.bookingRequirements.reservation.oneWayTrip.luggages.$model">
+                                                        </b-form-input>
+                                                    </b-input-group>
+                                                </b-form-group>
+                                            </div>
                                         </div>
                                     </section>
 
@@ -455,6 +483,34 @@
                                                         </b-input-group>
                                                     </b-form-group>
                                                 </div>
+
+                                                <div class="col-12 col-lg-6">
+                                                <b-form-group
+                                                    class="danny--form-group"
+                                                    label="Luggages"
+                                                    label-for="round-trip-luggages"
+                                                    label-cols="12"
+                                                    label-cols-sm="3"
+                                                    content-cols="12"
+                                                    content-cols-sm="9"
+                                                    :invalid-feedback="'Minimum luggages is 1'"
+                                                    :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.luggages)">
+                                                    <b-input-group>
+                                                        <b-input-group-prepend>
+                                                            <div class="btn">
+                                                                <b-icon icon="briefcase"></b-icon>
+                                                            </div>
+                                                        </b-input-group-prepend>
+                                                        <b-form-input
+                                                            no-wheel
+                                                            id="round-trip-luggages"
+                                                            min="0"
+                                                            type="number"
+                                                            v-model="$v.form.bookingRequirements.reservation.roundTrip.luggages.$model">
+                                                        </b-form-input>
+                                                    </b-input-group>
+                                                </b-form-group>
+                                            </div>
                                             </div>
                                         </section>
                                     </template>
@@ -581,19 +637,20 @@
                                                         </b-form-checkbox>
                                                     </div>
                                                     <div class="col-6">
-                                                        <div class="d-flex align-items-center">
+                                                        <div class="d-flex align-items-center justify-content-end">
                                                             <span class="danny--car-option-price">
                                                                 &dollar;{{ extraOption.configValue }}
                                                             </span>
                                                             <b-form-input
                                                                 no-wheel
                                                                 step="1"
-                                                                class="ml-2"
+                                                                class="ml-2 max-width-100"
                                                                 :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.extras, extraOption)"
                                                                 type="number"
                                                                 min="1"
                                                                 max="5"
-                                                                v-model="extraOption.quantity">
+                                                                v-model="extraOption.quantity"
+                                                                placeholder="Quantity">
                                                             </b-form-input>
                                                         </div>
                                                     </div>
@@ -618,19 +675,20 @@
                                                         </b-form-checkbox>
                                                     </div>
                                                     <div class="col-6">
-                                                        <div class="d-flex align-items-center">
+                                                        <div class="d-flex align-items-center justify-content-end">
                                                             <span class="danny--car-option-price">
                                                                 &dollar;{{ protectionOption.configValue }}
                                                             </span>
                                                             <b-form-input
                                                                 no-wheel
                                                                 step="1"
-                                                                class="ml-2"
+                                                                class="ml-2 max-width-100"
                                                                 :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.protection, protectionOption)"
                                                                 type="number"
                                                                 min="1"
                                                                 max="5"
-                                                                v-model="protectionOption.quantity">
+                                                                v-model="protectionOption.quantity"
+                                                                placeholder="Quantity">
                                                             </b-form-input>
                                                         </div>
                                                     </div>
@@ -665,19 +723,20 @@
                                                         </b-form-checkbox>
                                                     </div>
                                                     <div class="col-6">
-                                                        <div class="d-flex align-items-center">
+                                                        <div class="d-flex align-items-center justify-content-end">
                                                             <span class="danny--car-option-price">
                                                                 &dollar;{{ roundTripExtraOption.configValue }}
                                                             </span>
                                                             <b-form-input
                                                                 no-wheel
                                                                 step="1"
-                                                                class="ml-2"
+                                                                class="ml-2 max-width-100"
                                                                 :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.extras, roundTripExtraOption)"
                                                                 type="number"
                                                                 min="1"
                                                                 max="5"
-                                                                v-model="roundTripExtraOption.quantity">
+                                                                v-model="roundTripExtraOption.quantity"
+                                                                placeholder="Quantity">
                                                             </b-form-input>
                                                         </div>
                                                     </div>
@@ -702,19 +761,20 @@
                                                         </b-form-checkbox>
                                                     </div>
                                                     <div class="col-6">
-                                                        <div class="d-flex align-items-center">
+                                                        <div class="d-flex align-items-center justify-content-end">
                                                             <span class="danny--car-option-price">
                                                                 &dollar;{{ roundTripProtectionOption.configValue }}
                                                             </span>
                                                             <b-form-input
                                                                 no-wheel
                                                                 step="1"
-                                                                class="ml-2"
+                                                                class="ml-2 max-width-100"
                                                                 :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.protection, roundTripProtectionOption)"
                                                                 type="number"
                                                                 min="1"
                                                                 max="5"
-                                                                v-model="roundTripProtectionOption.quantity">
+                                                                v-model="roundTripProtectionOption.quantity"
+                                                                placeholder="Quantity">
                                                             </b-form-input>
                                                         </div>
                                                     </div>
@@ -1273,6 +1333,181 @@
                             </b-form>
                         </b-tab>
                     </b-tabs>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-12 text-center">
+                    <h2 class="text-white">Why choose us?</h2>
+                </div>
+                <div class="col-12">
+                    <table class="table table-bordered table-hover table-light table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Hello Shuttle</th>
+                                <th>Other companies</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    You get 10&percnt; OFF when booking round trip
+                                </td>
+                                <td>
+                                    No discount
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    We pick you up right in front of your terminal
+                                </td>
+                                <td>
+                                    You must take the airport bus to the transportation lot outside the airport to meet your driver
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p class="m-0">FREE child booster charges</p>
+                                    <p class="m-0">Child car seat charge only &dollar;20/each</p>
+                                </td>
+                                <td>
+                                    <p class="m-0">No free child booster</p>
+                                    <p class="m-0">Car seat charge a lot more</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    If you reschedule your reservation within 2 hours prior to your pickup time.
+                                    You will need to cancel with 50&percnt; refund and book a new one.
+                                </td>
+                                <td>
+                                    No refund and has to book a new one.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    If you cancel your reservation within 18-24 hours prior to your pickup time, there is
+                                    50&percnt; refund to your card
+                                </td>
+                                <td>
+                                    No refund
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Do not charge any tax on our fares
+                                </td>
+                                <td>
+                                    Taxes added at the end of your booking
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Pet cleaning fee is 35&dollar; for total trip regardless of the
+                                    numbers of pets
+                                </td>
+                                <td>
+                                    Charges depend on the number of pets
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-12 text-center">
+                    <h2 class="text-white">FAQs</h2>
+                </div>
+                <div class="col-12">
+                    <div id="faq-accordion">
+                        <div class="card">
+                            <div class="card-header">
+                                <a class="card-link d-block" data-toggle="collapse" href="#collapseOne">
+                                    Rescheduling
+                                </a>
+                            </div>
+                            <div id="collapseOne" class="collapse show" data-parent="#faq-accordion">
+                                <div class="card-body">
+                                    <p>
+                                        There is no charge if you reschedule your reservation more than 24 hours
+                                        to your pickup time. However, there will be 20&percnt; charge if either of the
+                                        following scenarios takes place:
+                                    </p>
+                                    <ol>
+                                        <li>
+                                            If you reschedule your reservation within 2-24 hours prior to your pickup time.
+                                        </li>
+                                        <li>
+                                            If you reschedule your pickup time due to flight delay or early arrivals. If the
+                                            flight delays multiple times, there will be 20&percnt; charge for each delay.
+                                        </li>
+                                    </ol>
+                                    <p>
+                                        You cannot reschedule your reservation within 2 hours prior to your pickup time.
+                                        You will need to cancel with 50&percnt; refund and book a new one.
+                                    </p>
+                                    <p>
+                                        Rescheduling must be requested by emailing us at
+                                        <a href="mailto:info@helloshuttle.com" target="_blank">info@helloshuttle.com</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapseTwo">
+                                    Cancellation
+                                </a>
+                            </div>
+                            <div id="collapseTwo" class="collapse" data-parent="#faq-accordion">
+                                <div class="card-body">
+                                    <p>
+                                        There will be 20&percnt; cancellation fee for any reasons. If you choose to cancel your
+                                        reservation within 18-24 hours to you pickup time, there is 50&percnt; refund to your card.
+                                        However, if you cancel your reservation within 6 hours to your pickup time, there is no refund.
+                                    </p>
+                                    <p>
+                                        The original fare amount will be refunded to your card within 7-10 business days.
+                                        Cancellation must be requested through email
+                                        <a href="mailto:info@helloshuttle.com" target="_blank">info@helloshuttle.com</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapseThree">
+                                    Pets
+                                </a>
+                            </div>
+                            <div id="collapseThree" class="collapse" data-parent="#faq-accordion">
+                                <div class="card-body">
+                                    <p>
+                                        Pet cleaning fee is 35&dollar; for any pet size, even if it is a service dog.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapseFour">
+                                    Child safety seats
+                                </a>
+                            </div>
+                            <div id="collapseFour" class="collapse" data-parent="#faq-accordion">
+                                <div class="card-body">
+                                    <p>
+                                        &dollar;20 per car seats, boosters are free of charge. You will be given the option
+                                        to add this service during your booking.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -42,14 +42,7 @@
         <div class="ltn__header-top-area top-area-color-white">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-7">
-                        <div class="ltn__top-bar-menu">
-                            <ul>
-                                <li><a href="javascript:void(0)"><i class="icon-mail"></i> info@helloshuttle.com</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-md-5">
+                    <div class="col-12">
                         <div class="top-bar-right text-right">
                             <div class="ltn__top-bar-menu">
                                 <ul>
@@ -59,7 +52,6 @@
                                             <ul>
                                                 <li><a href="javascript:void(0)" title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
                                                 <li><a href="javascript:void(0)" title="Twitter"><i class="fab fa-twitter"></i></a></li>
-                                                
                                                 <li><a href="javascript:void(0)" title="Instagram"><i class="fab fa-instagram"></i></a></li>
                                                 <li><a href="javascript:void(0)" title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
                                             </ul>
@@ -79,23 +71,8 @@
                 <div class="row">
                     <div class="col-12 col-lg-6">
                         <a href="<?= base_url('/') ?>">
-                            <img src="<?= base_url('static/images/logo/hello-shuttle-gold-03.png') ?>" alt="hello-shuttle-logo" style="max-height: 90px;">
+                            <img src="<?= base_url('static/images/logo/hello-shuttle-gold-03.png') ?>" alt="hello-shuttle-logo" style="max-height: 100px;">
                         </a>
-                        <!-- <div class="site-logo-wrap">
-                            <div class="site-logo">
-                                <a href="<?= base_url('/') ?>">
-                                    <img src="<?= base_url('static/images/logo/hello-shuttle-gold-03.png') ?>" alt="hello-shuttle-logo">
-                                </a>
-                            </div>
-                            <div class="get-support clearfix get-support-color-white">
-                                <div class="get-support-icon">
-                                    <i class="icon-call"></i>
-                                </div>
-                                <div class="get-support-info">
-                                    <h4><a href="tel:9498005678" target="_blank">(949) 800-5678</a></h4>
-                                </div>
-                            </div>
-                        </div> -->
                     </div>
                     <div class="col-12 col-lg-6 mt-3 mt-lg-0">
                         <div class="get-support get-support-color-white">
@@ -104,6 +81,14 @@
                             </div>
                             <div class="get-support-info">
                                 <h4><a href="tel:9498005678" target="_blank">(949) 800-5678</a></h4>
+                            </div>
+                        </div>
+                        <div class="get-support get-support-color-white">
+                            <div class="get-support-icon">
+                                <i class="icon-mail"></i>
+                            </div>
+                            <div class="get-support-info">
+                                <h4 style="font-size: 1.7rem;"><a href="mailto:info@helloshuttle.com" target="_blank">info@helloshuttle.com</a></h4>
                             </div>
                         </div>
                     </div>
