@@ -30,6 +30,8 @@ class ConfigModel extends Model
             'configurations.config_value AS configValue',
             'configurations.config_active AS configActive',
             'configurations.config_editable AS configEditable',
+            'configurations.config_has_tooltip AS configHasTooltip',
+            'configurations.config_tooltip_content AS configTooltipContent',
             'config_types.config_type_id AS configTypeId',
             'config_types.config_type_desc AS configTypeName',
             'config_groups.config_group_id AS configGroupId',
