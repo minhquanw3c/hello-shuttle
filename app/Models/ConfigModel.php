@@ -18,6 +18,7 @@ class ConfigModel extends Model
         'config_active',
         'config_editable',
         'config_visible',
+        'config_maximum_quantity',
         'config_created_at',
         'config_updated_at',
 	];
@@ -32,6 +33,7 @@ class ConfigModel extends Model
             'configurations.config_editable AS configEditable',
             'configurations.config_has_tooltip AS configHasTooltip',
             'configurations.config_tooltip_content AS configTooltipContent',
+            'configurations.config_maximum_quantity AS configMaximumQuantity',
             'config_types.config_type_id AS configTypeId',
             'config_types.config_type_desc AS configTypeName',
             'config_groups.config_group_id AS configGroupId',

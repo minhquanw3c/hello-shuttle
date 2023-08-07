@@ -664,7 +664,7 @@
                                                                 :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.extras, extraOption)"
                                                                 type="number"
                                                                 min="1"
-                                                                max="5"
+                                                                :max="extraOption.configMaximumQuantity"
                                                                 v-model="extraOption.quantity"
                                                                 placeholder="Quantity">
                                                             </b-form-input>
@@ -702,7 +702,7 @@
                                                                 :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.protection, protectionOption)"
                                                                 type="number"
                                                                 min="1"
-                                                                max="5"
+                                                                :max="protectionOption.configMaximumQuantity"
                                                                 v-model="protectionOption.quantity"
                                                                 placeholder="Quantity">
                                                             </b-form-input>
@@ -758,7 +758,7 @@
                                                                 :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.extras, roundTripExtraOption)"
                                                                 type="number"
                                                                 min="1"
-                                                                max="5"
+                                                                :max="roundTripExtraOption.configMaximumQuantity"
                                                                 v-model="roundTripExtraOption.quantity"
                                                                 placeholder="Quantity">
                                                             </b-form-input>
@@ -796,7 +796,7 @@
                                                                 :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.protection, roundTripProtectionOption)"
                                                                 type="number"
                                                                 min="1"
-                                                                max="5"
+                                                                :max="roundTripProtectionOption.configMaximumQuantity"
                                                                 v-model="roundTripProtectionOption.quantity"
                                                                 placeholder="Quantity">
                                                             </b-form-input>
