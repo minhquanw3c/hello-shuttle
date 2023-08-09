@@ -298,6 +298,38 @@ var app = new Vue({
         }
     },
     methods: {
+        increasePassengers: function (tripType, maxPassengers = 10) {
+            const self = this;
+            let passengers = self.form.bookingRequirements.reservation[tripType].passengers;
+
+            if (passengers < maxPassengers) {
+                self.form.bookingRequirements.reservation[tripType].passengers++;
+            }
+        },
+        increaseLuggages: function (tripType, maxLuggages = 10) {
+            const self = this;
+            let luggages = self.form.bookingRequirements.reservation[tripType].luggages;
+
+            if (luggages < maxLuggages) {
+                self.form.bookingRequirements.reservation[tripType].luggages++;
+            }
+        },
+        decreaseLuggages: function (tripType) {
+            const self = this;
+            let luggages = self.form.bookingRequirements.reservation[tripType].luggages;
+
+            if (luggages >= 1) {
+                self.form.bookingRequirements.reservation[tripType].luggages--;
+            }
+        },
+        decreasePassengers: function (tripType) {
+            const self = this;
+            let passengers = self.form.bookingRequirements.reservation[tripType].passengers;
+
+            if (passengers >= 1) {
+                self.form.bookingRequirements.reservation[tripType].passengers--;
+            }
+        },
         generateSearchSessionToken: function () {
             const self = this;
 

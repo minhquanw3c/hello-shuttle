@@ -250,13 +250,28 @@
                                                             </div>
                                                         </b-input-group-prepend>
                                                         <b-form-input
+                                                            class="readonly"
+                                                            readonly
                                                             no-wheel
                                                             id="one-way-passengers"
                                                             min="1"
                                                             type="number"
-                                                            v-model="$v.form.bookingRequirements.reservation.oneWayTrip.passengers.$model"
-                                                            @input="(val) => { form.bookingRequirements.reservation.oneWayTrip.luggages = val }">
+                                                            v-model="$v.form.bookingRequirements.reservation.oneWayTrip.passengers.$model">
                                                         </b-form-input>
+                                                        <b-input-group-append>
+                                                            <b-button-group size="sm">
+                                                                <b-button
+                                                                    @click="increasePassengers('oneWayTrip')"
+                                                                    variant="outline-dark">
+                                                                    <b-icon icon="plus-circle"></b-icon>
+                                                                </b-button>
+                                                                <b-button
+                                                                    @click="decreasePassengers('oneWayTrip')"
+                                                                    variant="outline-dark">
+                                                                    <b-icon icon="dash-circle"></b-icon>
+                                                                </b-button>
+                                                            </b-button-group>
+                                                        </b-input-group-append>
                                                     </b-input-group>
                                                 </b-form-group>
                                             </div>
@@ -279,6 +294,8 @@
                                                             </div>
                                                         </b-input-group-prepend>
                                                         <b-form-input
+                                                            class="readonly"
+                                                            readonly
                                                             no-wheel
                                                             id="one-way-luggages"
                                                             min="0"
@@ -293,6 +310,18 @@
                                                                 >
                                                                 <b-icon icon="question-circle"></b-icon>
                                                             </div>
+                                                            <b-button-group size="sm">
+                                                                <b-button
+                                                                    @click="increaseLuggages('oneWayTrip')"
+                                                                    variant="outline-dark">
+                                                                    <b-icon icon="plus-circle"></b-icon>
+                                                                </b-button>
+                                                                <b-button
+                                                                    @click="decreaseLuggages('oneWayTrip')"
+                                                                    variant="outline-dark">
+                                                                    <b-icon icon="dash-circle"></b-icon>
+                                                                </b-button>
+                                                            </b-button-group>
                                                         </b-input-group-append>
                                                     </b-input-group>
                                                 </b-form-group>
@@ -476,9 +505,22 @@
                                                                 id="round-trip-passengers"
                                                                 min="1"
                                                                 type="number"
-                                                                v-model="$v.form.bookingRequirements.reservation.roundTrip.passengers.$model"
-                                                                @input="(val) => { form.bookingRequirements.reservation.roundTrip.luggages = val }">
+                                                                v-model="$v.form.bookingRequirements.reservation.roundTrip.passengers.$model">
                                                             </b-form-input>
+                                                            <b-input-group-append>
+                                                                <b-button-group size="sm">
+                                                                    <b-button
+                                                                        @click="increasePassengers('roundTrip')"
+                                                                        variant="outline-dark">
+                                                                        <b-icon icon="plus-circle"></b-icon>
+                                                                    </b-button>
+                                                                    <b-button
+                                                                        @click="decreasePassengers('roundTrip')"
+                                                                        variant="outline-dark">
+                                                                        <b-icon icon="dash-circle"></b-icon>
+                                                                    </b-button>
+                                                                </b-button-group>
+                                                            </b-input-group-append>
                                                         </b-input-group>
                                                     </b-form-group>
                                                 </div>
@@ -515,6 +557,18 @@
                                                                 >
                                                                 <b-icon icon="question-circle"></b-icon>
                                                             </div>
+                                                            <b-button-group size="sm">
+                                                                <b-button
+                                                                    @click="increaseLuggages('roundTrip')"
+                                                                    variant="outline-dark">
+                                                                    <b-icon icon="plus-circle"></b-icon>
+                                                                </b-button>
+                                                                <b-button
+                                                                    @click="decreaseLuggages('roundTrip')"
+                                                                    variant="outline-dark">
+                                                                    <b-icon icon="dash-circle"></b-icon>
+                                                                </b-button>
+                                                            </b-button-group>
                                                         </b-input-group-append>
                                                     </b-input-group>
                                                 </b-form-group>
@@ -636,7 +690,7 @@
                                                     class="row align-items-center mb-2"
                                                     v-for="(extraOption, extraOptionIndex) in options.oneWayTrip.extras"
                                                     :key="`oneway-extras-${extraOptionIndex}`">
-                                                    <div class="col-6 d-flex align-items-center">
+                                                    <div class="col-12 col-lg-6 d-flex align-items-center">
                                                         <b-form-checkbox
                                                             name="options-extras"
                                                             v-model="form.bookingRequirements.chooseOptions.oneWayTrip.extras"
@@ -652,22 +706,42 @@
                                                             <b-icon icon="question-circle"></b-icon>
                                                         </div>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-12 col-lg-6">
                                                         <div class="d-flex align-items-center justify-content-end">
-                                                            <span class="danny--car-option-price">
+                                                            <span class="danny--car-option-price col-4">
                                                                 &dollar;{{ extraOption.configValue }}
                                                             </span>
-                                                            <b-form-input
-                                                                no-wheel
-                                                                step="1"
-                                                                class="ml-2 max-width-100"
-                                                                :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.extras, extraOption)"
-                                                                type="number"
-                                                                min="1"
-                                                                :max="extraOption.configMaximumQuantity"
-                                                                v-model="extraOption.quantity"
-                                                                placeholder="Quantity">
-                                                            </b-form-input>
+                                                            <b-input-group>
+                                                                <b-form-input
+                                                                    class="readonly"
+                                                                    readonly
+                                                                    no-wheel
+                                                                    step="1"
+                                                                    class="ml-2 max-width-100"
+                                                                    :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.extras, extraOption)"
+                                                                    type="number"
+                                                                    min="1"
+                                                                    :max="extraOption.configMaximumQuantity"
+                                                                    v-model="extraOption.quantity"
+                                                                    placeholder="Quantity">
+                                                                </b-form-input>
+                                                                <b-input-group-append>
+                                                                    <b-button-group size="sm">
+                                                                        <b-button
+                                                                            :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.extras, extraOption)"
+                                                                            @click="() => { if (extraOption.quantity >= 0 && extraOption.quantity < extraOption.configMaximumQuantity) { extraOption.quantity++ } }"
+                                                                            variant="outline-dark">
+                                                                            <b-icon icon="plus-circle"></b-icon>
+                                                                        </b-button>
+                                                                        <b-button
+                                                                            :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.extras, extraOption)"
+                                                                            @click="() => { if (extraOption.quantity > 1) { extraOption.quantity-- } }"
+                                                                            variant="outline-dark">
+                                                                            <b-icon icon="dash-circle"></b-icon>
+                                                                        </b-button>
+                                                                    </b-button-group>
+                                                                </b-input-group-append>
+                                                            </b-input-group>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -682,7 +756,7 @@
                                                     class="row align-items-center mb-2"
                                                     v-for="(protectionOption, protectionOptionIndex) in options.oneWayTrip.protection"
                                                     :key="`oneway-protection-${protectionOptionIndex}`">
-                                                    <div class="col-6">
+                                                    <div class="col-12 col-lg-6">
                                                         <b-form-checkbox
                                                             name="options-protection"
                                                             v-model="form.bookingRequirements.chooseOptions.oneWayTrip.protection"
@@ -690,22 +764,40 @@
                                                             {{ protectionOption.configName }}
                                                         </b-form-checkbox>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-12 col-lg-6">
                                                         <div class="d-flex align-items-center justify-content-end">
-                                                            <span class="danny--car-option-price">
+                                                            <span class="danny--car-option-price col-4">
                                                                 &dollar;{{ protectionOption.configValue }}
                                                             </span>
-                                                            <b-form-input
-                                                                no-wheel
-                                                                step="1"
-                                                                class="ml-2 max-width-100"
-                                                                :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.protection, protectionOption)"
-                                                                type="number"
-                                                                min="1"
-                                                                :max="protectionOption.configMaximumQuantity"
-                                                                v-model="protectionOption.quantity"
-                                                                placeholder="Quantity">
-                                                            </b-form-input>
+                                                            <b-input-group>
+                                                                <b-form-input
+                                                                    class="readonly"
+                                                                    readonly
+                                                                    no-wheel
+                                                                    step="1"
+                                                                    class="ml-2 max-width-100"
+                                                                    :disabled="!_.some(form.bookingRequirements.chooseOptions.oneWayTrip.protection, protectionOption)"
+                                                                    type="number"
+                                                                    min="1"
+                                                                    :max="protectionOption.configMaximumQuantity"
+                                                                    v-model="protectionOption.quantity"
+                                                                    placeholder="Quantity">
+                                                                </b-form-input>
+                                                                <b-input-group-append>
+                                                                    <b-button-group size="sm">
+                                                                        <b-button
+                                                                            disabled
+                                                                            variant="outline-dark">
+                                                                            <b-icon icon="plus-circle"></b-icon>
+                                                                        </b-button>
+                                                                        <b-button
+                                                                            disabled
+                                                                            variant="outline-dark">
+                                                                            <b-icon icon="dash-circle"></b-icon>
+                                                                        </b-button>
+                                                                    </b-button-group>
+                                                                </b-input-group-append>
+                                                            </b-input-group>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -748,20 +840,40 @@
                                                     </div>
                                                     <div class="col-6">
                                                         <div class="d-flex align-items-center justify-content-end">
-                                                            <span class="danny--car-option-price">
+                                                            <span class="danny--car-option-price col-4">
                                                                 &dollar;{{ roundTripExtraOption.configValue }}
                                                             </span>
-                                                            <b-form-input
-                                                                no-wheel
-                                                                step="1"
-                                                                class="ml-2 max-width-100"
-                                                                :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.extras, roundTripExtraOption)"
-                                                                type="number"
-                                                                min="1"
-                                                                :max="roundTripExtraOption.configMaximumQuantity"
-                                                                v-model="roundTripExtraOption.quantity"
-                                                                placeholder="Quantity">
-                                                            </b-form-input>
+                                                            <b-input-group>
+                                                                <b-form-input
+                                                                    class="readonly"
+                                                                    readonly
+                                                                    no-wheel
+                                                                    step="1"
+                                                                    class="ml-2 max-width-100"
+                                                                    :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.extras, roundTripExtraOption)"
+                                                                    type="number"
+                                                                    min="1"
+                                                                    :max="roundTripExtraOption.configMaximumQuantity"
+                                                                    v-model="roundTripExtraOption.quantity"
+                                                                    placeholder="Quantity">
+                                                                </b-form-input>
+                                                                <b-input-group-append>
+                                                                    <b-button-group size="sm">
+                                                                        <b-button
+                                                                            :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.extras, roundTripExtraOption)"
+                                                                            @click="() => { if (roundTripExtraOption.quantity >= 0 && roundTripExtraOption.quantity < roundTripExtraOption.configMaximumQuantity) { roundTripExtraOption.quantity++ } }"
+                                                                            variant="outline-dark">
+                                                                            <b-icon icon="plus-circle"></b-icon>
+                                                                        </b-button>
+                                                                        <b-button
+                                                                            :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.extras, roundTripExtraOption)"
+                                                                            @click="() => { if (roundTripExtraOption.quantity > 1) { roundTripExtraOption.quantity-- } }"
+                                                                            variant="outline-dark">
+                                                                            <b-icon icon="dash-circle"></b-icon>
+                                                                        </b-button>
+                                                                    </b-button-group>
+                                                                </b-input-group-append>
+                                                            </b-input-group>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -786,20 +898,38 @@
                                                     </div>
                                                     <div class="col-6">
                                                         <div class="d-flex align-items-center justify-content-end">
-                                                            <span class="danny--car-option-price">
+                                                            <span class="danny--car-option-price col-4">
                                                                 &dollar;{{ roundTripProtectionOption.configValue }}
                                                             </span>
-                                                            <b-form-input
-                                                                no-wheel
-                                                                step="1"
-                                                                class="ml-2 max-width-100"
-                                                                :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.protection, roundTripProtectionOption)"
-                                                                type="number"
-                                                                min="1"
-                                                                :max="roundTripProtectionOption.configMaximumQuantity"
-                                                                v-model="roundTripProtectionOption.quantity"
-                                                                placeholder="Quantity">
-                                                            </b-form-input>
+                                                            <b-input-group>
+                                                                <b-form-input
+                                                                    readonly
+                                                                    class="readonly"
+                                                                    no-wheel
+                                                                    step="1"
+                                                                    class="ml-2 max-width-100"
+                                                                    :disabled="!_.some(form.bookingRequirements.chooseOptions.roundTrip.protection, roundTripProtectionOption)"
+                                                                    type="number"
+                                                                    min="1"
+                                                                    :max="roundTripProtectionOption.configMaximumQuantity"
+                                                                    v-model="roundTripProtectionOption.quantity"
+                                                                    placeholder="Quantity">
+                                                                </b-form-input>
+                                                                <b-input-group-append>
+                                                                    <b-button-group size="sm">
+                                                                        <b-button
+                                                                            disabled
+                                                                            variant="outline-dark">
+                                                                            <b-icon icon="plus-circle"></b-icon>
+                                                                        </b-button>
+                                                                        <b-button
+                                                                            disabled
+                                                                            variant="outline-dark">
+                                                                            <b-icon icon="dash-circle"></b-icon>
+                                                                        </b-button>
+                                                                    </b-button-group>
+                                                                </b-input-group-append>
+                                                            </b-input-group>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -943,9 +1073,9 @@
                                                         <h5 class="danny--group-title">Vehicle</h5>
                                                     </div>
                                                     <div class="col-2">
-                                                        <button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 1 }">
+                                                        <b-button class="btn" title="Edit vehicle" @click="() => { formActiveTab = 1 }">
                                                             <b-icon icon="pencil-square"></b-icon>
-                                                        </button>
+                                                        </b-button>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -962,9 +1092,9 @@
                                                         <h5 class="danny--group-title">Pick-up</h5>
                                                     </div>
                                                     <div class="col-2">
-                                                        <button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 0 }">
+                                                        <b-button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 0 }">
                                                             <b-icon icon="pencil-square"></b-icon>
-                                                        </button>
+                                                        </b-button>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -1016,9 +1146,9 @@
                                                                 <h5 class="danny--group-title">Chosen options</h5>
                                                             </div>
                                                             <div class="col-2">
-                                                                <button class="btn" title="Edit chosen options" @click="() => { formActiveTab = 2 }">
+                                                                <b-button class="btn" title="Edit chosen options" @click="() => { formActiveTab = 2 }">
                                                                     <b-icon icon="pencil-square"></b-icon>
-                                                                </button>
+                                                                </b-button>
                                                             </div>
                                                         </div>
                                                     </section>
@@ -1053,6 +1183,30 @@
                                                         </div>
                                                     </section>
                                                 </section>
+
+                                                <!-- Total -->
+                                                <section class="mt-5">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <h5 class="danny--group-title">Route price</h5>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                                
+                                                <section>
+                                                    <div class="row">
+                                                        <div class="col-12 col-lg-8">
+                                                            <span class="danny--review-payment-total-text">
+                                                                Route total
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-12 col-lg-4">
+                                                            <p class="danny--review-payment-total-price m-0">
+                                                                &dollar;{{ form.bookingRequirements.review.prices.oneWayTrip }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </section>
                                             </section>
                                         </div>
 
@@ -1065,9 +1219,9 @@
                                                             <h5 class="danny--group-title">Vehicle</h5>
                                                         </div>
                                                         <div class="col-2">
-                                                            <button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 1 }">
+                                                            <b-button class="btn" title="Edit vehicle" @click="() => { formActiveTab = 1 }">
                                                                 <b-icon icon="pencil-square"></b-icon>
-                                                            </button>
+                                                            </b-button>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -1084,9 +1238,9 @@
                                                             <h5 class="danny--group-title">Return</h5>
                                                         </div>
                                                         <div class="col-2">
-                                                            <button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 0 }">
+                                                            <b-button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 0 }">
                                                                 <b-icon icon="pencil-square"></b-icon>
-                                                            </button>
+                                                            </b-button>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -1138,9 +1292,9 @@
                                                                     <h5 class="danny--group-title">Chosen options</h5>
                                                                 </div>
                                                                 <div class="col-2">
-                                                                    <button class="btn" title="Edit chosen options" @click="() => { formActiveTab = 2 }">
+                                                                    <b-button class="btn" title="Edit chosen options" @click="() => { formActiveTab = 2 }">
                                                                         <b-icon icon="pencil-square"></b-icon>
-                                                                    </button>
+                                                                    </b-button>
                                                                 </div>
                                                             </div>
                                                         </section>
@@ -1174,6 +1328,30 @@
                                                                 </div>
                                                             </div>
                                                         </section>
+                                                    </section>
+
+                                                    <!-- Total -->
+                                                    <section class="mt-5">
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <h5 class="danny--group-title">Route price</h5>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                    
+                                                    <section>
+                                                        <div class="row">
+                                                            <div class="col-12 col-lg-8">
+                                                                <span class="danny--review-payment-total-text">
+                                                                    Route total
+                                                                </span>
+                                                            </div>
+                                                            <div class="col-12 col-lg-4">
+                                                                <p class="danny--review-payment-total-price m-0">
+                                                                    &dollar;{{ form.bookingRequirements.review.prices.roundTrip }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
                                                     </section>
                                                 </section>
                                             </div>

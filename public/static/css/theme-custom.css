@@ -36,6 +36,10 @@ input[type="number"] {
     /* For Firefox */
 }
 
+.form-control.readonly[readonly] {
+    background-color: initial;
+}
+
 .get-support {
     padding-left: 0;
     margin-left: 0;

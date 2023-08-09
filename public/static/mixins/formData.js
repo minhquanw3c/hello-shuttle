@@ -368,7 +368,8 @@ const formDataRoundTrip =
             },
             "originSearch": "Disneyland Park, Anaheim, CA, USA",
             "destinationSearch": "11371 Lampson Avenue, Garden Grove, CA, USA",
-            "passengers": "3"
+            "passengers": "3",
+            "luggages": "3",
         },
         "roundTrip": {
             "origin": {
@@ -477,7 +478,8 @@ const formDataRoundTrip =
             },
             "originSearch": "San Francisco International Airport (SFO) (SFO), San Francisco, CA, USA",
             "destinationSearch": "11371 Lampson Avenue, Garden Grove, CA, USA",
-            "passengers": "5"
+            "passengers": "5",
+            "luggages": "5",
         },
         "tripType": "round-trip"
     },
@@ -523,7 +525,7 @@ const formDataRoundTrip =
             "totalNotDiscount": 1083.28,
             "discountAmount": 0,
             "tipDriverAmountOther": null,
-            "tipDriverAmount": 0
+            "tipDriverAmount": null
         },
         "agreeTermsConditions": true,
         "appliedCoupons": [],
