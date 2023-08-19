@@ -7,6 +7,14 @@
 }
 
 /* Utils */
+.list-style-upper-alpha {
+    list-style: upper-alpha !important;
+}
+
+.list-style-lower-alpha {
+    list-style: lower-alpha !important;
+}
+
 .max-width-100 {
     max-width: 100px !important;
 }

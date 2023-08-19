@@ -728,4 +728,9 @@ class Home extends BaseController
 
         return $this->response->setJSON($response);
     }
+
+    public function getPrivacyAndPolicy()
+    {
+        return view('frontend/privacy_policy');
+    }
 }

@@ -24,6 +24,8 @@
     <link rel="stylesheet" href="<?= base_url('static/css/vendors/bootstrap-vue-icons.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('static/css/theme-custom.css?v=' . now()) ?>">
     <link rel="stylesheet" href="<?= base_url('static/css/theme-custom-responsive.css?v=' . now()) ?>">
+
+    <?= $this->renderSection("page-custom-style") ?>
 </head>
 
 <body>
@@ -175,7 +177,7 @@
                             <ul>
                                 <li><a href="javascript:void(0)">Terms & Conditions</a></li>
                                 <li><a href="javascript:void(0)">Claim</a></li>
-                                <li><a href="javascript:void(0)">Privacy & Policy</a></li>
+                                <li><a href="<?= base_url('policy') ?>">Privacy & Policy</a></li>
                             </ul>
                         </div>
                     </div>
