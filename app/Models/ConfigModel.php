@@ -31,6 +31,7 @@ class ConfigModel extends Model
             'configurations.config_value AS configValue',
             'configurations.config_active AS configActive',
             'configurations.config_editable AS configEditable',
+            'configurations.config_countable AS configCountable',
             'configurations.config_has_tooltip AS configHasTooltip',
             'configurations.config_tooltip_content AS configTooltipContent',
             'configurations.config_maximum_quantity AS configMaximumQuantity',

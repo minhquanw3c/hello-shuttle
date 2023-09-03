@@ -1,5 +1,9 @@
 <?= $this->extend("templates/base_layout") ?>
 
+<?= $this->section("page-custom-style") ?>
+    <link rel="stylesheet" href="<?= base_url('static/css/vendors/vue-multiselect.min.css') ?>">
+<?= $this->endSection() ?>
+
 <?= $this->section("main-content") ?>
     <!-- SLIDER AREA START (slider-4) -->
     <div class="ltn__slider-area ltn__slider-4 ">
@@ -83,6 +87,12 @@
                                     <section>
                                         <div class="row">
                                             <div class="col-12">
+                                                <h5 class="danny--group-title">picking-up</h5>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-12">
                                                 <iframe
                                                     width="100%"
                                                     height="300"
@@ -92,12 +102,6 @@
                                                     :src="pickingUpMapPreview"
                                                     allowfullscreen>
                                                 </iframe>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <h5 class="danny--group-title">picking-up</h5>
                                             </div>
                                         </div>
 
@@ -119,29 +123,14 @@
                                                                 <b-icon icon="geo-alt"></b-icon>
                                                             </div>
                                                         </b-input-group-prepend>
-                                                        <b-form-input
-                                                            autocomplete="off"
-                                                            id="one-way-picking-up"
-                                                            placeholder="ZIP, City, Airport or Address"
-                                                            type="text"
-                                                            v-model="form.bookingRequirements.reservation.oneWayTrip.originSearch"
-                                                            @input="fetchSearchResultFromGoogle($event, 'oneWayTrip', 'origin')">
-                                                        </b-form-input>
-                                                        <ul class="dropdown-menu" :class="dropdowns.oneWayTrip.origin.show === true ? 'show' : ''">
-                                                            <li
-                                                                @click="updateSearchResult(location, 'oneWayTrip', 'origin')"
-                                                                v-for="location in dropdowns.oneWayTrip.origins"
-                                                                class="dropdown-item">
-                                                                <div class="danny--form-group-dropdown-item">
-                                                                    <div>
-                                                                        <div class="btn px-2">
-                                                                            <b-icon icon="geo-alt"></b-icon>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div>{{ location.description }}</div>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
+                                                        <multiselect
+                                                            v-model="form.bookingRequirements.reservation.oneWayTrip.origin"
+                                                            track-by="place_id"
+                                                            label="description"
+                                                            :options="dropdowns.oneWayTrip.origins"
+                                                            @search-change="fetchSearchResultFromGoogle($event, 'oneWayTrip', 'origin')"
+                                                            >
+                                                        </multiselect>
                                                     </b-input-group>
                                                 </b-form-group>
                                             </div>
@@ -163,29 +152,14 @@
                                                                 <b-icon icon="geo-alt"></b-icon>
                                                             </div>
                                                         </b-input-group-prepend>
-                                                        <b-form-input
-                                                            autocomplete="off"
-                                                            id="one-way-destination"
-                                                            placeholder="ZIP, City, Airport or Address"
-                                                            type="text"
-                                                            v-model="form.bookingRequirements.reservation.oneWayTrip.destinationSearch"
-                                                            @input="fetchSearchResultFromGoogle($event, 'oneWayTrip', 'destination')">
-                                                        </b-form-input>
-                                                        <ul class="dropdown-menu" :class="dropdowns.oneWayTrip.destination.show === true ? 'show' : ''">
-                                                            <li
-                                                                @click="updateSearchResult(location, 'oneWayTrip', 'destination')"
-                                                                v-for="location in dropdowns.oneWayTrip.destinations"
-                                                                class="dropdown-item">
-                                                                <div class="danny--form-group-dropdown-item">
-                                                                    <div>
-                                                                        <div class="btn px-2">
-                                                                            <b-icon icon="geo-alt"></b-icon>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div>{{ location.description }}</div>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
+                                                        <multiselect
+                                                            v-model="form.bookingRequirements.reservation.oneWayTrip.destination"
+                                                            track-by="place_id"
+                                                            label="description"
+                                                            :options="dropdowns.oneWayTrip.destinations"
+                                                            @search-change="fetchSearchResultFromGoogle($event, 'oneWayTrip', 'destination')"
+                                                            >
+                                                        </multiselect>
                                                     </b-input-group>
                                                 </b-form-group>
                                             </div>
@@ -327,11 +301,73 @@
                                                 </b-form-group>
                                             </div>
                                         </div>
+
+                                        <div class="row">
+                                            <div class="col-12 col-lg-6">
+                                                <b-form-group
+                                                    class="danny--form-group"
+                                                    label="Has rest stop?"
+                                                    label-for="one-way-rest-stop-flag"
+                                                    label-cols="12"
+                                                    label-cols-sm="3"
+                                                    content-cols="12"
+                                                    content-cols-sm="9"
+                                                    :invalid-feedback="errorMessages.required"
+                                                    :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.hasRestStop)">
+                                                    <b-form-checkbox
+                                                        name="one-way-rest-stop-flag"
+                                                        size="lg"
+                                                        value="1"
+                                                        unchecked-value="0"
+                                                        id="one-way-rest-stop-flag"
+                                                        v-model="$v.form.bookingRequirements.reservation.oneWayTrip.hasRestStop.$model">
+                                                    </b-form-timepicker>
+                                                </b-form-group>
+                                            </div>
+
+                                            <template v-if="$v.form.bookingRequirements.reservation.oneWayTrip.hasRestStop.$model === '1'">
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        class="danny--form-group"
+                                                        label="Rest stop"
+                                                        label-for="one-way-rest-stop"
+                                                        label-cols="12"
+                                                        label-cols-sm="3"
+                                                        content-cols="12"
+                                                        content-cols-sm="9"
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.restStop)">
+                                                        <b-input-group>
+                                                            <b-input-group-prepend>
+                                                                <div class="btn">
+                                                                    <b-icon icon="geo-alt"></b-icon>
+                                                                </div>
+                                                            </b-input-group-prepend>
+                                                            <multiselect
+                                                                id="one-way-rest-stop"
+                                                                v-model="$v.form.bookingRequirements.reservation.oneWayTrip.restStop.$model"
+                                                                track-by="place_id"
+                                                                label="description"
+                                                                :options="dropdowns.oneWayTrip.restStops"
+                                                                @search-change="fetchSearchResultFromGoogle($event, 'oneWayTrip', 'restStop')"
+                                                                >
+                                                            </multiselect>
+                                                        </b-input-group>
+                                                    </b-form-group>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </section>
 
                                     <template v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
                                         <!-- Second Origin -->
                                         <section class="mt-5">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h5 class="danny--group-title">return</h5>
+                                                </div>
+                                            </div>
+
                                             <div class="row">
                                                 <div class="col-12">
                                                     <iframe
@@ -343,12 +379,6 @@
                                                         :src="returnMapPreview"
                                                         allowfullscreen>
                                                     </iframe>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <h5 class="danny--group-title">return</h5>
                                                 </div>
                                             </div>
 
@@ -370,29 +400,14 @@
                                                                     <b-icon icon="geo-alt"></b-icon>
                                                                 </div>
                                                             </b-input-group-prepend>
-                                                            <b-form-input
-                                                                autocomplete="off"
-                                                                id="round-trip-picking-up"
-                                                                placeholder="ZIP, City, Airport or Address"
-                                                                type="text"
-                                                                v-model="form.bookingRequirements.reservation.roundTrip.originSearch"
-                                                                @input="fetchSearchResultFromGoogle($event, 'roundTrip', 'origin')">
-                                                            </b-form-input>
-                                                            <ul class="dropdown-menu" :class="dropdowns.roundTrip.origin.show === true ? 'show' : ''">
-                                                                <li
-                                                                    @click="updateSearchResult(location, 'roundTrip', 'origin')"
-                                                                    v-for="location in dropdowns.roundTrip.origins"
-                                                                    class="dropdown-item">
-                                                                    <div class="danny--form-group-dropdown-item">
-                                                                        <div>
-                                                                            <div class="btn px-2">
-                                                                                <b-icon icon="geo-alt"></b-icon>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div>{{ location.description }}</div>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
+                                                            <multiselect
+                                                                v-model="form.bookingRequirements.reservation.roundTrip.origin"
+                                                                track-by="place_id"
+                                                                label="description"
+                                                                :options="dropdowns.roundTrip.origins"
+                                                                @search-change="fetchSearchResultFromGoogle($event, 'roundTrip', 'origin')"
+                                                            >
+                                                            </multiselect>
                                                         </b-input-group>
                                                     </b-form-group>
                                                 </div>
@@ -414,29 +429,14 @@
                                                                     <b-icon icon="geo-alt"></b-icon>
                                                                 </div>
                                                             </b-input-group-prepend>
-                                                            <b-form-input
-                                                                autocomplete="off"
-                                                                id="round-trip-destination"
-                                                                placeholder="ZIP, City, Airport or Address"
-                                                                type="text"
-                                                                v-model="form.bookingRequirements.reservation.roundTrip.destinationSearch"
-                                                                @input="fetchSearchResultFromGoogle($event, 'roundTrip', 'destination')">
-                                                            </b-form-input>
-                                                            <ul class="dropdown-menu" :class="dropdowns.roundTrip.destination.show === true ? 'show' : ''">
-                                                                <li
-                                                                    @click="updateSearchResult(location, 'roundTrip', 'destination')"
-                                                                    v-for="location in dropdowns.roundTrip.destinations"
-                                                                    class="dropdown-item">
-                                                                    <div class="danny--form-group-dropdown-item">
-                                                                        <div>
-                                                                            <div class="btn px-2">
-                                                                                <b-icon icon="geo-alt"></b-icon>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div>{{ location.description }}</div>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
+                                                            <multiselect
+                                                                v-model="form.bookingRequirements.reservation.roundTrip.destination"
+                                                                track-by="place_id"
+                                                                label="description"
+                                                                :options="dropdowns.roundTrip.destinations"
+                                                                @search-change="fetchSearchResultFromGoogle($event, 'roundTrip', 'destination')"
+                                                            >
+                                                            </multiselect>
                                                         </b-input-group>
                                                     </b-form-group>
                                                 </div>
@@ -526,53 +526,109 @@
                                                 </div>
 
                                                 <div class="col-12 col-lg-6">
-                                                <b-form-group
-                                                    class="danny--form-group"
-                                                    label="Luggages"
-                                                    label-for="round-trip-luggages"
-                                                    label-cols="12"
-                                                    label-cols-sm="3"
-                                                    content-cols="12"
-                                                    content-cols-sm="9"
-                                                    :invalid-feedback="'Minimum luggages is 1'"
-                                                    :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.luggages)">
-                                                    <b-input-group>
-                                                        <b-input-group-prepend>
-                                                            <div class="btn">
-                                                                <b-icon icon="briefcase"></b-icon>
-                                                            </div>
-                                                        </b-input-group-prepend>
-                                                        <b-form-input
-                                                            no-wheel
-                                                            id="round-trip-luggages"
-                                                            min="0"
-                                                            type="number"
-                                                            v-model="$v.form.bookingRequirements.reservation.roundTrip.luggages.$model">
-                                                        </b-form-input>
-                                                        <b-input-group-append>
-                                                            <div
-                                                                class="btn"
-                                                                v-b-tooltip.hover
-                                                                title="Each person has 1 free luggage and 1 free small bag. Extra luggage or bag will be charged $10 each."
-                                                                >
-                                                                <b-icon icon="question-circle"></b-icon>
-                                                            </div>
-                                                            <b-button-group size="sm">
-                                                                <b-button
-                                                                    @click="increaseLuggages('roundTrip')"
-                                                                    variant="outline-dark">
-                                                                    <b-icon icon="plus-circle"></b-icon>
-                                                                </b-button>
-                                                                <b-button
-                                                                    @click="decreaseLuggages('roundTrip')"
-                                                                    variant="outline-dark">
-                                                                    <b-icon icon="dash-circle"></b-icon>
-                                                                </b-button>
-                                                            </b-button-group>
-                                                        </b-input-group-append>
-                                                    </b-input-group>
-                                                </b-form-group>
+                                                    <b-form-group
+                                                        class="danny--form-group"
+                                                        label="Luggages"
+                                                        label-for="round-trip-luggages"
+                                                        label-cols="12"
+                                                        label-cols-sm="3"
+                                                        content-cols="12"
+                                                        content-cols-sm="9"
+                                                        :invalid-feedback="'Minimum luggages is 1'"
+                                                        :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.luggages)">
+                                                        <b-input-group>
+                                                            <b-input-group-prepend>
+                                                                <div class="btn">
+                                                                    <b-icon icon="briefcase"></b-icon>
+                                                                </div>
+                                                            </b-input-group-prepend>
+                                                            <b-form-input
+                                                                no-wheel
+                                                                id="round-trip-luggages"
+                                                                min="0"
+                                                                type="number"
+                                                                v-model="$v.form.bookingRequirements.reservation.roundTrip.luggages.$model">
+                                                            </b-form-input>
+                                                            <b-input-group-append>
+                                                                <div
+                                                                    class="btn"
+                                                                    v-b-tooltip.hover
+                                                                    title="Each person has 1 free luggage and 1 free small bag. Extra luggage or bag will be charged $10 each."
+                                                                    >
+                                                                    <b-icon icon="question-circle"></b-icon>
+                                                                </div>
+                                                                <b-button-group size="sm">
+                                                                    <b-button
+                                                                        @click="increaseLuggages('roundTrip')"
+                                                                        variant="outline-dark">
+                                                                        <b-icon icon="plus-circle"></b-icon>
+                                                                    </b-button>
+                                                                    <b-button
+                                                                        @click="decreaseLuggages('roundTrip')"
+                                                                        variant="outline-dark">
+                                                                        <b-icon icon="dash-circle"></b-icon>
+                                                                    </b-button>
+                                                                </b-button-group>
+                                                            </b-input-group-append>
+                                                        </b-input-group>
+                                                    </b-form-group>
+                                                </div>
                                             </div>
+
+                                            <div class="row">
+                                                <div class="col-12 col-lg-6">
+                                                    <b-form-group
+                                                        class="danny--form-group"
+                                                        label="Has rest stop?"
+                                                        label-for="round-trip-rest-stop-flag"
+                                                        label-cols="12"
+                                                        label-cols-sm="3"
+                                                        content-cols="12"
+                                                        content-cols-sm="9"
+                                                        :invalid-feedback="errorMessages.required"
+                                                        :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.hasRestStop)">
+                                                        <b-form-checkbox
+                                                            name="round-trip-rest-stop-flag"
+                                                            size="lg"
+                                                            value="1"
+                                                            unchecked-value="0"
+                                                            id="round-trip-rest-stop-flag"
+                                                            v-model="$v.form.bookingRequirements.reservation.roundTrip.hasRestStop.$model">
+                                                        </b-form-timepicker>
+                                                    </b-form-group>
+                                                </div>
+
+                                                <template v-if="$v.form.bookingRequirements.reservation.roundTrip.hasRestStop.$model === '1'">
+                                                    <div class="col-12 col-lg-6">
+                                                        <b-form-group
+                                                            class="danny--form-group"
+                                                            label="Rest stop"
+                                                            label-for="round-trip-rest-stop"
+                                                            label-cols="12"
+                                                            label-cols-sm="3"
+                                                            content-cols="12"
+                                                            content-cols-sm="9"
+                                                            :invalid-feedback="errorMessages.required"
+                                                            :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.restStop)">
+                                                            <b-input-group>
+                                                                <b-input-group-prepend>
+                                                                    <div class="btn">
+                                                                        <b-icon icon="geo-alt"></b-icon>
+                                                                    </div>
+                                                                </b-input-group-prepend>
+                                                                <multiselect
+                                                                    id="one-way-rest-stop"
+                                                                    v-model="$v.form.bookingRequirements.reservation.roundTrip.restStop.$model"
+                                                                    track-by="place_id"
+                                                                    label="description"
+                                                                    :options="dropdowns.roundTrip.restStops"
+                                                                    @search-change="fetchSearchResultFromGoogle($event, 'roundTrip', 'restStop')"
+                                                                    >
+                                                                </multiselect>
+                                                            </b-input-group>
+                                                        </b-form-group>
+                                                    </div>
+                                                </template>
                                             </div>
                                         </section>
                                     </template>
@@ -707,11 +763,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-12 col-lg-6">
-                                                        <div class="d-flex align-items-center justify-content-end">
+                                                        <div class="d-flex align-items-center">
                                                             <span class="danny--car-option-price col-4">
                                                                 &dollar;{{ extraOption.configValue }}
                                                             </span>
-                                                            <b-input-group>
+                                                            <b-input-group v-if="extraOption.configCountable === '1'">
                                                                 <b-form-input
                                                                     class="readonly"
                                                                     readonly
@@ -765,11 +821,11 @@
                                                         </b-form-checkbox>
                                                     </div>
                                                     <div class="col-12 col-lg-6">
-                                                        <div class="d-flex align-items-center justify-content-end">
+                                                        <div class="d-flex align-items-center">
                                                             <span class="danny--car-option-price col-4">
                                                                 &dollar;{{ protectionOption.configValue }}
                                                             </span>
-                                                            <b-input-group>
+                                                            <b-input-group v-if="protectionOption.configCountable === '1'">
                                                                 <b-form-input
                                                                     class="readonly"
                                                                     readonly
@@ -839,11 +895,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-6">
-                                                        <div class="d-flex align-items-center justify-content-end">
+                                                        <div class="d-flex align-items-center">
                                                             <span class="danny--car-option-price col-4">
                                                                 &dollar;{{ roundTripExtraOption.configValue }}
                                                             </span>
-                                                            <b-input-group>
+                                                            <b-input-group v-if="roundTripExtraOption.configCountable === '1'">
                                                                 <b-form-input
                                                                     class="readonly"
                                                                     readonly
@@ -897,11 +953,11 @@
                                                         </b-form-checkbox>
                                                     </div>
                                                     <div class="col-6">
-                                                        <div class="d-flex align-items-center justify-content-end">
+                                                        <div class="d-flex align-items-center">
                                                             <span class="danny--car-option-price col-4">
                                                                 &dollar;{{ roundTripProtectionOption.configValue }}
                                                             </span>
-                                                            <b-input-group>
+                                                            <b-input-group v-if="roundTripProtectionOption.configCountable === '1'">
                                                                 <b-form-input
                                                                     readonly
                                                                     class="readonly"
@@ -1107,6 +1163,16 @@
                                                         }}
                                                     </div>
                                                 </div>
+                                                <div class="row" v-if="form.bookingRequirements.reservation.oneWayTrip.hasRestStop">
+                                                    <div class="col-12 col-md-3">
+                                                        <span class="danny--font-weight-bold">Intermediary:</span>
+                                                    </div>
+                                                    <div class="col-12 col-md-9">
+                                                        {{
+                                                            oneWayTripRestStop
+                                                        }}
+                                                    </div>
+                                                </div>
                                                 <div class="row">
                                                     <div class="col-12 col-md-3">
                                                         <span class="danny--font-weight-bold">To:</span>
@@ -1250,6 +1316,16 @@
                                                         <div class="col-12 col-md-9">
                                                             {{
                                                                 roundTripOrigin
+                                                            }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" v-if="form.bookingRequirements.reservation.roundTrip.hasRestStop">
+                                                        <div class="col-12 col-md-3">
+                                                            <span class="danny--font-weight-bold">Intermediary:</span>
+                                                        </div>
+                                                        <div class="col-12 col-md-9">
+                                                            {{
+                                                                roundTripRestStop
                                                             }}
                                                         </div>
                                                     </div>
@@ -1860,6 +1936,7 @@
         const baseURL = "<?= base_url('/') ?>";
         const bookingId = "<?= $bookingId ?>";
         const env = "<?= $enviroment ?>";
+        const apiKey = "<?= $enviroment === 'production' ? 'AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s' : 'AIzaSyB6QD0bdHEY5R9qoQ58VuFzdwm0YDLeSzA' ?>";
     </script>
 
     <script src="<?= base_url('static/js/vendors/jquery.min.js') ?>" type="text/javascript"></script>
@@ -1874,11 +1951,19 @@
     <script src="<?= base_url('static/js/vendors/bootstrap-vue-icons.min.js') ?>" type="text/javascript"></script>
     <script src="<?= base_url('static/js/vendors/validators.min.js') ?>" type="text/javascript"></script>
     <script src="<?= base_url('static/js/vendors/vuelidate.min.js') ?>" type="text/javascript"></script>
+    <script src="<?= base_url('static/js/vendors/vue-multiselect.min.js') ?>" type="text/javascript"></script>
 
-    <script
-        defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s&libraries=places&callback=initMap">
-    </script>
+    <?php if ($enviroment === 'production'): ?>
+        <script
+            defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s&libraries=places&callback=initMap">
+        </script>
+    <?php else: ?>
+        <script
+            defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6QD0bdHEY5R9qoQ58VuFzdwm0YDLeSzA&libraries=places&callback=initMap">
+        </script>
+    <?php endif ?>
 
     <script>
 

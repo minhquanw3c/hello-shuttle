@@ -241,31 +241,164 @@ const formDataRoundTrip =
 {
     "selectCar": {
         "oneWayTrip": {
-            "vehicle": {
-                "carId": "suv",
-                "carName": "SUV",
-                "availableCars": "1",
-                "carStartPrice": "85.00",
-                "carImage": "vehicle-suv.png"
-            }
+            "vehicle": {}
         },
         "roundTrip": {
-            "vehicle": {
-                "carId": "tt-psgr",
-                "carName": "Transit passenger",
-                "availableCars": "1",
-                "carStartPrice": "65.00",
-                "carImage": "vehicle-passenger.png"
-            }
+            "vehicle": {}
         }
     },
     "reservation": {
         "oneWayTrip": {
             "origin": {
+                "description": "Lampson Avenue, Garden Grove, CA, USA",
+                "matched_substrings": [
+                    {
+                        "length": 7,
+                        "offset": 0
+                    }
+                ],
+                "place_id": "EiVMYW1wc29uIEF2ZW51ZSwgR2FyZGVuIEdyb3ZlLCBDQSwgVVNBIi4qLAoUChIJ0UHmFZIo3YARY6TqyBMHHg0SFAoSCY3NHZ0_KN2AETqLD70ilpAD",
+                "reference": "EiVMYW1wc29uIEF2ZW51ZSwgR2FyZGVuIEdyb3ZlLCBDQSwgVVNBIi4qLAoUChIJ0UHmFZIo3YARY6TqyBMHHg0SFAoSCY3NHZ0_KN2AETqLD70ilpAD",
+                "structured_formatting": {
+                    "main_text": "Lampson Avenue",
+                    "main_text_matched_substrings": [
+                        {
+                            "length": 7,
+                            "offset": 0
+                        }
+                    ],
+                    "secondary_text": "Garden Grove, CA, USA"
+                },
+                "terms": [
+                    {
+                        "offset": 0,
+                        "value": "Lampson Avenue"
+                    },
+                    {
+                        "offset": 16,
+                        "value": "Garden Grove"
+                    },
+                    {
+                        "offset": 30,
+                        "value": "CA"
+                    },
+                    {
+                        "offset": 34,
+                        "value": "USA"
+                    }
+                ],
+                "types": [
+                    "route",
+                    "geocode"
+                ]
+            },
+            "destination": {
+                "description": "Lampson Elementary School, Lampson Avenue, Garden Grove, CA, USA",
+                "matched_substrings": [
+                    {
+                        "length": 7,
+                        "offset": 0
+                    }
+                ],
+                "place_id": "ChIJcZ7_p4rX3IAR9b7UYpaPaB0",
+                "reference": "ChIJcZ7_p4rX3IAR9b7UYpaPaB0",
+                "structured_formatting": {
+                    "main_text": "Lampson Elementary School",
+                    "main_text_matched_substrings": [
+                        {
+                            "length": 7,
+                            "offset": 0
+                        }
+                    ],
+                    "secondary_text": "Lampson Avenue, Garden Grove, CA, USA"
+                },
+                "terms": [
+                    {
+                        "offset": 0,
+                        "value": "Lampson Elementary School"
+                    },
+                    {
+                        "offset": 27,
+                        "value": "Lampson Avenue"
+                    },
+                    {
+                        "offset": 43,
+                        "value": "Garden Grove"
+                    },
+                    {
+                        "offset": 57,
+                        "value": "CA"
+                    },
+                    {
+                        "offset": 61,
+                        "value": "USA"
+                    }
+                ],
+                "types": [
+                    "primary_school",
+                    "primary_school",
+                    "school",
+                    "point_of_interest",
+                    "establishment"
+                ]
+            },
+            "miles": 0,
+            "pickup": {
+                "date": "2023-09-03",
+                "time": "00:00:00"
+            },
+            "originSearch": null,
+            "destinationSearch": null,
+            "passengers": 2,
+            "luggages": 2,
+            "hasRestStop": "1",
+            "restStop": {
+                "description": "Garden Grove, CA, USA",
+                "matched_substrings": [
+                    {
+                        "length": 6,
+                        "offset": 0
+                    }
+                ],
+                "place_id": "ChIJjc0dnT8o3YAROosPvSKWkAM",
+                "reference": "ChIJjc0dnT8o3YAROosPvSKWkAM",
+                "structured_formatting": {
+                    "main_text": "Garden Grove",
+                    "main_text_matched_substrings": [
+                        {
+                            "length": 6,
+                            "offset": 0
+                        }
+                    ],
+                    "secondary_text": "CA, USA"
+                },
+                "terms": [
+                    {
+                        "offset": 0,
+                        "value": "Garden Grove"
+                    },
+                    {
+                        "offset": 14,
+                        "value": "CA"
+                    },
+                    {
+                        "offset": 18,
+                        "value": "USA"
+                    }
+                ],
+                "types": [
+                    "locality",
+                    "political",
+                    "geocode"
+                ]
+            }
+        },
+        "roundTrip": {
+            "origin": {
                 "description": "Disneyland Park, Anaheim, CA, USA",
                 "matched_substrings": [
                     {
-                        "length": 10,
+                        "length": 6,
                         "offset": 0
                     }
                 ],
@@ -275,7 +408,7 @@ const formDataRoundTrip =
                     "main_text": "Disneyland Park",
                     "main_text_matched_substrings": [
                         {
-                            "length": 10,
+                            "length": 6,
                             "offset": 0
                         }
                     ],
@@ -314,7 +447,7 @@ const formDataRoundTrip =
                         "offset": 0
                     },
                     {
-                        "length": 5,
+                        "length": 3,
                         "offset": 6
                     }
                 ],
@@ -328,7 +461,7 @@ const formDataRoundTrip =
                             "offset": 0
                         },
                         {
-                            "length": 5,
+                            "length": 3,
                             "offset": 6
                         }
                     ],
@@ -363,123 +496,63 @@ const formDataRoundTrip =
             },
             "miles": 0,
             "pickup": {
-                "date": "2023-07-25",
-                "time": "15:00:00"
+                "date": "2023-09-03",
+                "time": "00:00:00"
             },
-            "originSearch": "Disneyland Park, Anaheim, CA, USA",
-            "destinationSearch": "11371 Lampson Avenue, Garden Grove, CA, USA",
-            "passengers": "3",
-            "luggages": "3",
-        },
-        "roundTrip": {
-            "origin": {
-                "description": "San Francisco International Airport (SFO) (SFO), San Francisco, CA, USA",
+            "originSearch": null,
+            "destinationSearch": null,
+            "passengers": 2,
+            "luggages": 2,
+            "hasRestStop": "1",
+            "restStop": {
+                "description": "Honda Center, East Katella Avenue, Anaheim, CA, USA",
                 "matched_substrings": [
                     {
-                        "length": 11,
+                        "length": 5,
                         "offset": 0
                     }
                 ],
-                "place_id": "ChIJVVVVVYx3j4ARP-3NGldc8qQ",
-                "reference": "ChIJVVVVVYx3j4ARP-3NGldc8qQ",
+                "place_id": "ChIJXyczhHXX3IARFVUqyhMqiqg",
+                "reference": "ChIJXyczhHXX3IARFVUqyhMqiqg",
                 "structured_formatting": {
-                    "main_text": "San Francisco International Airport (SFO) (SFO)",
+                    "main_text": "Honda Center",
                     "main_text_matched_substrings": [
                         {
-                            "length": 11,
+                            "length": 5,
                             "offset": 0
                         }
                     ],
-                    "secondary_text": "San Francisco, CA, USA"
+                    "secondary_text": "East Katella Avenue, Anaheim, CA, USA"
                 },
                 "terms": [
                     {
                         "offset": 0,
-                        "value": "San Francisco International Airport (SFO) (SFO)"
+                        "value": "Honda Center"
                     },
                     {
-                        "offset": 49,
-                        "value": "San Francisco"
+                        "offset": 14,
+                        "value": "East Katella Avenue"
                     },
                     {
-                        "offset": 64,
+                        "offset": 35,
+                        "value": "Anaheim"
+                    },
+                    {
+                        "offset": 44,
                         "value": "CA"
                     },
                     {
-                        "offset": 68,
+                        "offset": 48,
                         "value": "USA"
                     }
                 ],
                 "types": [
-                    "airport",
+                    "tourist_attraction",
+                    "stadium",
                     "point_of_interest",
                     "establishment"
                 ]
-            },
-            "destination": {
-                "description": "11371 Lampson Avenue, Garden Grove, CA, USA",
-                "matched_substrings": [
-                    {
-                        "length": 5,
-                        "offset": 0
-                    },
-                    {
-                        "length": 7,
-                        "offset": 6
-                    }
-                ],
-                "place_id": "ChIJYdCLrwUo3YARaD4yJKauRu0",
-                "reference": "ChIJYdCLrwUo3YARaD4yJKauRu0",
-                "structured_formatting": {
-                    "main_text": "11371 Lampson Avenue",
-                    "main_text_matched_substrings": [
-                        {
-                            "length": 5,
-                            "offset": 0
-                        },
-                        {
-                            "length": 7,
-                            "offset": 6
-                        }
-                    ],
-                    "secondary_text": "Garden Grove, CA, USA"
-                },
-                "terms": [
-                    {
-                        "offset": 0,
-                        "value": "11371"
-                    },
-                    {
-                        "offset": 6,
-                        "value": "Lampson Avenue"
-                    },
-                    {
-                        "offset": 22,
-                        "value": "Garden Grove"
-                    },
-                    {
-                        "offset": 36,
-                        "value": "CA"
-                    },
-                    {
-                        "offset": 40,
-                        "value": "USA"
-                    }
-                ],
-                "types": [
-                    "premise",
-                    "geocode"
-                ]
-            },
-            "miles": 0,
-            "pickup": {
-                "date": "2023-07-26",
-                "time": "00:30:00"
-            },
-            "originSearch": "San Francisco International Airport (SFO) (SFO), San Francisco, CA, USA",
-            "destinationSearch": "11371 Lampson Avenue, Garden Grove, CA, USA",
-            "passengers": "5",
-            "luggages": "5",
+            }
         },
         "tripType": "round-trip"
     },
@@ -495,40 +568,37 @@ const formDataRoundTrip =
     },
     "review": {
         "customer": {
-            "firstName": "le",
-            "lastName": "minh quan",
+            "firstName": null,
+            "lastName": null,
             "dob": null,
             "contact": {
-                "mobileNumber": "0941610700",
-                "email": "minhquanw3c@gmail.com"
+                "mobileNumber": null,
+                "email": null
             }
         },
         "airline": {
-            "brand": {
-                "text": "California Pacific Airlines",
-                "value": 16
-            },
-            "flightNumber": "119755ACF"
+            "brand": null,
+            "flightNumber": null
         },
         "routes": {
             "oneWayTrip": {
                 "miles": "4"
             },
             "roundTrip": {
-                "miles": "403"
+                "miles": "4"
             }
         },
         "prices": {
-            "oneWayTrip": "223.30",
-            "roundTrip": "859.98",
-            "total": "1245.77",
-            "totalNotDiscount": 1083.28,
+            "oneWayTrip": "73.00",
+            "roundTrip": "58.00",
+            "total": "131.00",
+            "totalNotDiscount": "131.00",
             "discountAmount": 0,
             "tipDriverAmountOther": null,
             "tipDriverAmount": null
         },
-        "agreeTermsConditions": true,
+        "agreeTermsConditions": null,
         "appliedCoupons": [],
-        "additionalNotes": "test lorem ipsum"
+        "additionalNotes": null
     }
 };
