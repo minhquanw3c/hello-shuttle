@@ -321,7 +321,7 @@
                                                         unchecked-value="0"
                                                         id="one-way-rest-stop-flag"
                                                         v-model="$v.form.bookingRequirements.reservation.oneWayTrip.hasRestStop.$model">
-                                                    </b-form-timepicker>
+                                                    </b-form-checkbox>
                                                 </b-form-group>
                                             </div>
 
@@ -594,7 +594,7 @@
                                                             unchecked-value="0"
                                                             id="round-trip-rest-stop-flag"
                                                             v-model="$v.form.bookingRequirements.reservation.roundTrip.hasRestStop.$model">
-                                                        </b-form-timepicker>
+                                                        </b-form-checkbox>
                                                     </b-form-group>
                                                 </div>
 
@@ -668,7 +668,7 @@
                                         </p>
                                     </div>
                                     <div class="col-12 col-sm-6 col-md-3 col-lg-3">
-                                        <p class="danny--car-price">&dollar;{{ vehicle.carStartPrice }}</p>
+                                        <p class="danny--car-price">&dollar;{{ vehicle.openDoorPrice }}</p>
                                     </div>
                                     <div class="col-12 col-lg-3 text-right">
                                         <b-form-radio
@@ -701,7 +701,7 @@
                                         </p>
                                     </div>
                                     <div class="col-12 col-sm-6 col-md-3 col-lg-3">
-                                        <p class="danny--car-price">&dollar;{{ vehicle.carStartPrice }}</p>
+                                        <p class="danny--car-price">&dollar;{{ vehicle.openDoorPrice }}</p>
                                     </div>
                                     <div class="col-12 col-lg-3 text-right">
                                         <b-form-radio
@@ -1015,7 +1015,7 @@
                                 <div class="row">
                                     <div class="col-12 col-md-6">
                                         <!-- Contact information -->
-                                        <section class="mb-5">
+                                        <section class="mb-2">
                                             <h5 class="danny--group-title">Personal info</h5>
                                             <div class="row">
                                                 <div class="col-12 col-lg-6">
@@ -1066,6 +1066,47 @@
                                                             v-model="$v.form.bookingRequirements.review.customer.contact.email.$model">
                                                         </b-form-input>
                                                     </b-form-group>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <b-alert
+                                                        :show="true"
+                                                        variant="info"
+                                                        class="mb-1"
+                                                    >
+                                                        Registering account using provided email address to have following benefits:
+                                                        <ul class="m-0">
+                                                            <li class="m-0">Better keep track of bookings history.</li>
+                                                            <li class="m-0">Automatically fill out information on payment step.</li>
+                                                            <li class="m-0">Receive discount coupons on special events.</li>
+                                                        </ul>
+                                                    </b-alert>
+                                                </div>
+
+                                                <div class="col-12">
+                                                    <b-form-group>
+                                                        <b-form-checkbox
+                                                            name="review-create-account"
+                                                            size="lg"
+                                                            value="1"
+                                                            unchecked-value="0"
+                                                            id="review-create-account"
+                                                            v-model="$v.form.bookingRequirements.review.customer.createAccount.$model">
+                                                            Register account?
+                                                        </b-form-checkbox>
+                                                    </b-form-group>
+
+                                                    <template v-if="form.bookingRequirements.review.customer.createAccount === '1'">
+                                                        <b-alert
+                                                            :show="true"
+                                                            variant="info"
+                                                            class="mb-1"
+                                                        >
+                                                            Further instruction will be sent to your email.
+                                                        </b-alert>
+                                                    </template>
                                                 </div>
                                             </div>
                                         </section>

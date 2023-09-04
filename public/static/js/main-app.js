@@ -81,6 +81,7 @@ var app = new Vue({
                                 mobileNumber: null,
                                 email: null,
                             },
+                            createAccount: null,
                         },
                         airline: {
                             brand: null,
@@ -837,7 +838,7 @@ var app = new Vue({
 
             if (config.thirdMilesPriceActive && routeMiles > 0) {
                 routeMiles -= parseFloat(config.thirdMiles);
-                price += parseFloat(config.thirdMilesPrice);
+                price += (routeMiles * parseFloat(config.thirdMilesPrice));
             }
 
             return price;
@@ -1300,6 +1301,7 @@ var app = new Vue({
                                 email: email,
                             }
                         },
+                        createAccount: {},
                     },
                     airline: {
                         brand: {},
