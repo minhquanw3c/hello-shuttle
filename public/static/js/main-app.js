@@ -81,7 +81,7 @@ var app = new Vue({
                                 mobileNumber: null,
                                 email: null,
                             },
-                            createAccount: null,
+                            registerAccount: null,
                         },
                         airline: {
                             brand: null,
@@ -1301,7 +1301,7 @@ var app = new Vue({
                                 email: email,
                             }
                         },
-                        createAccount: {},
+                        registerAccount: {},
                     },
                     airline: {
                         brand: {},

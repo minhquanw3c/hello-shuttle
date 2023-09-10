@@ -575,7 +575,7 @@ const formDataRoundTrip =
                 "mobileNumber": null,
                 "email": null
             },
-            "createAccount": null,
+            "registerAccount": null,
         },
         "airline": {
             "brand": null,

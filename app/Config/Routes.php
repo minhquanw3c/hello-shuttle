@@ -47,7 +47,7 @@ $routes->get('api/checkout/create', 'Home::testStripePayment');
 $routes->get('api/sms/send', 'Home::testClickSend');
 
 $routes->get('api/configurations/list', 'Home::getConfigList');
-$routes->post('api/coupons/validate', 'Home::validateCoupon');
+$routes->post('api/coupons/validate', 'CouponController::validateCoupon');
 
 $routes->get('policy', 'Home::getPrivacyAndPolicy');
 

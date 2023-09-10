@@ -1023,6 +1023,7 @@
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.review.customer.firstName)">
                                                         <b-form-input
+                                                            autocomplete="given-name"
                                                             placeholder="First name"
                                                             type="text"
                                                             v-model="$v.form.bookingRequirements.review.customer.firstName.$model">
@@ -1035,6 +1036,7 @@
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.review.customer.lastName)">
                                                         <b-form-input
+                                                            autocomplete="family-name"
                                                             placeholder="Last name"
                                                             type="text"
                                                             v-model="$v.form.bookingRequirements.review.customer.lastName.$model">
@@ -1049,8 +1051,9 @@
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.review.customer.contact.mobileNumber)">
                                                         <b-form-input
+                                                            autocomplete="tel"
                                                             placeholder="Mobile number"
-                                                            type="text"
+                                                            type="tel"
                                                             v-model="$v.form.bookingRequirements.review.customer.contact.mobileNumber.$model">
                                                         </b-form-input>
                                                     </b-form-group>
@@ -1061,8 +1064,9 @@
                                                         :invalid-feedback="errorMessageEmail"
                                                         :state="validateInputField($v.form.bookingRequirements.review.customer.contact.email)">
                                                         <b-form-input
+                                                            autocomplete="email"
                                                             placeholder="Email address"
-                                                            type="text"
+                                                            type="email"
                                                             v-model="$v.form.bookingRequirements.review.customer.contact.email.$model">
                                                         </b-form-input>
                                                     </b-form-group>
@@ -1093,12 +1097,12 @@
                                                             value="1"
                                                             unchecked-value="0"
                                                             id="review-create-account"
-                                                            v-model="$v.form.bookingRequirements.review.customer.createAccount.$model">
+                                                            v-model="$v.form.bookingRequirements.review.customer.registerAccount.$model">
                                                             Register account?
                                                         </b-form-checkbox>
                                                     </b-form-group>
 
-                                                    <template v-if="form.bookingRequirements.review.customer.createAccount === '1'">
+                                                    <template v-if="form.bookingRequirements.review.customer.registerAccount === '1'">
                                                         <b-alert
                                                             :show="true"
                                                             variant="info"

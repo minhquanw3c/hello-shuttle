@@ -10,7 +10,6 @@ use Ramsey\Uuid\Uuid;
 
 use CodeIgniter\I18n\Time;
 use DateTime;
-use DateTimeZone;
 
 class Home extends BaseController
 {
@@ -73,22 +72,19 @@ class Home extends BaseController
         $booking_id = $booking_data->bookingId;
 
         $booking_model = model(BookingModel::class);
-        $customer_model = model(CustomerModel::class);
-        $booking_schedule_model = model(BookingScheduleModel::class);
 
-        $customer_uuid = Uuid::uuid4()->toString();
+        $customer_data = $booking_data->bookingRequirements->review->customer;
+        $customer_handler = new CustomerController();
+        $customer_uuid = $customer_handler->createCustomer($customer_data);
 
-        $customer_data = [
-            'customer_id' => $customer_uuid,
-            'first_name' => $booking_data->bookingRequirements->review->customer->firstName,
-            'last_name' => $booking_data->bookingRequirements->review->customer->lastName,
-            'phone' => $booking_data->bookingRequirements->review->customer->contact->mobileNumber,
-            'email' => $booking_data->bookingRequirements->review->customer->contact->email,
-            'created_at' => Time::now('UTC'),
-            'updated_at' => Time::now('UTC'),
-        ];
+        if ($customer_data->registerAccount) {
+            $user_handler = new UserController();
+            $user_successfully_created = $user_handler->createUser($customer_data);
 
-        $customer_model->createCustomer($customer_data);
+            if ($user_successfully_created) {
+                $user_handler->generateAccountActivationLink($customer_data->contact->email);
+            }
+        }
 
         $payment_data = [
             'bookingId' => $booking_id,
@@ -692,41 +688,6 @@ class Home extends BaseController
         } catch (\Exception $e) {
             echo 'Exception when calling SMSApi->smsSendPost: ', $e->getMessage(), PHP_EOL;
         }
-    }
-
-    public function validateCoupon()
-    {
-        $response = [
-            'result' => false,
-            'message' => 'Invalid coupon'
-        ];
-
-        $coupon_in_request = $this->request->getVar('couponCode');
-
-        $coupon_model = model(CouponModel::class);
-        $coupon_in_db = $coupon_model->getCoupon($coupon_in_request);
-
-        if (count($coupon_in_db) == 0) {
-            return $this->response->setJSON($response);
-        }
-
-        $coupon = (object) $coupon_in_db[0];
-        $current_date = new DateTime('now', new DateTimeZone('UTC'));
-        $current_date = $current_date->format('Y-m-d');
-        $current_date = new DateTime($current_date, new DateTimeZone('UTC'));
-
-        $coupon_start_date = new DateTime($coupon->couponStartDate, new DateTimeZone('UTC'));
-        $coupon_end_date = new DateTime($coupon->couponEndDate, new DateTimeZone('UTC'));
-
-        if (!($current_date >= $coupon_start_date && $current_date <= $coupon_end_date)) {
-            return $this->response->setJSON($response);
-        }
-
-        $response['result'] = true;
-        $response['message'] = 'Coupon applied successfully';
-        $response['coupon'] = $coupon;
-
-        return $this->response->setJSON($response);
     }
 
     public function getPrivacyAndPolicy()
