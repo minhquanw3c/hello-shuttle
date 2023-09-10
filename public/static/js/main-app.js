@@ -82,6 +82,14 @@ var app = new Vue({
                                 email: null,
                             },
                             registerAccount: null,
+                            hasRegisterd: null,
+                            registerAccount: null,
+                            account: {
+                                sameAsContactEmail: null,
+                                email: null,
+                                password: null,
+                                confirmPassword: null,
+                            },
                         },
                         airline: {
                             brand: null,
@@ -1302,6 +1310,35 @@ var app = new Vue({
                             }
                         },
                         registerAccount: {},
+                        hasRegisterd: {},
+                        registedAccount: {},
+                        account: {
+                            sameAsContactEmail: {},
+                            email: {
+                                // requiredIf: validators.requiredIf(function() {
+                                //     let customerData = this.form.bookingRequirements.review.customer;
+                                //     return customerData.registerAccount === '1';
+                                // }),
+                            },
+                            password: {
+                                requiredIf: validators.requiredIf(function() {
+                                    let customerData = this.form.bookingRequirements.review.customer;
+                                    return customerData.registerAccount === '1';
+                                }),
+                            },
+                            confirmPassword: {
+                                requiredIf: validators.requiredIf(function() {
+                                    let customerData = this.form.bookingRequirements.review.customer;
+                                    return customerData.registerAccount === '1';
+                                }),
+                                sameAsPassword: function(val) {
+                                    let customerData = this.form.bookingRequirements.review.customer;
+                                    let skipValidation = true;
+
+                                    return customerData.registerAccount === '1' ? val === customerData.account.password : skipValidation;
+                                }
+                            },
+                        },
                     },
                     airline: {
                         brand: {},

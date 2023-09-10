@@ -576,6 +576,14 @@ const formDataRoundTrip =
                 "email": null
             },
             "registerAccount": null,
+            "hasRegistered": null,
+            "registeredAccount": null,
+            "account": {
+                "sameAsContactEmail": null,
+                "email": null,
+                "password": null,
+                "confirmPassword": null,
+            },
         },
         "airline": {
             "brand": null,

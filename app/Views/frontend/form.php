@@ -1016,7 +1016,7 @@
                                     <div class="col-12 col-md-6">
                                         <!-- Contact information -->
                                         <section class="mb-2">
-                                            <h5 class="danny--group-title">Personal info</h5>
+                                            <h5 class="danny--group-title">Contact info</h5>
                                             <div class="row">
                                                 <div class="col-12 col-lg-6">
                                                     <b-form-group
@@ -1080,7 +1080,7 @@
                                                         variant="info"
                                                         class="mb-1"
                                                     >
-                                                        Registering account using provided email address to have following benefits:
+                                                        Registering account to have following benefits:
                                                         <ul class="m-0">
                                                             <li class="m-0">Better keep track of bookings history.</li>
                                                             <li class="m-0">Automatically fill out information on payment step.</li>
@@ -1101,18 +1101,59 @@
                                                             Register account?
                                                         </b-form-checkbox>
                                                     </b-form-group>
-
-                                                    <template v-if="form.bookingRequirements.review.customer.registerAccount === '1'">
-                                                        <b-alert
-                                                            :show="true"
-                                                            variant="info"
-                                                            class="mb-1"
-                                                        >
-                                                            Further instruction will be sent to your email.
-                                                        </b-alert>
-                                                    </template>
                                                 </div>
                                             </div>
+
+                                            <template v-if="form.bookingRequirements.review.customer.registerAccount === '1'">
+                                                <!-- <div class="row">
+                                                    <div class="col-12 col-lg-6">
+                                                        <b-form-group
+                                                            :invalid-feedback="errorMessages.required"
+                                                            :state="validateInputField($v.form.bookingRequirements.review.customer.account.email)"
+                                                            >
+                                                            <b-form-input
+                                                                type="email"
+                                                                placeholder="Email"
+                                                                name="review-create-account-email"
+                                                                id="review-create-account-email"
+                                                                v-model="$v.form.bookingRequirements.review.customer.account.email.$model">
+                                                            </b-form-input>
+                                                        </b-form-group>
+                                                    </div>
+                                                </div> -->
+
+                                                <div class="row">
+                                                    <div class="col-12 col-lg-6">
+                                                        <b-form-group
+                                                            :invalid-feedback="errorMessages.required"
+                                                            :state="validateInputField($v.form.bookingRequirements.review.customer.account.password)"
+                                                        >
+                                                            <b-form-input
+                                                                type="password"
+                                                                placeholder="Password"
+                                                                name="review-create-account-password"
+                                                                id="review-create-account-password"
+                                                                v-model="$v.form.bookingRequirements.review.customer.account.password.$model">
+                                                            </b-form-input>
+                                                        </b-form-group>
+                                                    </div>
+
+                                                    <div class="col-12 col-lg-6">
+                                                        <b-form-group
+                                                            :invalid-feedback="errorMessages.required"
+                                                            :state="validateInputField($v.form.bookingRequirements.review.customer.account.confirmPassword)"
+                                                        >
+                                                            <b-form-input
+                                                                type="password"
+                                                                placeholder="Confirm password"
+                                                                name="review-create-account-confirm-password"
+                                                                id="review-create-account-confirm-password"
+                                                                v-model="$v.form.bookingRequirements.review.customer.account.confirmPassword.$model">
+                                                            </b-form-input>
+                                                        </b-form-group>
+                                                    </div>
+                                                </div>
+                                            </template>
                                         </section>
 
                                         <!-- Airline information -->

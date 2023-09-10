@@ -70,20 +70,26 @@ class Home extends BaseController
     {
         $booking_data = $this->request->getVar('form');
         $booking_id = $booking_data->bookingId;
+        $customer_uuid = null;
 
         $booking_model = model(BookingModel::class);
 
         $customer_data = $booking_data->bookingRequirements->review->customer;
-        $customer_handler = new CustomerController();
-        $customer_uuid = $customer_handler->createCustomer($customer_data);
 
-        if ($customer_data->registerAccount) {
-            $user_handler = new UserController();
-            $user_successfully_created = $user_handler->createUser($customer_data);
+        if (!$customer_data->hasRegistered) {
+            $customer_handler = new CustomerController();
+            $customer_uuid = $customer_handler->createCustomer($customer_data);
 
-            if ($user_successfully_created) {
-                $user_handler->generateAccountActivationLink($customer_data->contact->email);
+            if ($customer_data->registerAccount) {
+                $user_handler = new UserController();
+                $user_successfully_created = $user_handler->createUser($customer_data);
+
+                if ($user_successfully_created) {
+                    $user_handler->generateAccountActivationLink($customer_data->contact->email);
+                }
             }
+        } else {
+            $customer_uuid = $customer_data->registeredAccount->userId;
         }
 
         $payment_data = [

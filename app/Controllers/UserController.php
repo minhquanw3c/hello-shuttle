@@ -27,6 +27,7 @@ class UserController extends BaseController
 
         $data = [
             'user_email' => $user_data->contact->email,
+            'user_hashed_password' => password_hash($user_data->account->password, PASSWORD_DEFAULT),
             'user_first_name' => $user_data->firstName,
             'user_last_name' => $user_data->lastName,
             'user_role' => $ROLE_CUSTOMER,
@@ -54,6 +55,7 @@ class UserController extends BaseController
         $activation_data = [
             'user_id' => $user_id,
             'token' => $token_data['token'],
+            'token_type' => 'account-activation',
             'token_expired_at' => $token_data['expired_at'],
             'token_used_at' => null,
             'token_created_at' => Time::now('UTC'),
@@ -62,7 +64,7 @@ class UserController extends BaseController
 
         $token_model->saveActivationToken($activation_data);
 
-        $url = base_url('/auth/acount-activation?token=' . $token_data['token']);
+        $url = base_url('/auth/acount-activation?token=' . $token_data['token'] . '&user_id=' . $user_id);
 
         $email_handler = new EmailController();
 
