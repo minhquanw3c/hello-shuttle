@@ -16,6 +16,7 @@ class CustomerModel extends Model
         'phone',
         'email',
         'register_account',
+        'has_account',
         'created_at',
         'updated_at',
 	];

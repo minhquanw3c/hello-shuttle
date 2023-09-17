@@ -20,6 +20,7 @@ var app = new Vue({
             },
             form: {
                 bookingId: null,
+                accountId: null,
                 bookingRequirements: {
                     selectCar: {
                         oneWayTrip: {
@@ -81,11 +82,9 @@ var app = new Vue({
                                 mobileNumber: null,
                                 email: null,
                             },
-                            registerAccount: null,
-                            hasRegisterd: null,
-                            registerAccount: null,
+                            registerAccount: false,
                             account: {
-                                sameAsContactEmail: null,
+                                sameAsContactEmail: false,
                                 email: null,
                                 password: null,
                                 confirmPassword: null,
@@ -116,6 +115,14 @@ var app = new Vue({
                         appliedCoupons: [],
                         additionalNotes: null,
                     },
+                },
+                loginForm: {
+                    registeredAccount: {
+                        email: null,
+                        password: null,
+                    },
+                    hasRegistered: false,
+                    errorMessages: [],
                 },
             },
             errorMessages: {
@@ -301,6 +308,16 @@ var app = new Vue({
                     value: 'other',
                 },
             ],
+            modals: {
+                loginForm: {
+                    show: false,
+                },
+            },
+            alerts: {
+                emailAlreadyExisted: {
+                    show: false,
+                }
+            },
         }
     },
     mounted: async function () {
@@ -309,6 +326,7 @@ var app = new Vue({
 
         self.form.bookingId = bookingId;
         self.getOptionsList();
+        self.scrollToFormSteps();
 
         setTimeout(() => {
             self.dropdowns.oneWayTrip.origin.sessionToken = self.generateSearchSessionToken();
@@ -322,6 +340,7 @@ var app = new Vue({
 
         if (window.location.origin === 'http://localhost' && env === 'development') {
             self.form.bookingRequirements = formDataRoundTrip;
+            self.form.loginForm = loginForm;
         }
     },
     methods: {
@@ -456,6 +475,7 @@ var app = new Vue({
 
             setTimeout(() => {
                 self.formActiveTab = 1;
+                self.scrollToFormSteps();
             }, 500);
         },
         getAvailableCars: function () {
@@ -500,6 +520,7 @@ var app = new Vue({
 
             setTimeout(() => {
                 self.formActiveTab = 2;
+                self.scrollToFormSteps();
             }, 500);
         },
         getOptionsList: function () {
@@ -549,9 +570,10 @@ var app = new Vue({
 
             setTimeout(() => {
                 self.formActiveTab = 3;
+                self.scrollToFormSteps();
             }, 500);
         },
-        submitBooking: function () {
+        submitBooking: async function () {
             const self = this;
 
             self.$v.form.bookingRequirements.review.$touch();
@@ -565,6 +587,27 @@ var app = new Vue({
                 }, 1000);
 
                 return;
+            }
+
+            let customerData = self.form.bookingRequirements.review.customer;
+            if (customerData.registerAccount && customerData.account.sameAsContactEmail) {
+                let emailPayload = {
+                    email: customerData.account.email
+                };
+
+                await axios
+                    .post(baseURL + '/api/email/validate', emailPayload)
+                    .then(res => {
+                        self.alerts.emailAlreadyExisted.show = !res.data.result;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+
+                if (self.alerts.emailAlreadyExisted.show) {
+                    self.scrollToInvalidFields();
+                    return;
+                }
             }
 
             self.showCheckoutNotice = true;
@@ -620,7 +663,10 @@ var app = new Vue({
         scrollToInvalidFields: function () {
             const self = this;
 
-            var invalidFields = $('.tab-content .tab-pane.active form .form-group.is-invalid .d-block.invalid-feedback, .tab-content .tab-pane.active form .alert.alert-danger');
+            var invalidFields = $(
+                '.tab-content .tab-pane.active form .form-group.is-invalid .d-block.invalid-feedback,' +
+                '.tab-content .tab-pane.active form .alert.alert-danger'
+            );
 
             if (invalidFields.length > 0) {
                 invalidFields[0].scrollIntoView({
@@ -628,6 +674,17 @@ var app = new Vue({
                     block: 'center',
                 });
             }
+        },
+        scrollToFormSteps: function() {
+            const self = this;
+
+            setTimeout(function() {
+                let formSteps = $('#form-steps');
+                formSteps[0].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                });
+            }, 500);
         },
         fetchRoutesData: async function () {
             const self = this;
@@ -973,6 +1030,67 @@ var app = new Vue({
 
             return discountAmount;
         },
+        toggleAccountLoginForm: function (flag) {
+            const self = this;
+
+            if (!flag) { self.$v.form.loginForm.$reset(); }
+
+            self.modals.loginForm.show = flag;
+            self.form.loginForm.hasRegistered = flag;
+        },
+        getRegisteredCustomerData: function () {
+            const self = this;
+
+            self.$v.form.loginForm.$touch();
+            let loginFormValidity = !self.$v.form.loginForm.$invalid;
+
+            if (loginFormValidity) {
+                let payload = {
+                    form: {
+                        email: self.form.loginForm.registeredAccount.email,
+                        password: self.form.loginForm.registeredAccount.password,
+                    }
+                };
+
+                axios
+                    .post(baseURL + '/api/user/get', payload)
+                    .then(res => {
+                        if (!res.data.result) {
+                            self.form.loginForm.errorMessages = res.data.errorMessages;
+                        } else {
+                            let data = res.data.user;
+
+                            self.form.accountId = data.accountId;
+                            self.form.bookingRequirements.review.customer.firstName = data.firstName;
+                            self.form.bookingRequirements.review.customer.lastName = data.lastName;
+                            self.form.bookingRequirements.review.customer.contact.email = data.email;
+                            self.form.bookingRequirements.review.customer.contact.mobileNumber = data.phone;
+
+                            self.modals.loginForm.show = false;
+                            self.form.loginForm.hasRegistered = true;
+                        }
+                    })
+                    .catch(error => {
+                        self.showToastNotification(type = 'error');
+                    });
+            }
+        },
+        toggleRegisterAccountEmail: function (val) {
+            const self = this;
+            let customerData = self.form.bookingRequirements.review.customer;
+
+            if (val) {
+                customerData.account.email = customerData.contact.email;
+            }
+        },
+        populateRegisterAccountEmail: function (val) {
+            const self = this;
+            let customerData = self.form.bookingRequirements.review.customer;
+
+            if (customerData.registerAccount && customerData.account.sameAsContactEmail) {
+                customerData.account.email = val;
+            }
+        },
     },
     computed: {
         errorMessageEmail: function () {
@@ -1310,32 +1428,30 @@ var app = new Vue({
                             }
                         },
                         registerAccount: {},
-                        hasRegisterd: {},
-                        registedAccount: {},
                         account: {
                             sameAsContactEmail: {},
                             email: {
-                                // requiredIf: validators.requiredIf(function() {
-                                //     let customerData = this.form.bookingRequirements.review.customer;
-                                //     return customerData.registerAccount === '1';
-                                // }),
+                                requiredIf: validators.requiredIf(function() {
+                                    let customerData = this.form.bookingRequirements.review.customer;
+                                    return customerData.registerAccount === true;
+                                }),
                             },
                             password: {
                                 requiredIf: validators.requiredIf(function() {
                                     let customerData = this.form.bookingRequirements.review.customer;
-                                    return customerData.registerAccount === '1';
+                                    return customerData.registerAccount === true;
                                 }),
                             },
                             confirmPassword: {
                                 requiredIf: validators.requiredIf(function() {
                                     let customerData = this.form.bookingRequirements.review.customer;
-                                    return customerData.registerAccount === '1';
+                                    return customerData.registerAccount === true;
                                 }),
                                 sameAsPassword: function(val) {
                                     let customerData = this.form.bookingRequirements.review.customer;
                                     let skipValidation = true;
 
-                                    return customerData.registerAccount === '1' ? val === customerData.account.password : skipValidation;
+                                    return customerData.registerAccount === true ? val === customerData.account.password : skipValidation;
                                 }
                             },
                         },
@@ -1359,6 +1475,23 @@ var app = new Vue({
                     },
                 },
             },
+            loginForm: {
+                hasRegistered: {
+
+                },
+                registeredAccount: {
+                    email: {
+                        requiredIf: validators.requiredIf(function() {
+                            return this.form.loginForm.hasRegistered === true;
+                        }),
+                    },
+                    password: {
+                        requiredIf: validators.requiredIf(function() {
+                            return this.form.loginForm.hasRegistered === true;
+                        }),
+                    },
+                },
+            }
         },
     },
 });

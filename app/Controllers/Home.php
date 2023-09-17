@@ -68,29 +68,33 @@ class Home extends BaseController
 
     public function saveBooking()
     {
-        $booking_data = $this->request->getVar('form');
+        $booking_data = $this->request->getJsonVar('form');
         $booking_id = $booking_data->bookingId;
         $customer_uuid = null;
 
         $booking_model = model(BookingModel::class);
 
         $customer_data = $booking_data->bookingRequirements->review->customer;
-
-        if (!$customer_data->hasRegistered) {
-            $customer_handler = new CustomerController();
+        $login_data = $booking_data->loginForm;
+        
+        $customer_handler = new CustomerController();
+        $user_handler = new UserController();
+        
+        if ($login_data->hasRegistered) {
+            $customer_handler->createCustomer($customer_data, $booking_data->accountId);
+        } else {
             $customer_uuid = $customer_handler->createCustomer($customer_data);
-
+            
             if ($customer_data->registerAccount) {
-                $user_handler = new UserController();
-                $user_successfully_created = $user_handler->createUser($customer_data);
-
+                $user_successfully_created = $user_handler->createUser($customer_data, $customer_uuid);
+    
                 if ($user_successfully_created) {
                     $user_handler->generateAccountActivationLink($customer_data->contact->email);
                 }
             }
-        } else {
-            $customer_uuid = $customer_data->registeredAccount->userId;
         }
+
+        return;
 
         $payment_data = [
             'bookingId' => $booking_id,

@@ -7,12 +7,14 @@ use CodeIgniter\Model;
 class UserModel extends Model
 {
 	protected $table = 'users';
-	protected $primaryKey = 'user_email';
+	protected $primaryKey = 'user_id';
     protected $useAutoIncrement = true;
 
 	protected $allowedFields = [
+        'user_id',
 		'user_email',
         'user_hashed_password',
+        'user_phone',
         'user_first_name',
         'user_last_name',
         'user_role',
@@ -28,40 +30,39 @@ class UserModel extends Model
         return $create_user_query;
     }
 
-    public function getUserByEmail($user_email)
+    public function getUserById($user_id)
     {
         $get_user_query = $this->select([
             'users.user_id AS userId',
             'users.user_email AS userEmail',
+            'users.user_phone AS userPhone',
             'users.user_hashed_password AS userPassword',
             'users.user_first_name AS userFirstName',
             'users.user_last_name AS userLastName',
-            'CONCAT(users.user_last_name, " ", users.user_first_name) AS userFullName',
-            'users.user_role AS userRole',
-            'GROUP_CONCAT(roles_permissions.allowed_route_pattern SEPARATOR "|") AS userAllowedRoutes',
         ])
-        ->join('roles_permissions', 'roles_permissions.role = users.user_role')
         ->where([
             'users.user_active' => 1,
-            'roles_permissions.permission_active' => 1,
-            'users.user_email' => $user_email,
-        ])
-        ->groupBy([
-            'users.user_email',
-            'users.user_role',
+            'users.user_email' => $user_id,
         ])
         ->findAll();
 
         return $get_user_query;
     }
 
-    public function getRowsByColumn($column_id, $check_value)
+    public function getRowsByColumn($column_id, $check_value = null)
     {
-        $result = $this
-                    ->select($column_id)
-                    ->where($column_id, $check_value)
-                    ->get()
-                    ->getNumRows();
+        if ($check_value) {
+            $result = $this
+                        ->select($column_id)
+                        ->where($column_id, $check_value)
+                        ->get();
+        } else {
+            $result = $this
+                        ->select($column_id)
+                        ->where($column_id, $check_value)
+                        ->get()
+                        ->getNumRows();
+        }
 
         return $result;
     }

@@ -9,9 +9,10 @@ use CodeIgniter\I18n\Time;
 
 class UserController extends BaseController
 {
-    public function createUser($user_data)
+    public function createUser($user_data, $user_id)
     {
         $INACTIVE_USER = 0;
+        $ACTIVE_USER = 1;
         $ROLE_CUSTOMER = 'customer';
         $user_model = model(UserModel::class);
 
@@ -19,19 +20,21 @@ class UserController extends BaseController
             return;
         }
 
-        $user_existed = $user_model->getRowsByColumn('user_email', $user_data->contact->email);
+        // $user_existed = $user_model->getRowsByColumn('user_email', $user_data->contact->email);
 
-        if ($user_existed) {
-            return;
-        }
+        // if ($user_existed) {
+        //     return;
+        // }
 
         $data = [
+            'user_id' => $user_id,
             'user_email' => $user_data->contact->email,
+            'user_phone' => $user_data->contact->mobileNumber,
             'user_hashed_password' => password_hash($user_data->account->password, PASSWORD_DEFAULT),
             'user_first_name' => $user_data->firstName,
             'user_last_name' => $user_data->lastName,
             'user_role' => $ROLE_CUSTOMER,
-            'user_active' => $INACTIVE_USER,
+            'user_active' => $ACTIVE_USER,
             'user_created_at' => Time::now('UTC'),
             'user_updated_at' => Time::now('UTC'),
         ];
@@ -77,5 +80,83 @@ class UserController extends BaseController
         $email_handler->sendEmail((object) $mail_data);
 
         return $url;
+    }
+
+    public function getUserDataFromBookingForm()
+    {
+        $form = $this->request->getJsonVar('form', true);
+
+        $response = [
+            'errorMessages' => [],
+            'result' => true,
+            'user' => [],
+        ];
+
+        $user_data = [
+            'email' => $form['email'],
+            'password' => $form['password'],
+        ];
+
+        $validation = \Config\Services::validation();
+
+        $validation->setRules([
+            'email' => [
+                'rules' => 'required|valid_email',
+                'errors' => [
+                    'required' => 'Email is required',
+                    'valid_email' => 'Email must be a valid email address',
+                ],
+            ],
+            'password' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Password is required',
+                ],
+            ],
+        ]);
+
+        $input_validity = $validation->run($user_data);
+
+        if (!$input_validity) {
+            $response['errorMessages'] = array_values($validation->getErrors());
+            $response['result'] = false;
+            return $this->response->setJSON($response);
+        }
+
+        $user_model = model(UserModel::class);
+        $user = $user_model->getUserById($user_data['email']);
+
+        if (count($user) == 0) {
+            array_push($response['errorMessages'], "Email not existed");
+            $response['result'] = false;
+            return $this->response->setJSON($response);
+        }
+
+        $user = $user[0];
+        $hash = $user['userPassword'];
+
+        if (!password_verify($user_data['password'], $hash)) {
+            array_push($response['errorMessages'], "Email or password is incorrect");
+            $response['result'] = false;
+            return $this->response->setJSON($response);
+        };
+
+        $response['user']['firstName'] = $user['userFirstName'];
+        $response['user']['lastName'] = $user['userLastName'];
+        $response['user']['email'] = $user['userEmail'];
+        $response['user']['phone'] = $user['userPhone'];
+        $response['user']['accountId'] = $user['userId'];
+
+        return $this->response->setJSON($response);
+    }
+
+    public function validateRegisterAccountEmail()
+    {
+        $email = $this->request->getJsonVar('email');
+        $response = [
+            'result' => false,
+        ];
+
+        return $this->response->setJSON($response);
     }
 }

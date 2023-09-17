@@ -51,7 +51,7 @@
         <div class="container-md">
             <div class="row">
                 <div class="col-lg-12">
-                    <b-tabs class="danny--form-step" nav-class="mb-4 danny--nav-tabs" v-model="formActiveTab">
+                    <b-tabs class="danny--form-step" nav-class="mb-4 danny--nav-tabs" v-model="formActiveTab" id="form-steps">
                         <!-- reservation -->
                         <b-tab>
                             <template #title>
@@ -1023,6 +1023,7 @@
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.review.customer.firstName)">
                                                         <b-form-input
+                                                            :disabled="form.loginForm.hasRegistered"
                                                             autocomplete="given-name"
                                                             placeholder="First name"
                                                             type="text"
@@ -1036,6 +1037,7 @@
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.review.customer.lastName)">
                                                         <b-form-input
+                                                            :disabled="form.loginForm.hasRegistered"
                                                             autocomplete="family-name"
                                                             placeholder="Last name"
                                                             type="text"
@@ -1051,6 +1053,7 @@
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.review.customer.contact.mobileNumber)">
                                                         <b-form-input
+                                                            :disabled="form.loginForm.hasRegistered"
                                                             autocomplete="tel"
                                                             placeholder="Mobile number"
                                                             type="tel"
@@ -1064,16 +1067,23 @@
                                                         :invalid-feedback="errorMessageEmail"
                                                         :state="validateInputField($v.form.bookingRequirements.review.customer.contact.email)">
                                                         <b-form-input
+                                                            :disabled="form.loginForm.hasRegistered"
                                                             autocomplete="email"
                                                             placeholder="Email address"
                                                             type="email"
-                                                            v-model="$v.form.bookingRequirements.review.customer.contact.email.$model">
+                                                            v-model="$v.form.bookingRequirements.review.customer.contact.email.$model"
+                                                            @input="populateRegisterAccountEmail">
                                                         </b-form-input>
                                                     </b-form-group>
                                                 </div>
                                             </div>
 
-                                            <div class="row">
+                                            <div class="row" v-if="!(form.loginForm.hasRegistered)">
+                                                <div class="col-12 mb-3 text-right">
+                                                    <span class="d-inline-block mr-2">Already have an account?</span>
+                                                    <b-button @click="toggleAccountLoginForm">Login</b-button>
+                                                </div>
+
                                                 <div class="col-12">
                                                     <b-alert
                                                         :show="true"
@@ -1093,9 +1103,7 @@
                                                     <b-form-group>
                                                         <b-form-checkbox
                                                             name="review-create-account"
-                                                            size="lg"
-                                                            value="1"
-                                                            unchecked-value="0"
+                                                            size="md"
                                                             id="review-create-account"
                                                             v-model="$v.form.bookingRequirements.review.customer.registerAccount.$model">
                                                             Register account?
@@ -1104,14 +1112,15 @@
                                                 </div>
                                             </div>
 
-                                            <template v-if="form.bookingRequirements.review.customer.registerAccount === '1'">
-                                                <!-- <div class="row">
+                                            <template v-if="!form.loginForm.hasRegistered && form.bookingRequirements.review.customer.registerAccount">
+                                                <div class="row">
                                                     <div class="col-12 col-lg-6">
                                                         <b-form-group
                                                             :invalid-feedback="errorMessages.required"
                                                             :state="validateInputField($v.form.bookingRequirements.review.customer.account.email)"
                                                             >
                                                             <b-form-input
+                                                                :disabled="form.bookingRequirements.review.customer.account.sameAsContactEmail"
                                                                 type="email"
                                                                 placeholder="Email"
                                                                 name="review-create-account-email"
@@ -1120,7 +1129,35 @@
                                                             </b-form-input>
                                                         </b-form-group>
                                                     </div>
-                                                </div> -->
+
+                                                    <div class="col-12 col-lg-6">
+                                                        <b-form-group>
+                                                            <b-form-checkbox
+                                                                @input="toggleRegisterAccountEmail"
+                                                                name="review-create-account-same-as-contact"
+                                                                size="md"
+                                                                id="review-create-account-same-as-contact"
+                                                                v-model="$v.form.bookingRequirements.review.customer.account.sameAsContactEmail.$model">
+                                                                Same as contact email?
+                                                            </b-form-checkbox>
+                                                        </b-form-group>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    v-if="alerts.emailAlreadyExisted.show"
+                                                    class="row"
+                                                >
+                                                    <div class="col-12">
+                                                        <b-alert
+                                                            variant="danger"
+                                                            show="8"
+                                                            @dismissed="() => alerts.emailAlreadyExisted.show = false"
+                                                        >
+                                                            Email is already in used. Please choose another one.
+                                                        </b-alert>
+                                                    </div>
+                                                </div>
 
                                                 <div class="row">
                                                     <div class="col-12 col-lg-6">
@@ -2014,6 +2051,64 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modals -->
+        <b-modal
+            :visible="modals.loginForm.show"
+            title="Login"
+            no-close-on-backdrop
+            no-close-on-esc
+            static
+            @show="toggleAccountLoginForm(true)"
+            @close="toggleAccountLoginForm(false)"
+        >
+            <b-alert
+                variant="danger"
+                show="5"
+                v-if="form.loginForm.errorMessages.length > 0"
+                @dismissed="() => form.loginForm.errorMessages = []"
+            >
+                {{ form.loginForm.errorMessages.join('\n') }}
+            </b-alert>
+
+            <b-form @submit="getRegisteredCustomerData" novalidate>
+                <b-form-group
+                    label="Email"
+                    label-for="login-form-email"
+                    :state="validateInputField($v.form.loginForm.registeredAccount.email)"
+                    :invalid-feedback="errorMessages.required"
+                >
+                    <b-form-input
+                        id="login-form-email"
+                        v-model="$v.form.loginForm.registeredAccount.email.$model"
+                        type="email"
+                    >
+                    </b-form-input>
+                </b-form-group>
+
+                <b-form-group
+                    label="Password"
+                    label-for="login-form-password"
+                    :state="validateInputField($v.form.loginForm.registeredAccount.password)"
+                    :invalid-feedback="errorMessages.required"
+                >
+                    <b-form-input
+                        id="login-form-password"
+                        v-model="$v.form.loginForm.registeredAccount.password.$model"
+                        type="password"
+                    >
+                    </b-form-input>
+                </b-form-group>
+            </b-form>
+            <template #modal-footer>
+                <b-button
+                    class="mx-3"
+                    @click="getRegisteredCustomerData"
+                >
+                    Login
+                </b-button>
+            </template>
+        </b-modal>
     </div>
 <?= $this->endSection() ?>
 

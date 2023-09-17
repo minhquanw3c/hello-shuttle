@@ -51,6 +51,9 @@ $routes->post('api/coupons/validate', 'CouponController::validateCoupon');
 
 $routes->get('policy', 'Home::getPrivacyAndPolicy');
 
+$routes->post('api/user/get', 'UserController::getUserDataFromBookingForm');
+$routes->post('api/email/validate', 'UserController::validateRegisterAccountEmail');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
