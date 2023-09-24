@@ -6,7 +6,6 @@ use App\Models\ConfigModel;
 use App\Models\BookingModel;
 use App\Models\BookingScheduleModel;
 use \TCPDF as TCPDF;
-use Ramsey\Uuid\Uuid;
 
 use CodeIgniter\I18n\Time;
 use DateTime;
@@ -81,6 +80,7 @@ class Home extends BaseController
         $user_handler = new UserController();
         
         if ($login_data->hasRegistered) {
+            $customer_uuid = $booking_data->accountId;
             $customer_handler->createCustomer($customer_data, $booking_data->accountId);
         } else {
             $customer_uuid = $customer_handler->createCustomer($customer_data);
@@ -93,8 +93,6 @@ class Home extends BaseController
                 }
             }
         }
-
-        return;
 
         $payment_data = [
             'bookingId' => $booking_id,
