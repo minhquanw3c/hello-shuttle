@@ -28,7 +28,6 @@ class CarModel extends Model
             'config_cars.car_name AS carName',
             'config_cars.car_seats_capacity AS carSeatsCapacity',
             'config_cars.car_quantity AS carQuantity',
-            'config_cars.car_start_price AS carStartPrice',
             'config_cars.car_active AS carActive',
             'config_cars.car_editable AS carEditable',
             'config_cars.car_image AS carImage',

@@ -22,7 +22,6 @@ class BookingScheduleModel extends Model
             'config_cars.car_id AS carId',
             'config_cars.car_name AS carName',
             'config_cars.car_quantity - COUNT(booking_schedules.booking_id) AS availableCars',
-            'config_cars.car_start_price AS carStartPrice',
             'config_cars.car_image AS carImage',
             'config_cars.car_seats_capacity AS carSeats',
             //----
