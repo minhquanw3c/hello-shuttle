@@ -375,8 +375,8 @@ const loginForm =
 {
     "hasRegistered": null,
     "registeredAccount": {
-        "email": "minhquanw3c@gmail.com",
-        "password": "123456",
+        "email": "",
+        "password": "",
     },
     "errorMessages": [],
 };
