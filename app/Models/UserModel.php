@@ -55,13 +55,12 @@ class UserModel extends Model
             $result = $this
                         ->select($column_id)
                         ->where($column_id, $check_value)
-                        ->get();
+                        ->get()
+                        ->getNumRows();
         } else {
             $result = $this
                         ->select($column_id)
-                        ->where($column_id, $check_value)
-                        ->get()
-                        ->getNumRows();
+                        ->get();
         }
 
         return $result;

@@ -105,8 +105,8 @@ const formDataRoundTrip =
             },
             "miles": 0,
             "pickup": {
-                "date": "2023-09-03",
-                "time": "00:00:00"
+                "date": "",
+                "time": ""
             },
             "originSearch": null,
             "destinationSearch": null,
@@ -257,8 +257,8 @@ const formDataRoundTrip =
             },
             "miles": 0,
             "pickup": {
-                "date": "2023-09-03",
-                "time": "00:00:00"
+                "date": "",
+                "time": ""
             },
             "originSearch": null,
             "destinationSearch": null,

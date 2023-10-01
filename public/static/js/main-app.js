@@ -590,7 +590,7 @@ var app = new Vue({
             }
 
             let customerData = self.form.bookingRequirements.review.customer;
-            if (customerData.registerAccount && customerData.account.sameAsContactEmail) {
+            if (customerData.registerAccount) {
                 let emailPayload = {
                     email: customerData.account.email
                 };

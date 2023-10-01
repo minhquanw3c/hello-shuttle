@@ -153,9 +153,16 @@ class UserController extends BaseController
     public function validateRegisterAccountEmail()
     {
         $email = $this->request->getJsonVar('email');
+
         $response = [
-            'result' => false,
+            'result' => null,
         ];
+
+        $user_model = model(UserModel::class);
+
+        $email_existed = $user_model->getRowsByColumn('user_email', $email);
+
+        $response['result'] = $email_existed ? false : true;
 
         return $this->response->setJSON($response);
     }
