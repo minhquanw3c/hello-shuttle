@@ -51,7 +51,7 @@
         <div class="container-md">
             <div class="row">
                 <div class="col-lg-12">
-                    <b-tabs class="danny--form-step" nav-class="mb-4 danny--nav-tabs" v-model="formActiveTab" id="form-steps">
+                    <b-tabs class="danny--form-step" nav-class="mb-4 danny--nav-tabs" v-model="formActiveTabIndex" id="form-steps">
                         <!-- reservation -->
                         <b-tab>
                             <template #title>
@@ -117,13 +117,16 @@
                                                     content-cols-sm="9"
                                                     :invalid-feedback="errorMessages.required"
                                                     :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.origin)">
-                                                    <b-input-group>
+                                                    <b-input-group class="flex-nowrap">
                                                         <b-input-group-prepend>
                                                             <div class="btn">
                                                                 <b-icon icon="geo-alt"></b-icon>
                                                             </div>
                                                         </b-input-group-prepend>
                                                         <multiselect
+                                                            select-label=""
+                                                            selected-label=""
+                                                            deselect-label=""
                                                             v-model="form.bookingRequirements.reservation.oneWayTrip.origin"
                                                             track-by="place_id"
                                                             label="description"
@@ -146,13 +149,16 @@
                                                     content-cols-sm="9"
                                                     :invalid-feedback="errorMessages.required"
                                                     :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.destination)">
-                                                    <b-input-group>
+                                                    <b-input-group class="flex-nowrap">
                                                         <b-input-group-prepend>
                                                             <div class="btn">
                                                                 <b-icon icon="geo-alt"></b-icon>
                                                             </div>
                                                         </b-input-group-prepend>
                                                         <multiselect
+                                                            select-label=""
+                                                            selected-label=""
+                                                            deselect-label=""
                                                             v-model="form.bookingRequirements.reservation.oneWayTrip.destination"
                                                             track-by="place_id"
                                                             label="description"
@@ -337,13 +343,16 @@
                                                         content-cols-sm="9"
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.reservation.oneWayTrip.restStop)">
-                                                        <b-input-group>
+                                                        <b-input-group class="flex-nowrap">
                                                             <b-input-group-prepend>
                                                                 <div class="btn">
                                                                     <b-icon icon="geo-alt"></b-icon>
                                                                 </div>
                                                             </b-input-group-prepend>
                                                             <multiselect
+                                                                select-label=""
+                                                                selected-label=""
+                                                                deselect-label=""
                                                                 id="one-way-rest-stop"
                                                                 v-model="$v.form.bookingRequirements.reservation.oneWayTrip.restStop.$model"
                                                                 track-by="place_id"
@@ -401,6 +410,9 @@
                                                                 </div>
                                                             </b-input-group-prepend>
                                                             <multiselect
+                                                                select-label=""
+                                                                selected-label=""
+                                                                deselect-label=""
                                                                 v-model="form.bookingRequirements.reservation.roundTrip.origin"
                                                                 track-by="place_id"
                                                                 label="description"
@@ -430,6 +442,9 @@
                                                                 </div>
                                                             </b-input-group-prepend>
                                                             <multiselect
+                                                                select-label=""
+                                                                selected-label=""
+                                                                deselect-label=""
                                                                 v-model="form.bookingRequirements.reservation.roundTrip.destination"
                                                                 track-by="place_id"
                                                                 label="description"
@@ -617,6 +632,9 @@
                                                                     </div>
                                                                 </b-input-group-prepend>
                                                                 <multiselect
+                                                                    select-label=""
+                                                                    selected-label=""
+                                                                    deselect-label=""
                                                                     id="one-way-rest-stop"
                                                                     v-model="$v.form.bookingRequirements.reservation.roundTrip.restStop.$model"
                                                                     track-by="place_id"
@@ -1252,7 +1270,7 @@
                                                         <h5 class="danny--group-title">Vehicle</h5>
                                                     </div>
                                                     <div class="col-2">
-                                                        <b-button class="btn" title="Edit vehicle" @click="() => { formActiveTab = 1 }">
+                                                        <b-button class="btn" title="Edit vehicle" @click="() => { formActiveTabIndex = 1 }">
                                                             <b-icon icon="pencil-square"></b-icon>
                                                         </b-button>
                                                     </div>
@@ -1271,7 +1289,7 @@
                                                         <h5 class="danny--group-title">Pick-up</h5>
                                                     </div>
                                                     <div class="col-2">
-                                                        <b-button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 0 }">
+                                                        <b-button class="btn" title="Edit pick-up" @click="() => { formActiveTabIndex = 0 }">
                                                             <b-icon icon="pencil-square"></b-icon>
                                                         </b-button>
                                                     </div>
@@ -1335,7 +1353,7 @@
                                                                 <h5 class="danny--group-title">Chosen options</h5>
                                                             </div>
                                                             <div class="col-2">
-                                                                <b-button class="btn" title="Edit chosen options" @click="() => { formActiveTab = 2 }">
+                                                                <b-button class="btn" title="Edit chosen options" @click="() => { formActiveTabIndex = 2 }">
                                                                     <b-icon icon="pencil-square"></b-icon>
                                                                 </b-button>
                                                             </div>
@@ -1408,7 +1426,7 @@
                                                             <h5 class="danny--group-title">Vehicle</h5>
                                                         </div>
                                                         <div class="col-2">
-                                                            <b-button class="btn" title="Edit vehicle" @click="() => { formActiveTab = 1 }">
+                                                            <b-button class="btn" title="Edit vehicle" @click="() => { formActiveTabIndex = 1 }">
                                                                 <b-icon icon="pencil-square"></b-icon>
                                                             </b-button>
                                                         </div>
@@ -1427,7 +1445,7 @@
                                                             <h5 class="danny--group-title">Return</h5>
                                                         </div>
                                                         <div class="col-2">
-                                                            <b-button class="btn" title="Edit pick-up" @click="() => { formActiveTab = 0 }">
+                                                            <b-button class="btn" title="Edit pick-up" @click="() => { formActiveTabIndex = 0 }">
                                                                 <b-icon icon="pencil-square"></b-icon>
                                                             </b-button>
                                                         </div>
@@ -1491,7 +1509,7 @@
                                                                     <h5 class="danny--group-title">Chosen options</h5>
                                                                 </div>
                                                                 <div class="col-2">
-                                                                    <b-button class="btn" title="Edit chosen options" @click="() => { formActiveTab = 2 }">
+                                                                    <b-button class="btn" title="Edit chosen options" @click="() => { formActiveTabIndex = 2 }">
                                                                         <b-icon icon="pencil-square"></b-icon>
                                                                     </b-button>
                                                                 </div>

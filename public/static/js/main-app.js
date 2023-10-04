@@ -97,9 +97,11 @@ var app = new Vue({
                         routes: {
                             oneWayTrip: {
                                 miles: 0,
+                                milesFromBaseToPickup: 0,
                             },
                             roundTrip: {
-                                miles: 0
+                                miles: 0,
+                                milesFromBaseToPickup: 0,
                             }
                         },
                         prices: {
@@ -110,6 +112,14 @@ var app = new Vue({
                             discountAmount: 0,
                             tipDriverAmountOther: null,
                             tipDriverAmount: null,
+                            adminFee: {
+                                oneWayTrip: 0,
+                                roundTrip: 0
+                            },
+                            pickupFee: {
+                                oneWayTrip: 0,
+                                roundTrip: 0
+                            },
                         },
                         agreeTermsConditions: null,
                         appliedCoupons: [],
@@ -128,7 +138,7 @@ var app = new Vue({
             errorMessages: {
                 required: 'This field is required',
             },
-            formActiveTab: 0,
+            formActiveTabIndex: 0,
             completedTabs: {
                 reservation: true,
                 selectCar: false,
@@ -408,7 +418,7 @@ var app = new Vue({
             const displaySuggestions = function (predictions, status) {
                 if (status != google.maps.places.PlacesServiceStatus.OK || !predictions) {
                     console.log(status);
-                    alert(status);
+                    // alert(status);
                     return;
                 }
 
@@ -453,7 +463,7 @@ var app = new Vue({
 
             return input.$dirty ? !input.$invalid : null;
         },
-        saveReservation: function () {
+        saveReservation: async function () {
             const self = this;
 
             self.$v.form.bookingRequirements.reservation.$touch();
@@ -470,11 +480,40 @@ var app = new Vue({
             }
 
             self.completedTabs.selectCar = true;
-            self.fetchRoutesData();
             self.getAvailableCars();
 
+            let tripType = self.form.bookingRequirements.reservation.tripType;
+
+            let oneWayTripData = self.form.bookingRequirements.reservation.oneWayTrip;
+            self.form.bookingRequirements.review.routes.oneWayTrip.miles = await self.fetchRoutesData(oneWayTripData);
+
+            let oneWayTripPickup = {
+                origin: {
+                    place_id: self.transformedConfigs['cfg-base-location']
+                },
+                destination: {
+                    place_id: oneWayTripData.origin.place_id
+                }
+            };
+            self.form.bookingRequirements.review.routes.oneWayTrip.milesFromBaseToPickup = await self.fetchRoutesData(oneWayTripPickup);
+
+            if (tripType === 'round-trip') {
+                let roundTripData = self.form.bookingRequirements.reservation.roundTrip;
+                let roundTripPickup = {
+                    origin: {
+                        place_id: self.transformedConfigs['cfg-base-location']
+                    },
+                    destination: {
+                        place_id: roundTripData.origin.place_id
+                    }
+                };
+
+                self.form.bookingRequirements.review.routes.roundTrip.milesFromBaseToPickup = await self.fetchRoutesData(roundTripPickup);
+                self.form.bookingRequirements.review.routes.roundTrip.miles = await self.fetchRoutesData(roundTripData);
+            }
+
             setTimeout(() => {
-                self.formActiveTab = 1;
+                self.formActiveTabIndex = 1;
                 self.scrollToFormSteps();
             }, 500);
         },
@@ -519,7 +558,7 @@ var app = new Vue({
             self.completedTabs.chooseOptions = true;
 
             setTimeout(() => {
-                self.formActiveTab = 2;
+                self.formActiveTabIndex = 2;
                 self.scrollToFormSteps();
             }, 500);
         },
@@ -569,7 +608,7 @@ var app = new Vue({
             self.completedTabs.review = true;
 
             setTimeout(() => {
-                self.formActiveTab = 3;
+                self.formActiveTabIndex = 3;
                 self.scrollToFormSteps();
             }, 500);
         },
@@ -686,50 +725,40 @@ var app = new Vue({
                 });
             }, 500);
         },
-        fetchRoutesData: async function () {
+        fetchRoutesData: async function (routeData) {
             const self = this;
 
-            const routeUrl = 'https://routes.googleapis.com/directions/v2:computeRoutes?key=' + apiKey;
+            const routeUrlAPI = 'https://routes.googleapis.com/directions/v2:computeRoutes?key=' + apiKey;
             const oneMeterPerMile = 0.000621371;
-            var tripType = self.form.bookingRequirements.reservation.tripType;
 
-            let oneWayTripRouteMiles = 0;
-            let roundTripRouteMiles = 0;
+            let routeMiles = 0;
+            let routeHasRestStop = routeData.hasRestStop && routeData.hasRestStop === '1';
 
-            let oneWayTrip = self.form.bookingRequirements.reservation.oneWayTrip;
-            let oneWayTripHasRestStop = oneWayTrip.hasRestStop === '1';
-
-            let oneWayTripPayload = {
+            let payload = {
                 origin: {
-                    placeId: oneWayTrip.origin.place_id
+                    placeId: routeData.origin.place_id
                 },
                 destination: {
-                    placeId: oneWayTrip.destination.place_id
+                    placeId: routeData.destination.place_id
                 },
                 travelMode: "DRIVE",
-                // transitPreferences: {
-                //     allowedTravelModes: [
-                //         "LIGHT_RAIL",
-                //         "RAIL",
-                //     ]
-                // },
                 computeAlternativeRoutes: false,
                 languageCode: "en-US",
                 units: "IMPERIAL",
             };
 
-            if (oneWayTripHasRestStop) {
-                oneWayTripPayload.intermediates = [
+            if (routeHasRestStop) {
+                payload.intermediates = [
                     {
-                        placeId: oneWayTrip.restStop.place_id
+                        placeId: routeData.restStop.place_id
                     }
                 ];
             }
 
             await axios
                 .post(
-                    routeUrl,
-                    oneWayTripPayload,
+                    routeUrlAPI,
+                    payload,
                     {
                         headers: {
                             'X-Goog-FieldMask': 'routes.distanceMeters'
@@ -739,69 +768,14 @@ var app = new Vue({
                 .then((res) => {
                     console.log(res.data);
                     if (res.data.routes) {
-                        oneWayTripRouteMiles = res.data.routes[0].distanceMeters;
+                        routeMiles = res.data.routes[0].distanceMeters;
                     }
                 })
                 .catch((err) => {
                     console.log(err);
                 });
 
-            self.form.bookingRequirements.review.routes.oneWayTrip.miles = parseFloat(oneMeterPerMile * parseInt(oneWayTripRouteMiles)).toFixed(0);
-
-            if (tripType === 'round-trip') {
-
-                let roundTrip = self.form.bookingRequirements.reservation.roundTrip;
-                let roundTripHasRestStop = roundTrip.hasRestStop === '1';
-
-                let roundTripPayload = {
-                    origin: {
-                        placeId: roundTrip.origin.place_id
-                    },
-                    destination: {
-                        placeId: roundTrip.destination.place_id
-                    },
-                    travelMode: "DRIVE",
-                    // transitPreferences: {
-                    //     allowedTravelModes: [
-                    //         "LIGHT_RAIL",
-                    //         "RAIL",
-                    //     ]
-                    // },
-                    computeAlternativeRoutes: false,
-                    languageCode: "en-US",
-                    units: "IMPERIAL",
-                };
-
-                if (roundTripHasRestStop) {
-                    roundTripPayload.intermediates = [
-                        {
-                            placeId: roundTrip.restStop.place_id
-                        }
-                    ];
-                }
-
-                await axios
-                    .post(
-                        routeUrl,
-                        roundTripPayload,
-                        {
-                            headers: {
-                                'X-Goog-FieldMask': 'routes.distanceMeters'
-                            }
-                        }
-                    )
-                    .then((res) => {
-                        console.log(res.data);
-                        if (res.data.routes) {
-                            roundTripRouteMiles = res.data.routes[0].distanceMeters;
-                        }
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-
-                self.form.bookingRequirements.review.routes.roundTrip.miles = parseFloat(oneMeterPerMile * parseInt(roundTripRouteMiles)).toFixed(0);
-            }
+            return parseFloat((oneMeterPerMile * parseFloat(routeMiles)).toFixed(0));
         },
         computeRoutes: function () {
             const self = this;
@@ -817,6 +791,7 @@ var app = new Vue({
             oneWayTrip.chosenOptions = [...tripData.chooseOptions.oneWayTrip.extras, ...tripData.chooseOptions.oneWayTrip.protection];
             oneWayTrip.pickupTime = tripData.reservation.oneWayTrip.pickup.time;
             oneWayTrip.carConfig = tripData.selectCar.oneWayTrip.vehicle;
+            oneWayTrip.milesFromBaseToPickup = tripData.review.routes.oneWayTrip.milesFromBaseToPickup;
 
             self.form.bookingRequirements.review.prices.oneWayTrip = self.calculateRoutePrice(
                 oneWayTrip.routeMiles,
@@ -824,7 +799,9 @@ var app = new Vue({
                 oneWayTrip.packages,
                 oneWayTrip.chosenOptions,
                 oneWayTrip.pickupTime,
-                oneWayTrip.carConfig
+                oneWayTrip.carConfig,
+                'oneWayTrip',
+                oneWayTrip.milesFromBaseToPickup
             );
 
             if (tripType === 'round-trip') {
@@ -836,6 +813,7 @@ var app = new Vue({
                 roundTrip.chosenOptions = [...tripData.chooseOptions.roundTrip.extras, ...tripData.chooseOptions.roundTrip.protection];
                 roundTrip.pickupTime = tripData.reservation.roundTrip.pickup.time;
                 roundTrip.carConfig = tripData.selectCar.roundTrip.vehicle;
+                roundTrip.milesFromBaseToPickup = tripData.review.routes.roundTrip.milesFromBaseToPickup;
 
                 self.form.bookingRequirements.review.prices.roundTrip = self.calculateRoutePrice(
                     roundTrip.routeMiles,
@@ -843,7 +821,9 @@ var app = new Vue({
                     roundTrip.packages,
                     roundTrip.chosenOptions,
                     roundTrip.pickupTime,
-                    roundTrip.carConfig
+                    roundTrip.carConfig,
+                    'roundTrip',
+                    roundTrip.milesFromBaseToPickup
                 );
             }
         },
@@ -908,8 +888,9 @@ var app = new Vue({
 
             return price;
         },
-        calculateAdminFee: function (config, miles, totalPrice) {
+        calculateAdminFee: function (config, miles, totalPrice, tripType) {
             const self = this;
+
             let price = 0;
             let routeMiles = parseFloat(miles);
             let routePrice = parseFloat(totalPrice);
@@ -919,6 +900,25 @@ var app = new Vue({
                         parseFloat(config.adminFeeFixedAmount) : 
                         (routePrice * (parseFloat(config.adminFeePercentage) / 100));
             }
+
+            self.form.bookingRequirements.review.prices.adminFee[tripType] = price;
+
+            return price;
+        },
+        calculatePickupFee: function (config, milesFromBaseToPickup, totalPrice, tripType) {
+            const self = this;
+
+            let price = 0;
+            let routeMiles = parseFloat(milesFromBaseToPickup);
+            let routePrice = parseFloat(totalPrice);
+
+            if (config.pickupFeeActive && (routeMiles > parseFloat(config.pickupFeeLimitMiles))) {
+                price += config.pickupFeeType === 'fixed' ? 
+                        parseFloat(config.pickupFeeFixedAmount) : 
+                        (routePrice * (parseFloat(config.pickupFeePercentage) / 100));
+            }
+
+            self.form.bookingRequirements.review.prices.pickupFee[tripType] = price;
 
             return price;
         },
@@ -935,7 +935,7 @@ var app = new Vue({
 
             return price;
         },
-        calculateRoutePrice: function (miles, passengers, packages, chosenOptions, pickupTime, carConfig) {
+        calculateRoutePrice: function (miles, passengers, packages, chosenOptions, pickupTime, carConfig, tripType, milesFromBaseToPickup) {
             const self = this;
 
             let totalPrice = 0;
@@ -944,15 +944,10 @@ var app = new Vue({
             let adminFee = 0;
             let optionsPrice = 0;
             let packagesPrice = 0;
+            let pickupFee = 0;
 
             let trafficHoursPrice = 0;
             let isInTrafficHours = false;
-
-            // var pricePassengersGT4 = parseFloat(self.transformedConfigs['cfg-psr-gt-4']);
-            // var priceMilesLT30 = parseFloat(self.transformedConfigs['cfg-pr-ml']);
-            // var priceMilesGT30 = parseFloat(self.transformedConfigs['cfg-pr-ml-gt-30']);
-            // var priceAdmin = parseFloat(self.transformedConfigs['cfg-admin-fee']);
-            // var trafficHoursExtra = parseFloat(self.transformedConfigs['cfg-trffh-rate']);
 
             let nonTrafficHours = [];
 
@@ -975,13 +970,14 @@ var app = new Vue({
 
             totalPrice = openDoorPrice + milesPrice + optionsPrice + packagesPrice;
 
-            adminFee = self.calculateAdminFee(carConfig, miles, totalPrice);
+            adminFee = self.calculateAdminFee(carConfig, miles, totalPrice, tripType);
+            pickupFee = self.calculatePickupFee(carConfig, milesFromBaseToPickup, totalPrice, tripType);
 
             // if (isInTrafficHours) {
             //     trafficHoursPrice = totalPrice * (trafficHoursExtra / 100);
             // }
 
-            totalPrice = parseFloat(totalPrice + trafficHoursPrice + adminFee);
+            totalPrice = parseFloat(totalPrice + trafficHoursPrice + adminFee + pickupFee);
 
             return totalPrice.toFixed(2);
         },
@@ -1300,6 +1296,7 @@ var app = new Vue({
             let finalPrice = parseFloat(self.form.bookingRequirements.review.prices.total).toFixed(2);
             self.form.bookingRequirements.review.prices.total = finalPrice;
 
+            console.log('computed changes');
             return finalPrice;
         },
     },

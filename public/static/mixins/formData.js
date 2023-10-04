@@ -315,7 +315,7 @@ const formDataRoundTrip =
                 ]
             }
         },
-        "tripType": "round-trip"
+        "tripType": "one-way"
     },
     "chooseOptions": {
         "oneWayTrip": {
@@ -350,10 +350,12 @@ const formDataRoundTrip =
         },
         "routes": {
             "oneWayTrip": {
-                "miles": "4"
+                "miles": "4",
+                "milesFromBaseToPickup": 0
             },
             "roundTrip": {
-                "miles": "4"
+                "miles": "4",
+                "milesFromBaseToPickup": 0
             }
         },
         "prices": {
@@ -363,7 +365,15 @@ const formDataRoundTrip =
             "totalNotDiscount": "131.00",
             "discountAmount": 0,
             "tipDriverAmountOther": null,
-            "tipDriverAmount": null
+            "tipDriverAmount": null,
+            "adminFee": {
+                "oneWayTrip": 0,
+                "roundTrip": 0
+            },
+            "pickupFee": {
+                "oneWayTrip": 0,
+                "roundTrip": 0
+            }
         },
         "agreeTermsConditions": null,
         "appliedCoupons": [],

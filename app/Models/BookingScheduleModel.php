@@ -45,6 +45,12 @@ class BookingScheduleModel extends Model
             'config_cars_price.admin_fee_fixed_amount AS adminFeeFixedAmount',
             'config_cars_price.admin_fee_active AS adminFeeActive',
             //----
+            'config_cars_price.pickup_fee_type AS pickupFeeType',
+            'config_cars_price.pickup_fee_limit_miles AS pickupFeeLimitMiles',
+            'config_cars_price.pickup_fee_percentage AS pickupFeePercentage',
+            'config_cars_price.pickup_fee_fixed_amount AS pickupFeeFixedAmount',
+            'config_cars_price.pickup_fee_active AS pickupFeeActive',
+            //----
             'config_cars_price.extra_luggages_price AS extraLuggagesPrice',
         ])
         ->join('config_cars', 'config_cars.car_id = booking_schedules.car_id AND booking_schedules.scheduled_date = "' . $date . '"', 'right')

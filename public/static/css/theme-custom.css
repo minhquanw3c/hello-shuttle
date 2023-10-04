@@ -318,3 +318,11 @@ body {
 .ltn__header-top-area .ltn__social-media ul li {
     font-size: 20px;
 }
+
+.danny--form-group .multiselect__content {
+    max-width: 100%;
+}
+
+.danny--form-group .multiselect__option {
+    text-wrap: pretty;
+}
