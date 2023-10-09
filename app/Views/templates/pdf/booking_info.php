@@ -2,6 +2,11 @@
 <head>
 </head>
 <body>
+<?php
+    $oneWay_hasRestStop = $bookingData->reservation->oneWayTrip->$hasRestStop;
+    $roundTrip_hasRestStop = $bookingData->reservation->roundTrip->$hasRestStop;
+?>
+
 <p>Dear <?= implode(" ", array($bookingData->review->customer->lastName, $bookingData->review->customer->firstName))  ?>,</p>
 <p>Your booking details for order: <?= $bookingRefNo ?></p>
 <p>Trip type: <?= $bookingData->reservation->tripType ?></p>
@@ -10,7 +15,7 @@
     <ul>
         <li>Vehicle: <?= $bookingData->selectCar->oneWayTrip->vehicle->carName ?></li>
         <li>From: <?= $bookingData->reservation->oneWayTrip->origin->description ?></li>
-        <li>Rest stop: <?= $bookingData->reservation->oneWayTrip->restStop->description ?></li>
+        <li>Rest stop: <?= $oneWay_hasRestStop ? $bookingData->reservation->oneWayTrip->restStop->description : null ?></li>
         <li>To: <?= $bookingData->reservation->oneWayTrip->destination->description ?></li>
         <li>Miles: <?= $bookingData->review->routes->oneWayTrip->miles ?></li>
         <li>Pickup time: 
@@ -50,7 +55,7 @@
     <ul>
         <li>Vehicle: <?= $bookingData->selectCar->roundTrip->vehicle->carName ?></li>
         <li>From: <?= $bookingData->reservation->roundTrip->origin->description ?></li>
-        <li>Rest stop: <?= $bookingData->reservation->roundTrip->restStop->description ?></li>
+        <li>Rest stop: <?= $roundTrip_hasRestStop ? $bookingData->reservation->roundTrip->restStop->description : null ?></li>
         <li>To: <?= $bookingData->reservation->roundTrip->destination->description ?></li>
         <li>Miles: <?= $bookingData->review->routes->roundTrip->miles ?></li>
         <li>Pickup time: 

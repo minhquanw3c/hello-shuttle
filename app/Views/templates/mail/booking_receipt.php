@@ -28,14 +28,16 @@
         $additionalNotes = $bookingData->review->additionalNotes ? $bookingData->review->additionalNotes : 'N/A';
 
         $oneWayDestination = $bookingData->reservation->oneWayTrip->destination->description;
-        $oneWayRestStop = $bookingData->reservation->oneWayTrip->restStop->description;
+        $oneWayHasRestStop = $bookingData->reservation->oneWayTrip->hasRestStop;
+        $oneWayRestStop = $oneWayHasRestStop ? $bookingData->reservation->oneWayTrip->restStop->description : null;
         $oneWayPickup = $bookingData->reservation->oneWayTrip->pickup->date . ' ' . $bookingData->reservation->oneWayTrip->pickup->time;
         $oneWayPassengers = $bookingData->reservation->oneWayTrip->passengers;
         $oneWayVehicle = $bookingData->selectCar->oneWayTrip->vehicle->carName;
 
         if ($tripType === 'round-trip') {
             $roundTripDestination = $bookingData->reservation->roundTrip->destination->description;
-            $roundTripRestStop = $bookingData->reservation->roundTrip->restStop->description;
+            $roundTripHasRestStop = $bookingData->reservation->roundTrip->hasRestStop;
+            $roundTripRestStop = $roundTripHasRestStop ? $bookingData->reservation->roundTrip->restStop->description : null;
             $roundTripPickup = $bookingData->reservation->roundTrip->pickup->date . ' ' . $bookingData->reservation->roundTrip->pickup->time;
             $roundTripPassengers = $bookingData->reservation->roundTrip->passengers;
             $roundTripVehicle = $bookingData->selectCar->roundTrip->vehicle->carName;
