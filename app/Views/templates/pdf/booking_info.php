@@ -3,8 +3,8 @@
 </head>
 <body>
 <?php
-    $oneWay_hasRestStop = $bookingData->reservation->oneWayTrip->$hasRestStop;
-    $roundTrip_hasRestStop = $bookingData->reservation->roundTrip->$hasRestStop;
+    $oneWay_hasRestStop = $bookingData->reservation->oneWayTrip->hasRestStop;
+    $roundTrip_hasRestStop = $bookingData->reservation->roundTrip->hasRestStop;
 ?>
 
 <p>Dear <?= implode(" ", array($bookingData->review->customer->lastName, $bookingData->review->customer->firstName))  ?>,</p>
