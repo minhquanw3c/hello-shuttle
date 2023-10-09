@@ -13,6 +13,9 @@
     .mt-0 {
         margin-top: 0;
     }
+    .mt-1 {
+        margin-top: 1rem;
+    }
 </style>
 </head>
 <body>
@@ -25,12 +28,14 @@
         $additionalNotes = $bookingData->review->additionalNotes ? $bookingData->review->additionalNotes : 'N/A';
 
         $oneWayDestination = $bookingData->reservation->oneWayTrip->destination->description;
+        $oneWayRestStop = $bookingData->reservation->oneWayTrip->restStop->description;
         $oneWayPickup = $bookingData->reservation->oneWayTrip->pickup->date . ' ' . $bookingData->reservation->oneWayTrip->pickup->time;
         $oneWayPassengers = $bookingData->reservation->oneWayTrip->passengers;
         $oneWayVehicle = $bookingData->selectCar->oneWayTrip->vehicle->carName;
 
         if ($tripType === 'round-trip') {
             $roundTripDestination = $bookingData->reservation->roundTrip->destination->description;
+            $roundTripRestStop = $bookingData->reservation->roundTrip->restStop->description;
             $roundTripPickup = $bookingData->reservation->roundTrip->pickup->date . ' ' . $bookingData->reservation->roundTrip->pickup->time;
             $roundTripPassengers = $bookingData->reservation->roundTrip->passengers;
             $roundTripVehicle = $bookingData->selectCar->roundTrip->vehicle->carName;
@@ -45,24 +50,31 @@
     </p>
 
     <p>
-        Here are the details of your trip:
+        Here are the details of your trips:
     </p>
 
-    <ul>
-        <li>Destination: <?= $oneWayDestination ?></li>
-        <li>Departure Date: <?= $oneWayPickup ?></li>
-        <li>Number of Travelers: <?= $oneWayPassengers ?></li>
-        <li>Transportation: <?= $oneWayVehicle ?></li>
-    </ul>
-
-    <?php if($tripType === 'round-trip'): ?>
-        <ul>
-            <li>Destination: <?= $roundTripDestination ?></li>
-            <li>Departure Date: <?= $roundTripPickup ?></li>
-            <li>Number of Travelers: <?= $roundTripPassengers ?></li>
-            <li>Transportation: <?= $roundTripVehicle ?></li>
-        </ul>
-    <?php endif ?>
+    <ol>
+        <li>
+            <ul>
+                <li>Destination: <?= $oneWayDestination ?></li>
+                <li>Rest stop: <?= $oneWayRestStop ?></li>
+                <li>Departure date: <?= $oneWayPickup ?></li>
+                <li>Number of travelers: <?= $oneWayPassengers ?></li>
+                <li>Transportation: <?= $oneWayVehicle ?></li>
+            </ul>
+        </li>
+        <?php if($tripType === 'round-trip'): ?>
+            <li class="mt-1">
+                <ul>
+                    <li>Destination: <?= $roundTripDestination ?></li>
+                    <li>Rest stop: <?= $roundTripRestStop ?></li>
+                    <li>Departure date: <?= $roundTripPickup ?></li>
+                    <li>Number of travelers: <?= $roundTripPassengers ?></li>
+                    <li>Transportation: <?= $roundTripVehicle ?></li>
+                </ul>
+            </li>
+        <?php endif ?>
+    </ol>
 
     <ul>
         <li>Airlane: <?= $airlane ?></li>

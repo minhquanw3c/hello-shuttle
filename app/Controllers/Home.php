@@ -420,7 +420,7 @@ class Home extends BaseController
         return $response;
     }
 
-    public function generateBookingReceipt($pdf_template, $booking_id)
+    public function generateBookingReceipt($pdf_template, $booking_ref_no)
     {
         // Create a new PDF instance
         $pdf = new TCPDF('P', 'mm', 'LETTER', true, 'UTF-8');
@@ -445,10 +445,12 @@ class Home extends BaseController
         $savePath = WRITEPATH . '/receipts/pdf/';
 
         // Generate a unique filename for the PDF
-        $filename = $booking_id . '.pdf';
+        $filename = 'helloshuttle-receipt-' . $booking_ref_no . '.pdf';
 
         // Save the PDF to the specified folder
         $pdf->Output($savePath . $filename, 'F');
+
+        return $filename;
     }
 
     private function generateBookingCancelLink($booking_id, $cancel_session_id)
@@ -485,9 +487,9 @@ class Home extends BaseController
             ), ['debug' => false]
         );
 
-        $this->generateBookingReceipt($pdf_content, $booking_id);
+        $pdf_receipt_name = $this->generateBookingReceipt($pdf_content, $booking_ref_no);
 
-        $receiptsPath = WRITEPATH . 'receipts/pdf/' . $booking_id . '.pdf';
+        $receiptsPath = WRITEPATH . 'receipts/pdf/' . $pdf_receipt_name;
 
         $email = \Config\Services::email();
 

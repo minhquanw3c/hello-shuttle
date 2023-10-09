@@ -524,12 +524,9 @@ var app = new Vue({
                 form: { ...self.form.bookingRequirements.reservation }
             }
 
-            console.log(payload);
-
             axios
                 .post(baseURL + '/api/car/list', payload)
                 .then(res => {
-                    console.log(res);
                     self.vehicles.oneWayTrip = res.data.oneWayCars;
                     self.vehicles.roundTrip = res.data.roundTripCars;
                     var toastType = res.data.result ? 'success' : 'error';
@@ -658,7 +655,6 @@ var app = new Vue({
             axios
                 .post(baseURL + '/api/booking/save', payload)
                 .then(res => {
-                    console.log(res);
                     var toastType = res.data.result ? 'success' : 'error';
                     self.showToastNotification(toastType);
 
@@ -766,7 +762,6 @@ var app = new Vue({
                     }
                 )
                 .then((res) => {
-                    console.log(res.data);
                     if (res.data.routes) {
                         routeMiles = res.data.routes[0].distanceMeters;
                     }
@@ -851,7 +846,6 @@ var app = new Vue({
                 }
             }
 
-            console.log(newObject);
             return newObject;
         },
         checkHourInRanges: function (hour, ranges) {
@@ -1296,7 +1290,6 @@ var app = new Vue({
             let finalPrice = parseFloat(self.form.bookingRequirements.review.prices.total).toFixed(2);
             self.form.bookingRequirements.review.prices.total = finalPrice;
 
-            console.log('computed changes');
             return finalPrice;
         },
     },

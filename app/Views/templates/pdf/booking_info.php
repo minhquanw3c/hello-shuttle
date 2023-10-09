@@ -10,6 +10,7 @@
     <ul>
         <li>Vehicle: <?= $bookingData->selectCar->oneWayTrip->vehicle->carName ?></li>
         <li>From: <?= $bookingData->reservation->oneWayTrip->origin->description ?></li>
+        <li>Rest stop: <?= $bookingData->reservation->oneWayTrip->restStop->description ?></li>
         <li>To: <?= $bookingData->reservation->oneWayTrip->destination->description ?></li>
         <li>Miles: <?= $bookingData->review->routes->oneWayTrip->miles ?></li>
         <li>Pickup time: 
@@ -49,6 +50,7 @@
     <ul>
         <li>Vehicle: <?= $bookingData->selectCar->roundTrip->vehicle->carName ?></li>
         <li>From: <?= $bookingData->reservation->roundTrip->origin->description ?></li>
+        <li>Rest stop: <?= $bookingData->reservation->roundTrip->restStop->description ?></li>
         <li>To: <?= $bookingData->reservation->roundTrip->destination->description ?></li>
         <li>Miles: <?= $bookingData->review->routes->roundTrip->miles ?></li>
         <li>Pickup time: 

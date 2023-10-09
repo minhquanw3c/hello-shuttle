@@ -403,7 +403,7 @@
                                                         content-cols-sm="9"
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.origin)">
-                                                        <b-input-group>
+                                                        <b-input-group class="flex-nowrap">
                                                             <b-input-group-prepend>
                                                                 <div class="btn">
                                                                     <b-icon icon="geo-alt"></b-icon>
@@ -435,7 +435,7 @@
                                                         content-cols-sm="9"
                                                         :invalid-feedback="errorMessages.required"
                                                         :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.destination)">
-                                                        <b-input-group>
+                                                        <b-input-group class="flex-nowrap">
                                                             <b-input-group-prepend>
                                                                 <div class="btn">
                                                                     <b-icon icon="geo-alt"></b-icon>
@@ -625,7 +625,7 @@
                                                             content-cols-sm="9"
                                                             :invalid-feedback="errorMessages.required"
                                                             :state="validateInputField($v.form.bookingRequirements.reservation.roundTrip.restStop)">
-                                                            <b-input-group>
+                                                            <b-input-group class="flex-nowrap">
                                                                 <b-input-group-prepend>
                                                                     <div class="btn">
                                                                         <b-icon icon="geo-alt"></b-icon>
