@@ -76,7 +76,7 @@
                             <img src="<?= base_url('static/images/logo/hello-shuttle-gold-03.png') ?>" alt="hello-shuttle-logo" style="max-height: 100px;">
                         </a>
                     </div>
-                    <div class="col-12 col-lg-6 mt-3 mt-lg-0">
+                    <div class="col-12 col-lg-4 mt-3 mt-lg-0">
                         <div class="get-support get-support-color-white">
                             <div class="get-support-icon">
                                 <i class="icon-call"></i>
@@ -93,6 +93,14 @@
                                 <h4 style="font-size: 1.7rem;"><a href="mailto:info@helloshuttle.com" target="_blank">info@helloshuttle.com</a></h4>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-12 col-lg-2 mt-3 mt-lg-0 text-center">
+                        <a
+                            class="align-items-center btn btn-primary d-inline-flex"
+                            href="<?= $dashboardUrl ?>"
+                            target="blank">
+                            Dashboard login
+                        </a>
                     </div>
                 </div>
             </div>

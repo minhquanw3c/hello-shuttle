@@ -19,6 +19,7 @@ class Home extends BaseController
         $data = [
             'bookingId' => $booking_id,
             'enviroment' => $_SERVER['CI_ENVIRONMENT'],
+            'dashboardUrl' => $this->getResourcesURLs('dashboard')
         ];
 
         return view('frontend/form', $data);
