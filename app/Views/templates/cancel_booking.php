@@ -10,7 +10,8 @@
                         <h2 class="text-white">Your request has been processed</h2>
                         <p class="text-white">Thank you for choosing us! Please check your email for more details.</p>
                         <div class="btn-wrapper">
-                            <a href="<?= base_url('/') ?>" class="btn btn-white btn-lg"><i class="fas fa-long-arrow-alt-left"></i> BACK TO HOME</a>
+                            <a href="<?= base_url('/') ?>" class="btn btn-primary btn-lg mr-2"><i class="fas fa-long-arrow-alt-left"></i> BOOK MORE</a>
+                            <a href="<?= $dashboardUrl ?>" class="btn btn-white btn-lg">MY DASHBOARD <i class="fas fa-long-arrow-alt-right"></i></a>
                         </div>
                     </div>
                 </div>

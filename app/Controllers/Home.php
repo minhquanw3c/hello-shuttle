@@ -177,6 +177,36 @@ class Home extends BaseController
         return $charge_object->refunded == true ? $refunded : !$refunded;
     }
 
+    public function calculateTripRefundAmount($booking_data, $trip_type) {
+        $config_model = model(ConfigModel::class);
+        $valid_full_refund_hours = $config_model->getConfigById('cfg-rfd-tm')[0]['configValue'];
+        $invalid_full_refund_percentage = $config_model->getConfigById('cfg-ivld-frd')[0]['configValue'];
+
+        $has_purchased_booking_insurance = $this->checkPurchasedInsurance($booking_data->chooseOptions->{$trip_type}->protection);
+
+        $cancel_booking_request_time = Time::now('UTC');
+        $refund_amount = 0.00;
+
+        $is_full_refund_eligible = $this->checkEligibleRefundTime(
+                $cancel_booking_request_time,
+                $booking_data->bookingCreatedAt,
+                $valid_full_refund_hours
+        );
+
+        if ($has_purchased_booking_insurance) {
+            $protection_plan = $booking_data->chooseOptions->{$trip_type}->protection[0];
+            $protection_price = floatval($protection_plan->configValue) * $protection_plan->quantity;
+
+            $refund_amount = floatval($booking_data->review->prices->{$trip_type}) - $protection_price;
+        } else if ($is_full_refund_eligible) {
+            $refund_amount = floatval($booking_data->review->prices->{$trip_type});
+        } else {
+            $refund_amount = floatval($booking_data->review->prices->{$trip_type}) * ($invalid_full_refund_percentage / 100);
+        }
+
+        return round($refund_amount, 2);
+    }
+
     public function cancelBooking()
     {
         $booking_id = filter_var($this->request->getVar('booking_id'), FILTER_SANITIZE_STRING);
@@ -209,52 +239,14 @@ class Home extends BaseController
                 throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
             }
 
-            $config_model = model(ConfigModel::class);
-            $valid_full_refund_hours = $config_model->getConfigById('cfg-rfd-tm')[0]['configValue'];
-            $invalid_full_refund_percentage = $config_model->getConfigById('cfg-ivld-frd')[0]['configValue'];
+            $booking_data->bookingCreatedAt = $booking->bookingCreatedAt;
 
-            $has_purchased_booking_insurance = [
-                'one-way' => $this->checkPurchasedInsurance($booking_data->chooseOptions->oneWayTrip->protection),
-                'round-trip' => $this->checkPurchasedInsurance($booking_data->chooseOptions->roundTrip->protection),
-            ];
-
-            $cancel_booking_request_time = Time::now('UTC');
-
-            $is_full_refund_eligible = [
-                'one-way' => $this->checkEligibleRefundTime(
-                    $cancel_booking_request_time,
-                    $booking->bookingCreatedAt,
-                    $valid_full_refund_hours,
-                ),
-                'round-trip' => $this->checkEligibleRefundTime(
-                    $cancel_booking_request_time,
-                    $booking->bookingCreatedAt,
-                    $valid_full_refund_hours,
-                ),
-            ];
-
-            $refund_amount_one_way = 0.00;
-            $refund_amount_round_trip = 0.00;
-
-            if ($has_purchased_booking_insurance['one-way'] || $is_full_refund_eligible['one-way']) {
-                $refund_amount_one_way = $booking_data->review->prices->oneWayTrip;
-            } else {
-                $refund_amount_one_way = $booking_data->review->prices->oneWayTrip * ($invalid_full_refund_percentage / 100);
-            }
-
-            if ($booking_data->reservation->tripType == 'round-trip') {
-                if ($has_purchased_booking_insurance['round-trip'] || $is_full_refund_eligible['round-trip']) {
-                    $refund_amount_round_trip = $booking_data->review->prices->roundTrip;
-                } else {
-                    $refund_amount_round_trip = $booking_data->review->prices->roundTrip * ($invalid_full_refund_percentage / 100);
-                }
-            }
-
-            $refund_amount_one_way = round($refund_amount_one_way, 2);
-            $refund_amount_round_trip = round($refund_amount_round_trip, 2);
+            $refund_amount_one_way = $this->calculateTripRefundAmount($booking_data, 'oneWayTrip');
+            $refund_amount_round_trip = $this->calculateTripRefundAmount($booking_data, 'roundTrip');
             $discount_amount = round($booking_data->review->prices->discountAmount, 2);
+            $stripe_decimal_converter = 100;
 
-            $total_refund_amount = (($refund_amount_one_way + $refund_amount_round_trip) - $discount_amount) * 100;
+            $total_refund_amount = (($refund_amount_one_way + $refund_amount_round_trip) - $discount_amount) * $stripe_decimal_converter;
 
             $refund_result = $this->refundBooking($booking->bookingCheckoutSessionId, $total_refund_amount);
 
@@ -292,6 +284,7 @@ class Home extends BaseController
             $response = [
                 'sendRefundEmail' => $notify_email_result,
                 'updateBooking' => $update_booking_status,
+                'dashboardUrl' => $this->getResourcesURLs('dashboard'),
             ];
         }
 
@@ -382,6 +375,7 @@ class Home extends BaseController
         foreach ($trip_data as $option) {
             if ($option->configId == 'bk-insurance') {
                 $purchased_insurance = true;
+                break;
             }
         }
 
@@ -591,6 +585,7 @@ class Home extends BaseController
             'result' => $update_booking_result,
             'sendBookingReceipt' => $send_receipt,
             'createBookingSchedule' => $create_booking_schedule_result,
+            'dashboardUrl' => $this->getResourcesURLs('dashboard'),
         ];
 
         return view('templates/confirmation', $response);
@@ -624,7 +619,7 @@ class Home extends BaseController
         $stripe = new \Stripe\StripeClient($stripe_payment_key);
 
         $product = $stripe->products->create([
-            'name' => 'Car booking No ' . $booking_id,
+            'name' => 'Payment for booking No: ' . $booking_id,
         ]);
 
         $price = $stripe->prices->create([
@@ -703,5 +698,17 @@ class Home extends BaseController
     public function getPrivacyAndPolicy()
     {
         return view('frontend/privacy_policy');
+    }
+
+    public function getResourcesURLs($resource_type)
+    {
+        $current_env = strtolower($_SERVER['CI_ENVIRONMENT']);
+
+        $resources = (object) [];
+
+        $resources->form = $current_env === 'production' ? 'https://helloshuttle.com/' : 'http://localhost/projects/hello-shuttle/public/';
+        $resources->dashboard = $current_env === 'production' ? 'https://dashboard.helloshuttle.com/' : 'http://localhost/projects/hello-shuttle-dashboard/public/';
+
+        return $resources->{$resource_type};
     }
 }
