@@ -208,36 +208,61 @@ class Home extends BaseController
         return round($refund_amount, 2);
     }
 
-    public function cancelBooking()
+    public function cancelBookingGateway()
     {
-        $booking_id = filter_var($this->request->getVar('booking_id'), FILTER_SANITIZE_STRING);
-        $cancel_session_id = filter_var($this->request->getVar('cancel_session_id'), FILTER_SANITIZE_STRING);
+        $request_method = $this->request->getMethod(true);
+
+        if ($request_method === 'GET') {
+            $booking_id = filter_var($this->request->getVar('booking_id'), FILTER_SANITIZE_STRING);
+            $cancel_session_id = filter_var($this->request->getVar('cancel_session_id'), FILTER_SANITIZE_STRING);
+        } else if ($request_method === 'POST') {
+            $booking_id = filter_var($this->request->getJSONVar('booking_id'), FILTER_SANITIZE_STRING);
+            $cancel_session_id = filter_var($this->request->getJSONVar('cancel_session_id'), FILTER_SANITIZE_STRING);
+        }
+
+        $cancel_result = $this->cancelBooking($booking_id, $cancel_session_id);
+
+        if ($request_method === 'GET') {
+            return $cancel_result['result'] === true ?
+                view('templates/cancel_booking', ['dashboardUrl' => $this->getResourcesURLs('dashboard')]) :
+                throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
+        } else if ($request_method === 'POST') {
+            return $this->response->setJSON($cancel_result);
+        }
+    }
+
+    public function cancelBooking($booking_id, $cancel_session_id)
+    {
+        $response = [
+            'result' => false,
+            'message' => 'Error occurred'
+        ];
 
         $booking_model = model(BookingModel::class);
 
         $booking = $booking_model->getBookingById($booking_id);
 
         if (count($booking) == 0) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
+            return $response;
         }
 
         $booking = (object) $booking[0];
 
         if (!(strcmp($cancel_session_id, $booking->bookingCancelId) === 0)) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
+            return $response;
         }
 
         $booking_data = json_decode($booking->bookingData);
 
         if (!($booking->bookingStatusId == 'bk-sts-prsng')) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
+            return $response;
         }
 
         if ($booking->bookingPaymentStatus === 'pmst-paid') {
             $is_booking_already_refunded = $this->checkBookingIsRefunded($booking->bookingCheckoutSessionId);
 
             if ($is_booking_already_refunded) {
-                throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
+                return $response;
             }
 
             $booking_data->bookingCreatedAt = $booking->bookingCreatedAt;
@@ -292,7 +317,12 @@ class Home extends BaseController
         $this->disablePaymentLink($booking->bookingPaymentLinkId);
         $this->removeBookingSchedules($booking_id);
 
-        return view('templates/cancel_booking', $response);
+        $response = [
+            'result' => true,
+            'message' => 'Booking cancelled successfully',
+        ];
+
+        return $response;
     }
 
     private function notifyCustomerRefundStatus($recipient, $booking_id, $is_payment_paid)

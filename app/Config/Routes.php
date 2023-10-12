@@ -33,12 +33,12 @@ $routes->set404Override('App\Controllers\ErrorHandler::pageNotFound');
 $routes->get('/', 'Home::index');
 $routes->get('/reservation', 'Home::reservationForm');
 $routes->get('/confirmation', 'Home::confirmBookingPayment');
-$routes->get('/cancel', 'Home::cancelBooking');
+$routes->get('/cancel', 'Home::cancelBookingGateway');
 
 $routes->post('api/car/list', 'Home::getAvailableCarsList');
 
 $routes->post('api/booking/save', 'Home::saveBooking');
-$routes->get('api/booking/cancel', 'Home::cancelBooking');
+$routes->post('api/booking/cancel', 'Home::cancelBookingGateway');
 
 $routes->get('api/checkout/create', 'Home::testStripePayment');
 $routes->get('api/sms/send', 'Home::testClickSend');

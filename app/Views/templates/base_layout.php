@@ -99,7 +99,7 @@
                             class="align-items-center btn btn-primary d-inline-flex"
                             href="<?= $dashboardUrl ?>"
                             target="blank">
-                            Dashboard login
+                            Login
                         </a>
                     </div>
                 </div>
