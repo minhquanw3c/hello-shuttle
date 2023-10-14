@@ -227,7 +227,6 @@ class Home extends BaseController
                 view('templates/cancel_booking', ['dashboardUrl' => $this->getResourcesURLs('dashboard')]) :
                 throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
         } else if ($request_method === 'POST') {
-            $this->response->setHeader('Access-Control-Allow-Origin', '*');
             return $this->response->setJSON($cancel_result);
         }
     }
