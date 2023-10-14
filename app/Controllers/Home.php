@@ -728,7 +728,11 @@ class Home extends BaseController
 
     public function getPrivacyAndPolicy()
     {
-        return view('frontend/privacy_policy');
+        $data = [
+            'dashboardUrl' => $this->getResourcesURLs('dashboard')
+        ];
+
+        return view('frontend/privacy_policy', $data);
     }
 
     public function getResourcesURLs($resource_type)

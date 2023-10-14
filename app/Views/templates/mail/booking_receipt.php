@@ -16,6 +16,10 @@
     .mt-1 {
         margin-top: 1rem;
     }
+    .policy__notices {
+        font-size: 0.65rem;
+        color: grey;
+    }
 </style>
 </head>
 <body>
@@ -109,6 +113,24 @@
         Best regards,<br/>
         Hello Shuttle CEO<br/>
         Hello Shuttle
+    </p>
+    <p class="policy__notices">
+        *Gratuity - (Standard gratuity rate is 20%)* Fares listed do not include gratuity. 
+        If you'd like to show your appreciation to your driver, your gesture is greatly welcomed. 
+        You can provide a gratuity in Zelle, Venmo or Cash at the end of your trip or request your 
+        preferred dollar amount or percentage to be added to your reservation. 
+        We'll then send you an updated receipt via email.
+    </p>
+    <p class="policy__notices">
+        *Where to Find Your Driver at the Airport* Your driver will be waiting for you right in front of your terminal. 
+        Please do not proceed to the Uber/Lyft/Taxi transportation lot outside the airport. 
+        Your driver will reach out to you via text and calls prior to your scheduled pickup time. 
+        You should be ready at the curb in front of your terminal, and your driver will be standing by. 
+        Contact him when you're outside, and he'll arrive within minutes to pick you up.
+    </p>
+    <p class="policy__notices">
+        *Modifying or Cancelling a Reservation* To ensure any changes or cancellations are valid, 
+        you must receive a text or email confirmation from HelloShuttle
     </p>
 </body>
 </html>
