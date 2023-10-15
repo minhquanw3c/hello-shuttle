@@ -302,16 +302,16 @@ var app = new Vue({
                     value: null,
                 },
                 {
-                    text: '5%',
-                    value: 0.05,
+                    text: '20%',
+                    value: 0.2,
                 },
                 {
-                    text: '10%',
-                    value: 0.1,
+                    text: '25%',
+                    value: 0.25,
                 },
                 {
-                    text: '15%',
-                    value: 0.15,
+                    text: '30%',
+                    value: 0.3,
                 },
                 {
                     text: 'Other',
@@ -1291,6 +1291,34 @@ var app = new Vue({
             self.form.bookingRequirements.review.prices.total = finalPrice;
 
             return finalPrice;
+        },
+        extraLuggages: function () {
+            const self = this;
+
+            let isRoundTrip = self.form.bookingRequirements.reservation.tripType === 'round-trip';
+
+            let oneWayTripLuggages = self.form.bookingRequirements.reservation.oneWayTrip.luggages;
+            let roundTripLuggages = self.form.bookingRequirements.reservation.roundTrip.luggages;
+
+            let oneWayTripVehicleConfig = self.form.bookingRequirements.selectCar.oneWayTrip.vehicle;
+            let roundTripVehicleConfig = self.form.bookingRequirements.selectCar.roundTrip.vehicle;
+
+            let luggages = {
+                oneWayTrip: {
+                    extras: !_.isNil(oneWayTripVehicleConfig) ? 
+                        (parseInt(oneWayTripVehicleConfig.carSeats) - parseInt(oneWayTripLuggages)) : 0,
+                    extrasPrice: !_.isNil(oneWayTripVehicleConfig) ? 
+                        ((parseInt(oneWayTripVehicleConfig.carSeats) - parseInt(oneWayTripLuggages)) * oneWayTripVehicleConfig.extraLuggagesPrice) : 0,
+                },
+                roundTrip: {
+                    extras: !_.isNil(roundTripVehicleConfig) && isRoundTrip ? 
+                        (parseInt(roundTripVehicleConfig.carSeats) - parseInt(roundTripLuggages)) : 0,
+                    extrasPrice: !_.isNil(roundTripVehicleConfig) && isRoundTrip ? 
+                        ((parseInt(roundTripVehicleConfig.carSeats) - parseInt(roundTripLuggages)) * roundTripVehicleConfig.extraLuggagesPrice) : 0,
+                }
+            };
+
+            return luggages;
         },
     },
     validations: {

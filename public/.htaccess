@@ -14,6 +14,11 @@ Options All -Indexes
 	Options +FollowSymlinks
 	RewriteEngine On
 
+	# Block access to the JS file in production
+	RewriteCond %{HTTP_HOST} ^helloshuttle\.com$ [NC]
+	RewriteCond %{REQUEST_URI} \/static\/js\/main-app\.js$
+	RewriteRule ^ - [F,L]
+
 	# If you installed CodeIgniter in a subfolder, you will need to
 	# change the following line to match the subfolder you need.
 	# http://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase

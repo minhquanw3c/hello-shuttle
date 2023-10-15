@@ -1391,6 +1391,30 @@
                                                     </section>
                                                 </section>
 
+                                                <!-- Extra luggages -->
+                                                <section v-if="extraLuggages.oneWayTrip.extras < 0" class="mt-5">
+                                                    <div class="row">
+                                                        <div class="col-10">
+                                                            <h5 class="danny--group-title">Luggages</h5>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <b-button class="btn" title="Edit luggages" @click="() => { formActiveTabIndex = 0 }">
+                                                                <b-icon icon="pencil-square"></b-icon>
+                                                            </b-button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-8">
+                                                            Extra luggages (&times;{{ Math.abs(extraLuggages.oneWayTrip.extras) }})
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <span class="danny--car-option-price">
+                                                                &dollar;{{ Math.abs(extraLuggages.oneWayTrip.extrasPrice) }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </section>
+
                                                 <!-- Total -->
                                                 <section class="mt-5">
                                                     <div class="row">
@@ -1545,6 +1569,30 @@
                                                                 </div>
                                                             </div>
                                                         </section>
+                                                    </section>
+
+                                                    <!-- Extra luggages -->
+                                                    <section v-if="extraLuggages.roundTrip.extras < 0" class="mt-5">
+                                                        <div class="row">
+                                                            <div class="col-10">
+                                                                <h5 class="danny--group-title">Luggages</h5>
+                                                            </div>
+                                                            <div class="col-2">
+                                                                <b-button class="btn" title="Edit luggages" @click="() => { formActiveTabIndex = 0 }">
+                                                                    <b-icon icon="pencil-square"></b-icon>
+                                                                </b-button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-8">
+                                                                Extra luggages (&times;{{ Math.abs(extraLuggages.roundTrip.extras) }})
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <span class="danny--car-option-price">
+                                                                    &dollar;{{ Math.abs(extraLuggages.roundTrip.extrasPrice) }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
                                                     </section>
 
                                                     <!-- Total -->
