@@ -48,13 +48,22 @@ class Home extends BaseController
         $one_way_cars = [];
         $round_trip_cars = [];
 
-        $booking_date = $booking_data->oneWayTrip->pickup->date;
-        $one_way_cars = $booking_schedule_model->getAvailableCarsForDate($booking_date);
+        $one_way_cars_payload = [
+            'date' => $booking_data->oneWayTrip->pickup->date,
+            'passengers' => $booking_data->oneWayTrip->passengers,
+            'luggages' => $booking_data->oneWayTrip->luggages,
+        ];
+
+        $one_way_cars = $booking_schedule_model->getAvailableCarsForDate($one_way_cars_payload);
 
         if ($booking_data->tripType == 'round-trip') {
-            $round_trip_booking_date = $booking_data->roundTrip->pickup->date;
+            $round_trip_cars_payload = [
+                'date' => $booking_data->roundTrip->pickup->date,
+                'passengers' => $booking_data->roundTrip->passengers,
+                'luggages' => $booking_data->roundTrip->luggages,
+            ];
 
-            $round_trip_cars = $booking_schedule_model->getAvailableCarsForDate($round_trip_booking_date);
+            $round_trip_cars = $booking_schedule_model->getAvailableCarsForDate($round_trip_cars_payload);
         }
 
         $response = [

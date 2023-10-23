@@ -1179,7 +1179,7 @@ var app = new Vue({
             const self = this;
 
             return self.form.bookingRequirements.review.routes.oneWayTrip.miles > 0 ?
-                self.form.bookingRequirements.review.routes.oneWayTrip.miles + ' mile(s)' :
+                self.form.bookingRequirements.review.routes.oneWayTrip.miles + ' miles' :
                 'Not provided';
         },
         oneWayTripPickup: function () {
@@ -1239,7 +1239,7 @@ var app = new Vue({
             const self = this;
 
             return self.form.bookingRequirements.review.routes.roundTrip.miles > 0 ?
-                self.form.bookingRequirements.review.routes.roundTrip.miles + ' mile(s)' :
+                self.form.bookingRequirements.review.routes.roundTrip.miles + ' miles' :
                 'Not provided';
         },
         roundTripVehicle: function () {
@@ -1319,6 +1319,13 @@ var app = new Vue({
             };
 
             return luggages;
+        },
+        isRoundTrip: function () {
+            const self = this;
+
+            let isRoundTrip = self.form.bookingRequirements.reservation.tripType === 'round-trip';
+
+            return isRoundTrip;
         },
     },
     validations: {

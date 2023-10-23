@@ -153,30 +153,26 @@ input[type="number"] {
     border-width: 0 33px 33px 0;
 }
 
-.danny--car-name {
-    font-size: 22px;
-    color: #262626;
+.danny--car {
     font-weight: bold;
     padding-left: 35px;
     margin: 0;
     line-height: normal;
+}
+
+.danny--car-name {
+    font-size: 22px;
+    color: #262626;
 }
 
 .danny--car-availability {
     font-size: 14px;
     color: #585858;
-    font-weight: bold;
-    padding-left: 35px;
-    margin: 0;
-    line-height: normal;
 }
 
 .danny--car-price {
     font-size: 25px;
     color: #ff7043;
-    font-weight: bold;
-    letter-spacing: normal;
-    margin: 0;
 }
 
 .danny--group-title {

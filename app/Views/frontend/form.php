@@ -368,7 +368,7 @@
                                         </div>
                                     </section>
 
-                                    <template v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
+                                    <template v-if="isRoundTrip">
                                         <!-- Second Origin -->
                                         <section class="mt-5">
                                             <div class="row">
@@ -669,70 +669,88 @@
                                 <span>2.</span> <span class="tab-heading">Select your car</span>
                             </template>
 
-                            <section v-if="vehicles.oneWayTrip.length > 0">
+                            <section>
                                 <h5 class="danny--group-title">Picking-up</h5>
-                                <div
-                                    class="row align-items-center p-4 mb-3 bg-white"
-                                    v-for="vehicle in vehicles.oneWayTrip">
-                                    <div class="col-12 col-md-6 col-lg-3">
-                                        <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
+                                <template v-if="vehicles.oneWayTrip.length > 0">
+                                    <div
+                                        class="row align-items-center p-4 mb-3 bg-white"
+                                        v-for="vehicle in vehicles.oneWayTrip">
+                                        <div class="col-12 col-md-6 col-lg-3">
+                                            <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+                                            <p class="danny--car danny--car-name">
+                                                {{ vehicle.carName }}
+                                            </p>
+                                            <p class="danny--car danny--car-capacity">
+                                                <span class="d-block"><b-icon icon="people"></b-icon> {{ vehicle.maxPassengers }}</span>
+                                                <span class="d-block"><b-icon icon="briefcase"></b-icon> {{ vehicle.maxLuggages }}</span>
+                                            </p>
+                                            <p :class="{ 'danny--car danny--car-availability': true, 'text-danger': parseInt(vehicle.availableCars) <= 0 }">
+                                                {{ parseInt(vehicle.availableCars) <= 0 ? 'Out of service' : 'Available' }}
+                                            </p>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+                                            <p class="danny--car danny--car-price">&dollar;{{ vehicle.openDoorPrice }}</p>
+                                        </div>
+                                        <div class="col-12 col-lg-3 text-right">
+                                            <b-form-radio
+                                                :disabled="parseInt(vehicle.availableCars) <= 0"
+                                                v-model="$v.form.bookingRequirements.selectCar.oneWayTrip.vehicle.$model"
+                                                name="one-way-vehicle"
+                                                :value="vehicle"
+                                                button
+                                                button-variant="outline-primary">
+                                                Select
+                                            </b-form-radio>
+                                        </div>
                                     </div>
-                                    <div class="col-12 col-sm-6 col-md-3 col-lg-3">
-                                        <p class="danny--car-name">
-                                            {{ vehicle.carName }}
-                                        </p>
-                                        <p :class="{ 'danny--car-availability': true, 'text-danger': parseInt(vehicle.availableCars) <= 0 }">
-                                            {{ parseInt(vehicle.availableCars) <= 0 ? 'Out of service' : 'Available' }}
-                                        </p>
-                                    </div>
-                                    <div class="col-12 col-sm-6 col-md-3 col-lg-3">
-                                        <p class="danny--car-price">&dollar;{{ vehicle.openDoorPrice }}</p>
-                                    </div>
-                                    <div class="col-12 col-lg-3 text-right">
-                                        <b-form-radio
-                                            :disabled="parseInt(vehicle.availableCars) <= 0"
-                                            v-model="$v.form.bookingRequirements.selectCar.oneWayTrip.vehicle.$model"
-                                            name="one-way-vehicle"
-                                            :value="vehicle"
-                                            button
-                                            button-variant="outline-primary">
-                                            Select
-                                        </b-form-radio>
-                                    </div>
-                                </div>
+                                </template>
+                                <template v-if="vehicles.oneWayTrip.length === 0">
+                                    Sorry! There are no available cars at the moment.
+                                </template>
                             </section>
 
-                            <section v-if="vehicles.roundTrip.length > 0">
+                            <section class="mt-4" v-if="isRoundTrip">
                                 <h5 class="danny--group-title">Return</h5>
-                                <div
-                                    class="row align-items-center p-4 mb-3 bg-white"
-                                    v-for="vehicle in vehicles.roundTrip">
-                                    <div class="col-12 col-md-6 col-lg-3">
-                                        <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
+                                <template v-if="vehicles.roundTrip.length > 0">
+                                    <div
+                                        class="row align-items-center p-4 mb-3 bg-white"
+                                        v-for="vehicle in vehicles.roundTrip">
+                                        <div class="col-12 col-md-6 col-lg-3">
+                                            <img :src="'<?= base_url('static/images/vehicles/') ?>/' + vehicle.carImage" class="img-fluid" />
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+                                            <p class="danny--car danny--car-name">
+                                                {{ vehicle.carName }}
+                                            </p>
+                                            <p class="danny--car danny--car-capacity">
+                                                <span class="d-block"><b-icon icon="people"></b-icon> {{ vehicle.maxPassengers }}</span>
+                                                <span class="d-block"><b-icon icon="briefcase"></b-icon> {{ vehicle.maxLuggages }}</span>
+                                            </p>
+                                            <p :class="{ 'danny--car danny--car-availability': true, 'text-danger': parseInt(vehicle.availableCars) <= 0 }">
+                                                {{ parseInt(vehicle.availableCars) <= 0 ? 'Out of service' : 'Available' }}
+                                            </p>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+                                            <p class="danny-car danny--car-price">&dollar;{{ vehicle.openDoorPrice }}</p>
+                                        </div>
+                                        <div class="col-12 col-lg-3 text-right">
+                                            <b-form-radio
+                                                :disabled="parseInt(vehicle.availableCars) <= 0"
+                                                v-model="$v.form.bookingRequirements.selectCar.roundTrip.vehicle.$model"
+                                                name="round-trip-vehicle"
+                                                :value="vehicle"
+                                                button
+                                                button-variant="outline-primary">
+                                                Select
+                                            </b-form-radio>
+                                        </div>
                                     </div>
-                                    <div class="col-12 col-sm-6 col-md-3 col-lg-3">
-                                        <p class="danny--car-name">
-                                            {{ vehicle.carName }}
-                                        </p>
-                                        <p :class="{ 'danny--car-availability': true, 'text-danger': parseInt(vehicle.availableCars) <= 0 }">
-                                            {{ parseInt(vehicle.availableCars) <= 0 ? 'Out of service' : 'Available' }}
-                                        </p>
-                                    </div>
-                                    <div class="col-12 col-sm-6 col-md-3 col-lg-3">
-                                        <p class="danny--car-price">&dollar;{{ vehicle.openDoorPrice }}</p>
-                                    </div>
-                                    <div class="col-12 col-lg-3 text-right">
-                                        <b-form-radio
-                                            :disabled="parseInt(vehicle.availableCars) <= 0"
-                                            v-model="$v.form.bookingRequirements.selectCar.roundTrip.vehicle.$model"
-                                            name="round-trip-vehicle"
-                                            :value="vehicle"
-                                            button
-                                            button-variant="outline-primary">
-                                            Select
-                                        </b-form-radio>
-                                    </div>
-                                </div>
+                                </template>
+                                <template v-if="vehicles.roundTrip.length === 0">
+                                    Sorry! There are no available cars at the moment.
+                                </template>
                             </section>
 
                             <!-- Buttons -->
@@ -883,7 +901,7 @@
 
                             <section
                                 class="mt-4"
-                                v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
+                                v-if="isRoundTrip">
                                 <div class="row">
                                     <div class="col-12">
                                         <h5 class="danny--group-title">return</h5>
@@ -1415,6 +1433,35 @@
                                                     </div>
                                                 </section>
 
+                                                <!-- Admin/Pickup fees -->
+                                                <section class="mt-5">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <h5 class="danny--group-title">Fees</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-8">
+                                                            Admin fee
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <span class="danny--car-option-price">
+                                                                &dollar;{{ form.bookingRequirements.review.prices.adminFee.oneWayTrip }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-8">
+                                                            Pick-up fee
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <span class="danny--car-option-price">
+                                                                &dollar;{{ form.bookingRequirements.review.prices.pickupFee.oneWayTrip }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </section>
+
                                                 <!-- Total -->
                                                 <section class="mt-5">
                                                     <div class="row">
@@ -1428,7 +1475,7 @@
                                                     <div class="row">
                                                         <div class="col-12 col-lg-8">
                                                             <span class="danny--review-payment-total-text">
-                                                                Route total
+                                                                Route total - {{ oneWayTripRouteMiles }}
                                                             </span>
                                                         </div>
                                                         <div class="col-12 col-lg-4">
@@ -1442,7 +1489,7 @@
                                         </div>
 
                                         <!-- Round trip -->
-                                        <template v-if="form.bookingRequirements.reservation.tripType === 'round-trip'">
+                                        <template v-if="isRoundTrip">
                                             <div class="bg-white p-4 mt-3">
                                                 <section>
                                                     <div class="row">
@@ -1595,6 +1642,35 @@
                                                         </div>
                                                     </section>
 
+                                                    <!-- Admin/Pickup fees -->
+                                                    <section class="mt-5">
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <h5 class="danny--group-title">Fees</h5>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-8">
+                                                                Admin fee
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <span class="danny--car-option-price">
+                                                                    &dollar;{{ form.bookingRequirements.review.prices.adminFee.roundTrip }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-8">
+                                                                Pick-up fee
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <span class="danny--car-option-price">
+                                                                    &dollar;{{ form.bookingRequirements.review.prices.pickupFee.roundTrip }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+
                                                     <!-- Total -->
                                                     <section class="mt-5">
                                                         <div class="row">
@@ -1608,7 +1684,7 @@
                                                         <div class="row">
                                                             <div class="col-12 col-lg-8">
                                                                 <span class="danny--review-payment-total-text">
-                                                                    Route total
+                                                                    Route total - {{ roundTripRouteMiles }}
                                                                 </span>
                                                             </div>
                                                             <div class="col-12 col-lg-4">
