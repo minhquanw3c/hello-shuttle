@@ -564,7 +564,7 @@ class Home extends BaseController
             'bookingData' => $booking_data,
         ));
 
-        $pdf_content = view('templates/pdf/booking_info', array(
+        $pdf_content = view('templates/pdf/booking_receipt/test_receipt_layout', array(
             'bookingData' => $booking_data,
             'bookingRefNo' => $booking_ref_no,
             ), ['debug' => false]
@@ -647,6 +647,7 @@ class Home extends BaseController
 
         $booking = $booking[0];
         $receipt_data = json_decode($booking['bookingData']);
+        $receipt_data->bookedAt = $booking['bookingCreatedAt'];
 
         if ($booking['bookingPaymentStatus'] != 'pmst-pending') {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');

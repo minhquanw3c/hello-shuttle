@@ -37,22 +37,12 @@
                 <span>Address: 10700 Flower Ave, Stanton, CA 90680, USA</span>
             </td>
         </tr>
-        <!-- <tr>
-            <td colspan="3">
-                <span>Pick-up Date: 10/16/2023</span>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                <span>Pick-up Time: 2:00 PM</span>
-            </td>
-        </tr> -->
 
         <tr><td colspan="3"><br/></td></tr>
 
         <tr>
             <td colspan="3">
-                <span class="font-weight-bold">Reservation #: 12345</span>
+                <span class="font-weight-bold">Reservation #: <?= $bookingRefNo ?></span>
             </td>
         </tr>
 
@@ -74,7 +64,7 @@
             <td>
                 <span class="font-weight-bold">Booked On:</span>
                 <br/>&nbsp;
-                10/11/2023 02:55 PM
+                <?= $bookingData->bookedAt ?>
             </td>
         </tr>
 
@@ -82,57 +72,23 @@
 
         <tr>
             <td>
-                <!-- <span class="font-weight-bold">Vehicle Type</span>
-                <br/>&nbsp;
-                Van 9 Pax -->
                 <span class="font-weight-bold">Payment Type</span>
                 <br/>&nbsp;
                 Stripe
             </td>
             <td>
-                <!-- <span class="font-weight-bold"># of Pax/Luggages</span>
-                <br/>&nbsp;
-                8 -->
                 <span class="font-weight-bold">Payment Status</span>
                 <br/>&nbsp;
                 PAID
             </td>
             <td>
-                <!-- <span class="font-weight-bold">Driver(s)</span>
-                <br/>&nbsp;
-                Tai -->
+
             </td>
         </tr>
 
         <tr><td colspan="3"><br/></td></tr>
 
-        <tr>
-            <td colspan="2">
-                <span class="font-weight-bold">Routing Information</span>
-                <br/>&nbsp;
-                Vehicle: Sedan
-                <br/>&nbsp;
-                Driver: Tai Thai
-                <br/>&nbsp;
-                From: Los Angeles International Airport
-                <br/>&nbsp;
-                To: 105 Marinella Aisle Irvine, CA 92606
-                <br/>&nbsp;
-                Rest Stop: Los Angeles International Airport
-                <br/>&nbsp;
-                Miles: 50
-            </td>
-            <td>
-                <span class="font-weight-bold">Pick-Up Date</span>
-                <br/>&nbsp;
-                10/11/2023
-                <br/>
-                <br/>&nbsp;
-                <span class="font-weight-bold">Pick-Up Time</span>
-                <br/>&nbsp;
-                02:55 PM
-            </td>
-        </tr>
+        <?= view('templates/pdf/booking_receipt/route_information', ['routeData' => $bookingData, 'routeType' => 'oneWayTrip']) ?>
 
         <tr><td colspan="3"><br/></td></tr>
 
