@@ -494,6 +494,55 @@ class Home extends BaseController
         return $cancel_booking_link;
     }
 
+    public function generateSampleBookingReceipt()
+    {
+        $pdf_template = view('templates/pdf/test_receipt');
+        // define('K_PATH_IMAGES', base_url() . '/static/images/');
+        // $hello_shuttle_logo = K_PATH_IMAGES . 'logo/hello-shuttle-gold-01.png';
+
+        // Create a new PDF instance
+        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8');
+
+        // Set document information
+        $pdf->SetCreator('Hello Shuttle');
+        $pdf->SetAuthor('Hello Shuttle Billing Department');
+        $pdf->SetTitle('Hello Shuttle - Booking receipt on ' . now());
+        $pdf->SetSubject('Booking receipt');
+        $pdf->SetKeywords('Hello Shuttle, Booking receipt, Car rental');
+
+        // Set default font settings
+        $pdf->SetFont('helvetica', '', 10);
+
+        // remove default header/footer
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
+        // $pdf->Image($hello_shuttle_logo, 10, 10, 15, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+
+        // Add a page
+        $pdf->AddPage();
+
+        // Set the HTML content as the PDF content
+        $pdf->writeHTML($pdf_template, true, false, true, false, '');
+
+        // Specify the path to the folder where you want to save the PDF
+        $savePath = WRITEPATH . '/receipts/pdf/';
+
+        // Generate a unique filename for the PDF
+        $filename = 'test-receipt-' . now() . '.pdf';
+
+        // Save the PDF to the specified folder
+        $pdf->Output($savePath . $filename, 'F');
+
+        $file_path = $savePath . $filename;
+
+        // Set the appropriate headers for PDF content
+        $this->response->setHeader('Content-Type', 'application/pdf');
+        $this->response->setHeader("Content-Length", filesize($file_path));
+
+        // Read and output the PDF file
+        return readfile($file_path);
+    }
+
     public function sendBookingReceiptEmail($booking_data, $booking_id)
     {
         $config_model = model(ConfigModel::class);

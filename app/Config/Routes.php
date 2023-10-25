@@ -51,6 +51,9 @@ $routes->get('policy', 'Home::getPrivacyAndPolicy');
 $routes->post('api/user/get', 'UserController::getUserDataFromBookingForm');
 $routes->post('api/email/validate', 'UserController::validateRegisterAccountEmail');
 
+// test/update pdf receipt UI
+$routes->get('test-pdf-receipt', 'Home::generateSampleBookingReceipt');
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing
