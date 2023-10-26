@@ -33,7 +33,8 @@ class BookingModel extends Model
 
     public function getBookingById($booking_id)
     {
-        $get_booking_query = $this->select([
+        $get_booking_query = $this
+        ->select([
             'bookings.booking_id AS bookingId',
             'bookings.booking_data AS bookingData',
             'bookings.booking_status AS bookingStatusId',
@@ -43,7 +44,9 @@ class BookingModel extends Model
             'bookings.booking_created_at AS bookingCreatedAt',
             'bookings.booking_ref_no AS bookingRefNo',
             'bookings.cancel_session_id AS bookingCancelId',
+            'payment_status.payment_status_desc AS paymentStatusDesc',
         ])
+        ->join('payment_status', 'payment_status.payment_status_id = bookings.payment_status')
         ->where('booking_id', $booking_id)
         ->findAll();
 

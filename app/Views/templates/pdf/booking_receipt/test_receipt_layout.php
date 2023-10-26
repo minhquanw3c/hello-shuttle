@@ -12,6 +12,14 @@
 </head>
 <body>
 
+<?php
+    $customer_name = $bookingData->review->customer->lastName . ' ' . $bookingData->review->customer->firstName;
+    $customer_phone = $bookingData->review->customer->contact->mobileNumber;
+    $trip_notes = $bookingData->review->additionalNotes;
+    $airline = $bookingData->review->airline->brand->text;
+    $flight_number = $bookingData->review->airline->flightNumber;
+?>
+
 <table>
     <tbody>
         <tr>
@@ -52,14 +60,14 @@
             <td>
                 <span class="font-weight-bold">Bill To:</span>
                 <br/>&nbsp;
-                Tai Thai
+                <?= $customer_name ?>
             </td>
             <td>
                 <span class="font-weight-bold">Primary Passengers:</span>
                 <br/>&nbsp;
-                Tai Thai
+                <?= $customer_name ?>
                 <br/>&nbsp;
-                Phone #(714)...
+                Phone: <?= $customer_phone ?>
             </td>
             <td>
                 <span class="font-weight-bold">Booked On:</span>
@@ -79,7 +87,7 @@
             <td>
                 <span class="font-weight-bold">Payment Status</span>
                 <br/>&nbsp;
-                PAID
+                <?= $bookingData->paymentStatus ?>
             </td>
             <td>
 
@@ -92,63 +100,8 @@
 
         <tr><td colspan="3"><br/></td></tr>
 
-        <tr>
-            <td>
-                <span class="font-weight-bold">Option Description</span>
-            </td>
-            <td>
-                <span class="font-weight-bold">Quantity</span>
-            </td>
-            <td>
-                <span class="font-weight-bold">Amount ($)</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Pet Included
-            </td>
-            <td>
-                1
-            </td>
-            <td>
-                177.68
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Pick-Up Fee
-            </td>
-            <td>
-                3
-            </td>
-            <td>
-                10.00
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Admin Fee
-            </td>
-            <td>
-                2
-            </td>
-            <td>
-                76.33
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                ------------
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                Options Total
-            </td>
-            <td>
-                316.81
-            </td>
-        </tr>
+        <!-- Chosen options -->
+        <?= view('templates/pdf/booking_receipt/chosen_options', ['optionsData' => $bookingData->chooseOptions, 'routeType' => 'oneWayTrip']) ?>
 
         <!-- Charges and fees -->
         <tr><td colspan="3"><br/></td></tr>
@@ -213,24 +166,24 @@
             <td>
                 Trip Notes:
                 <br/>&nbsp;
-                test notes lorem ipsum test notes lorem ipsum test notes
+                <?= $trip_notes ?>
             </td>
             <td>
                 EVA air:
                 <br/>&nbsp;
-                test notes lorem ipsum test notes lorem ipsum test notes
+                
             </td>
         </tr>
         <tr>
             <td>
-                Pax Notes:
+                Airline:
                 <br/>&nbsp;
-                test notes lorem ipsum test notes lorem ipsum test notes
+                <?= $airline ?>
             </td>
             <td>
                 Fly number:
                 <br/>&nbsp;
-                test notes lorem ipsum test notes lorem ipsum test notes
+                <?= $flight_number ?>
             </td>
         </tr>
 

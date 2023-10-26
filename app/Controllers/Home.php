@@ -496,9 +496,15 @@ class Home extends BaseController
 
     public function generateSampleBookingReceipt()
     {
-        $pdf_template = view('templates/pdf/test_receipt');
-        // define('K_PATH_IMAGES', base_url() . '/static/images/');
-        // $hello_shuttle_logo = K_PATH_IMAGES . 'logo/hello-shuttle-gold-01.png';
+        $booking_model = model(BookingModel::class);
+        // $booking = $booking_model->getBookingById($booking_id);
+        $latest_booking = $booking_model->asObject()->select('*')->join('payment_status', 'payment_status.payment_status_id = bookings.payment_status')->orderBy('booking_ref_no', 'desc')->first();
+        $latest_booking_data = json_decode($latest_booking->booking_data);
+        $latest_booking_data->bookedAt = $latest_booking->booking_created_at;
+        $latest_booking_data->bookingRefNo = $latest_booking->booking_ref_no;
+        $latest_booking_data->paymentStatus = $latest_booking->payment_status_desc;
+
+        $pdf_template = view('templates/pdf/booking_receipt/test_receipt_layout', ['bookingData' => $latest_booking_data, 'bookingRefNo' => $latest_booking_data->bookingRefNo]);
 
         // Create a new PDF instance
         $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8');
@@ -648,6 +654,8 @@ class Home extends BaseController
         $booking = $booking[0];
         $receipt_data = json_decode($booking['bookingData']);
         $receipt_data->bookedAt = $booking['bookingCreatedAt'];
+        $receipt_data->bookingRefNo = $booking['bookingRefNo'];
+        $receipt_data->paymentStatus = $booking['paymentStatusDesc'];
 
         if ($booking['bookingPaymentStatus'] != 'pmst-pending') {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Not found');
