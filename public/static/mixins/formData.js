@@ -345,7 +345,10 @@ const formDataRoundTrip =
             },
         },
         "airline": {
-            "brand": null,
+            "brand": {
+                "text": null,
+                "value": null,
+            },
             "flightNumber": null
         },
         "routes": {
@@ -373,7 +376,27 @@ const formDataRoundTrip =
             "pickupFee": {
                 "oneWayTrip": 0,
                 "roundTrip": 0
-            }
+            },
+            "luggages": {
+                "oneWayTrip": {
+                    "extras": 0,
+                    "prices": 0,
+                },
+                "roundTrip": {
+                    "extras": 0,
+                    "prices": 0,
+                },
+            },
+            "passengers": {
+                "oneWayTrip": {
+                    "extras": 0,
+                    "prices": 0,
+                },
+                "roundTrip": {
+                    "extras": 0,
+                    "prices": 0,
+                },
+            },
         },
         "agreeTermsConditions": null,
         "appliedCoupons": [],

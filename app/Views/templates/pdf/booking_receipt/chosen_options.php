@@ -56,7 +56,7 @@
 </tr>
 <tr>
     <td colspan="2">
-        Options Total
+        Total
     </td>
     <td>
         <?= $extras_total + $protection_total ?>

@@ -1410,7 +1410,7 @@
                                                 </section>
 
                                                 <!-- Extra luggages -->
-                                                <section v-if="extraLuggages.oneWayTrip.extras < 0" class="mt-5">
+                                                <section v-if="extraLuggages.oneWayTrip.extras > 0" class="mt-5">
                                                     <div class="row">
                                                         <div class="col-10">
                                                             <h5 class="danny--group-title">Luggages</h5>
@@ -1423,11 +1423,11 @@
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-8">
-                                                            Extra luggages (&times;{{ Math.abs(extraLuggages.oneWayTrip.extras) }})
+                                                            Extra luggages (&times;{{ extraLuggages.oneWayTrip.extras }})
                                                         </div>
                                                         <div class="col-4">
                                                             <span class="danny--car-option-price">
-                                                                &dollar;{{ Math.abs(extraLuggages.oneWayTrip.extrasPrice) }}
+                                                                &dollar;{{ extraLuggages.oneWayTrip.extrasPrice }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -1619,7 +1619,7 @@
                                                     </section>
 
                                                     <!-- Extra luggages -->
-                                                    <section v-if="extraLuggages.roundTrip.extras < 0" class="mt-5">
+                                                    <section v-if="extraLuggages.roundTrip.extras > 0" class="mt-5">
                                                         <div class="row">
                                                             <div class="col-10">
                                                                 <h5 class="danny--group-title">Luggages</h5>
@@ -1632,11 +1632,11 @@
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-8">
-                                                                Extra luggages (&times;{{ Math.abs(extraLuggages.roundTrip.extras) }})
+                                                                Extra luggages (&times;{{ extraLuggages.roundTrip.extras }})
                                                             </div>
                                                             <div class="col-4">
                                                                 <span class="danny--car-option-price">
-                                                                    &dollar;{{ Math.abs(extraLuggages.roundTrip.extrasPrice) }}
+                                                                    &dollar;{{ extraLuggages.roundTrip.extrasPrice }}
                                                                 </span>
                                                             </div>
                                                         </div>

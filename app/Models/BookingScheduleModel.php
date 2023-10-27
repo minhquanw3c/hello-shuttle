@@ -52,6 +52,7 @@ class BookingScheduleModel extends Model
             'config_cars_price.pickup_fee_active AS pickupFeeActive',
             //----
             'config_cars_price.max_luggages AS maxLuggages',
+            'config_cars_price.free_luggages_quantity AS freeLuggagesQuantity',
             'config_cars_price.extra_luggages_price AS extraLuggagesPrice',
             //---
             'config_cars_price.max_passengers AS maxPassengers',
@@ -61,7 +62,7 @@ class BookingScheduleModel extends Model
         ->join('config_cars', 'config_cars.car_id = booking_schedules.car_id AND booking_schedules.scheduled_date = "' . $params['date'] . '"', 'right')
         ->join('config_cars_price', 'config_cars_price.car_id = config_cars.car_id')
         // Checking passengers and luggages quantity
-        ->where('config_cars_price.max_luggages >=', $params['luggages'])
+        // ->where('config_cars_price.max_luggages >=', $params['luggages'])
         ->where('config_cars_price.max_passengers >=', $params['passengers'])
         ->groupBy('config_cars.car_id')
         ->findAll();

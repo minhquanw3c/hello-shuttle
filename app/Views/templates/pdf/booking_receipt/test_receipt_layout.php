@@ -13,15 +13,18 @@
 <body>
 
 <?php
+    $is_round_trip = $bookingData->reservation->tripType === 'round-trip';
     $customer_name = $bookingData->review->customer->lastName . ' ' . $bookingData->review->customer->firstName;
     $customer_phone = $bookingData->review->customer->contact->mobileNumber;
     $trip_notes = $bookingData->review->additionalNotes;
     $airline = $bookingData->review->airline->brand->text;
     $flight_number = $bookingData->review->airline->flightNumber;
+    $total_trips_prices = $bookingData->review->prices->total;
 ?>
 
 <table>
     <tbody>
+        <!-- Header logo -->
         <tr>
             <td colspan="3" style="background-color: #071c1f; text-align: center;">
                 <img height="70px" src="<?= base_url('/') . '/static/images/logo/hello-shuttle-gold-03.png' ?>" alt="logo" />
@@ -30,6 +33,7 @@
 
         <tr><td colspan="3"><br/></td></tr>
 
+        <!-- Company contact -->
         <tr>
             <td colspan="3">
                 <span>Tel: (949) 800-5678</span>
@@ -56,6 +60,7 @@
 
         <tr><td colspan="3"><br/></td></tr>
 
+        <!-- Customer info -->
         <tr>
             <td>
                 <span class="font-weight-bold">Bill To:</span>
@@ -78,6 +83,7 @@
 
         <tr><td colspan="3"><br/></td></tr>
 
+        <!-- Payment info -->
         <tr>
             <td>
                 <span class="font-weight-bold">Payment Type</span>
@@ -90,11 +96,14 @@
                 <?= $bookingData->paymentStatus ?>
             </td>
             <td>
-
+                <span class="font-weight-bold">Total Trip(s) Amount</span>
+                <br/>&nbsp;
+                $<?= $total_trips_prices ?>
             </td>
         </tr>
 
         <tr><td colspan="3"><br/></td></tr>
+        <tr><td colspan="3"><hr></td></tr>
 
         <?= view('templates/pdf/booking_receipt/route_information', ['routeData' => $bookingData, 'routeType' => 'oneWayTrip']) ?>
 
@@ -103,57 +112,32 @@
         <!-- Chosen options -->
         <?= view('templates/pdf/booking_receipt/chosen_options', ['optionsData' => $bookingData->chooseOptions, 'routeType' => 'oneWayTrip']) ?>
 
-        <!-- Charges and fees -->
         <tr><td colspan="3"><br/></td></tr>
 
-        <tr>
-            <td>
-                <span class="font-weight-bold">Fees Description</span>
-            </td>
-            <td>
-                <span class="font-weight-bold">Amount ($)</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Base Fare
-            </td>
-            <td>
-                177.68
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Pick-Up Fee
-            </td>
-            <td>
-                10.00
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Admin Fee
-            </td>
-            <td>
-                76.33
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                ------------
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Trip Total
-            </td>
-            <td>
-                316.81
-            </td>
-        </tr>
-
+        <!-- Charges & Fees -->
+        <?= view('templates/pdf/booking_receipt/fees_charges', ['feesChargesData' => $bookingData->review->prices, 'routeType' => 'oneWayTrip']) ?>
         <tr><td colspan="3"><br/></td></tr>
 
+        <?php if ($is_round_trip): ?>
+            <tr><td colspan="3"><hr></td></tr>
+
+            <?= view('templates/pdf/booking_receipt/route_information', ['routeData' => $bookingData, 'routeType' => 'roundTrip']) ?>
+
+            <tr><td colspan="3"><br/></td></tr>
+
+            <!-- Chosen options -->
+            <?= view('templates/pdf/booking_receipt/chosen_options', ['optionsData' => $bookingData->chooseOptions, 'routeType' => 'roundTrip']) ?>
+
+            <tr><td colspan="3"><br/></td></tr>
+
+            <!-- Charges & Fees -->
+            <?= view('templates/pdf/booking_receipt/fees_charges', ['feesChargesData' => $bookingData->review->prices, 'routeType' => 'roundTrip']) ?>
+        <?php endif ?>
+
+        <tr><td colspan="3"><br/></td></tr>
+        <tr><td colspan="3"><hr></td></tr>
+
+        <!-- Notes & Flight -->
         <tr>
             <td>
                 <span class="font-weight-bold">Notes/Comments</span>
@@ -188,7 +172,9 @@
         </tr>
 
         <tr><td colspan="3"><br></td></tr>
+        <tr><td colspan="3"><hr></td></tr>
 
+        <!-- Policy -->
         <tr>
             <td colspan="3">
                 <span class="font-weight-bold">Gratuity - (Normal gratuity amount is 20%)</span>

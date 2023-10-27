@@ -497,8 +497,12 @@ class Home extends BaseController
     public function generateSampleBookingReceipt()
     {
         $booking_model = model(BookingModel::class);
-        // $booking = $booking_model->getBookingById($booking_id);
         $latest_booking = $booking_model->asObject()->select('*')->join('payment_status', 'payment_status.payment_status_id = bookings.payment_status')->orderBy('booking_ref_no', 'desc')->first();
+        
+        if (!$latest_booking) {
+            return view('templates/page_not_found', ['dashboardUrl' => $this->getResourcesURLs('dashboard')]);
+        }
+        
         $latest_booking_data = json_decode($latest_booking->booking_data);
         $latest_booking_data->bookedAt = $latest_booking->booking_created_at;
         $latest_booking_data->bookingRefNo = $latest_booking->booking_ref_no;

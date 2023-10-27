@@ -91,7 +91,10 @@ var app = new Vue({
                             },
                         },
                         airline: {
-                            brand: null,
+                            brand: {
+                                text: null,
+                                value: null,
+                            },
                             flightNumber: null,
                         },
                         routes: {
@@ -119,6 +122,26 @@ var app = new Vue({
                             pickupFee: {
                                 oneWayTrip: 0,
                                 roundTrip: 0
+                            },
+                            luggages: {
+                                oneWayTrip: {
+                                    extras: 0,
+                                    prices: 0,
+                                },
+                                roundTrip: {
+                                    extras: 0,
+                                    prices: 0,
+                                },
+                            },
+                            passengers: {
+                                oneWayTrip: {
+                                    extras: 0,
+                                    prices: 0,
+                                },
+                                roundTrip: {
+                                    extras: 0,
+                                    prices: 0,
+                                },
                             },
                         },
                         agreeTermsConditions: null,
@@ -918,13 +941,28 @@ var app = new Vue({
         },
         calculatePackagesPrice: function (config, passengers, packages) {
             const self = this;
+
             let price = 0;
             let totalPackages = parseInt(packages);
-            let carSeats = parseInt(config.carSeats);
-            let exceedAmount = totalPackages - carSeats;
-
-            if (totalPackages > carSeats) {
+            let freePackages = parseInt(config.freeLuggagesQuantity);
+            
+            if (totalPackages > freePackages) {
+                let exceedAmount = totalPackages - freePackages;
                 price += (exceedAmount * parseFloat(config.extraLuggagesPrice));
+            }
+
+            return price;
+        },
+        calculatePassengersPrice: function (config, passengers) {
+            const self = this;
+
+            let price = 0;
+            let totalPassengers = parseInt(passengers);
+            let freePassengers = parseInt(config.freePassengersQuantity);
+            
+            if (totalPassengers > freePassengers) {
+                let exceedAmount = totalPassengers - freePassengers;
+                price += (exceedAmount * parseFloat(config.extraPassengersPrice));
             }
 
             return price;
@@ -938,6 +976,7 @@ var app = new Vue({
             let adminFee = 0;
             let optionsPrice = 0;
             let packagesPrice = 0;
+            let passengersPrice = 0;
             let pickupFee = 0;
 
             let trafficHoursPrice = 0;
@@ -962,16 +1001,20 @@ var app = new Vue({
                 });
             }
 
-            totalPrice = openDoorPrice + milesPrice + optionsPrice + packagesPrice;
+            passengersPrice = self.calculatePassengersPrice(carConfig, passengers);
+            
+            totalPrice = openDoorPrice + milesPrice + optionsPrice + packagesPrice + passengersPrice;
+
+            if (isInTrafficHours) {
+                let trafficHoursExtra = self.transformedConfigs['cfg-trffh-rate'];
+
+                trafficHoursPrice = totalPrice * (trafficHoursExtra / 100);
+            }
 
             adminFee = self.calculateAdminFee(carConfig, miles, totalPrice, tripType);
             pickupFee = self.calculatePickupFee(carConfig, milesFromBaseToPickup, totalPrice, tripType);
 
-            // if (isInTrafficHours) {
-            //     trafficHoursPrice = totalPrice * (trafficHoursExtra / 100);
-            // }
-
-            totalPrice = parseFloat(totalPrice + trafficHoursPrice + adminFee + pickupFee);
+            totalPrice = parseFloat(totalPrice + adminFee + pickupFee + trafficHoursPrice);
 
             return totalPrice.toFixed(2);
         },
@@ -1295,8 +1338,6 @@ var app = new Vue({
         extraLuggages: function () {
             const self = this;
 
-            let isRoundTrip = self.form.bookingRequirements.reservation.tripType === 'round-trip';
-
             let oneWayTripLuggages = self.form.bookingRequirements.reservation.oneWayTrip.luggages;
             let roundTripLuggages = self.form.bookingRequirements.reservation.roundTrip.luggages;
 
@@ -1306,19 +1347,95 @@ var app = new Vue({
             let luggages = {
                 oneWayTrip: {
                     extras: !_.isNil(oneWayTripVehicleConfig) ? 
-                        (parseInt(oneWayTripVehicleConfig.carSeats) - parseInt(oneWayTripLuggages)) : 0,
+                        (
+                            (parseInt(oneWayTripVehicleConfig.freeLuggagesQuantity) - parseInt(oneWayTripLuggages)) < 0 ?
+                            Math.abs(parseInt(oneWayTripVehicleConfig.freeLuggagesQuantity) - parseInt(oneWayTripLuggages)) :
+                            0
+                        ) : 0,
                     extrasPrice: !_.isNil(oneWayTripVehicleConfig) ? 
-                        ((parseInt(oneWayTripVehicleConfig.carSeats) - parseInt(oneWayTripLuggages)) * oneWayTripVehicleConfig.extraLuggagesPrice) : 0,
+                        (
+                            // (parseInt(oneWayTripVehicleConfig.freeLuggagesQuantity) - parseInt(oneWayTripLuggages)) < 0 ?
+                            // Math.abs(parseInt(oneWayTripVehicleConfig.freeLuggagesQuantity) - parseInt(oneWayTripLuggages)) * oneWayTripVehicleConfig.extraLuggagesPrice :
+                            // 0
+                            self.calculatePackagesPrice(oneWayTripVehicleConfig, null, oneWayTripLuggages)
+                        ) : 0,
                 },
                 roundTrip: {
-                    extras: !_.isNil(roundTripVehicleConfig) && isRoundTrip ? 
-                        (parseInt(roundTripVehicleConfig.carSeats) - parseInt(roundTripLuggages)) : 0,
-                    extrasPrice: !_.isNil(roundTripVehicleConfig) && isRoundTrip ? 
-                        ((parseInt(roundTripVehicleConfig.carSeats) - parseInt(roundTripLuggages)) * roundTripVehicleConfig.extraLuggagesPrice) : 0,
+                    extras: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? 
+                        (
+                            (parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) < 0 ?
+                            Math.abs(parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) :
+                            0
+                        ) : 0,
+                    extrasPrice: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? 
+                        (
+                            // (parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) < 0 ?
+                            // Math.abs(parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) * roundTripVehicleConfig.extraLuggagesPrice :
+                            // 0
+                            self.calculatePackagesPrice(roundTripVehicleConfig, null, roundTripLuggages)
+                        ) : 0,
                 }
             };
 
+            // Update extras for passengers and luggages
+            self.form.bookingRequirements.review.prices.luggages.oneWayTrip.extras = luggages.oneWayTrip.extras;
+            self.form.bookingRequirements.review.prices.luggages.oneWayTrip.prices = luggages.oneWayTrip.extrasPrice;
+
+            self.form.bookingRequirements.review.prices.luggages.roundTrip.extras = luggages.roundTrip.extras;
+            self.form.bookingRequirements.review.prices.luggages.roundTrip.prices = luggages.roundTrip.extrasPrice;
+
             return luggages;
+        },
+        extraPassengers: function () {
+            const self = this;
+
+            let oneWayTripPassengers = self.form.bookingRequirements.reservation.oneWayTrip.passengers;
+            let roundTripPassengers = self.form.bookingRequirements.reservation.roundTrip.passengers;
+
+            let oneWayTripVehicleConfig = self.form.bookingRequirements.selectCar.oneWayTrip.vehicle;
+            let roundTripVehicleConfig = self.form.bookingRequirements.selectCar.roundTrip.vehicle;
+
+            let passengers = {
+                oneWayTrip: {
+                    extras: !_.isNil(oneWayTripVehicleConfig) ? 
+                        (
+                            (parseInt(oneWayTripVehicleConfig.freePassengersQuantity) - parseInt(oneWayTripPassengers)) < 0 ?
+                            Math.abs(parseInt(oneWayTripVehicleConfig.freePassengersQuantity) - parseInt(oneWayTripPassengers)) :
+                            0
+                        ) : 0,
+                    extrasPrice: !_.isNil(oneWayTripVehicleConfig) ? 
+                        (
+                            // (parseInt(oneWayTripVehicleConfig.freePassengersQuantity) - parseInt(oneWayTripPassengers)) < 0 ?
+                            // Math.abs(parseInt(oneWayTripVehicleConfig.freePassengersQuantity) - parseInt(oneWayTripPassengers)) * oneWayTripVehicleConfig.extraPassengersPrice :
+                            // 0
+                            self.calculatePassengersPrice(oneWayTripVehicleConfig, null, oneWayTripPassengers)
+                        ) : 0,
+                },
+                roundTrip: {
+                    extras: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? 
+                        (
+                            (parseInt(roundTripVehicleConfig.freePassengersQuantity) - parseInt(roundTripPassengers)) < 0 ?
+                            Math.abs(parseInt(roundTripVehicleConfig.freePassengersQuantity) - parseInt(roundTripPassengers)) :
+                            0
+                        ) : 0,
+                    extrasPrice: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? 
+                        (
+                            // (parseInt(roundTripVehicleConfig.freePassengersQuantity) - parseInt(roundTripPassengers)) < 0 ?
+                            // Math.abs(parseInt(roundTripVehicleConfig.freePassengersQuantity) - parseInt(roundTripPassengers)) * roundTripVehicleConfig.extraPassengersPrice :
+                            // 0
+                            self.calculatePassengersPrice(roundTripVehicleConfig, null, roundTripPassengers)
+                        ) : 0,
+                }
+            };
+
+            // Update extras for passengers and passengers
+            self.form.bookingRequirements.review.prices.passengers.oneWayTrip.extras = passengers.oneWayTrip.extras;
+            self.form.bookingRequirements.review.prices.passengers.oneWayTrip.prices = passengers.oneWayTrip.extrasPrice;
+
+            self.form.bookingRequirements.review.prices.passengers.roundTrip.extras = passengers.roundTrip.extras;
+            self.form.bookingRequirements.review.prices.passengers.roundTrip.prices = passengers.roundTrip.extrasPrice;
+
+            return passengers;
         },
         isRoundTrip: function () {
             const self = this;
