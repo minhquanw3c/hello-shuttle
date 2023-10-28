@@ -456,18 +456,22 @@ class Home extends BaseController
 
     public function generateBookingReceipt($pdf_template, $booking_ref_no)
     {
-        // Create a new PDF instance
-        $pdf = new TCPDF('P', 'mm', 'LETTER', true, 'UTF-8');
+       // Create a new PDF instance
+       $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8');
 
-        // Set document information
-        $pdf->SetCreator('Your Name');
-        $pdf->SetAuthor('Your Name');
-        $pdf->SetTitle('Sample PDF');
-        $pdf->SetSubject('Generating PDF using TCPDF');
-        $pdf->SetKeywords('TCPDF, PDF, sample');
+       // Set document information
+       $pdf->SetCreator('Hello Shuttle');
+       $pdf->SetAuthor('Hello Shuttle Billing Department');
+       $pdf->SetTitle('Hello Shuttle - Booking receipt on ' . now());
+       $pdf->SetSubject('Booking receipt');
+       $pdf->SetKeywords('Hello Shuttle, Booking receipt, Car rental');
 
-        // Set default font settings
-        $pdf->SetFont('helvetica', '', 12);
+       // Set default font settings
+       $pdf->SetFont('helvetica', '', 10);
+
+       // remove default header/footer
+       $pdf->setPrintHeader(false);
+       $pdf->setPrintFooter(false);
 
         // Add a page
         $pdf->AddPage();

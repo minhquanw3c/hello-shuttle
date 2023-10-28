@@ -27,7 +27,7 @@
         <!-- Header logo -->
         <tr>
             <td colspan="3" style="background-color: #071c1f; text-align: center;">
-                <img height="70px" src="<?= base_url('/') . '/static/images/logo/hello-shuttle-gold-03.png' ?>" alt="logo" />
+                <img height="70px" src="<?= base_url('/') . '/static/images/logo/hello-shuttle-gold-hand-white-text.png' ?>" alt="logo" />
             </td>
         </tr>
 

@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Place favicon.png in the root directory -->
-    <link rel="shortcut icon" href="<?= base_url('static/images/favicon.png') ?>" type="image/x-icon" />
+    <link rel="shortcut icon" href="<?= base_url('static/images/logo/favicons/32x36.png') ?>" type="image/x-icon" />
     <!-- Font Icons css -->
     <link rel="stylesheet" href="<?= base_url('static/css/theme/font-icons.css') ?>">
     <!-- plugins css -->
@@ -73,7 +73,7 @@
                 <div class="row">
                     <div class="col-12 col-lg-6">
                         <a href="<?= base_url('/') ?>">
-                            <img src="<?= base_url('static/images/logo/hello-shuttle-gold-03.png') ?>" alt="hello-shuttle-logo" style="max-height: 100px;">
+                            <img src="<?= base_url('static/images/logo/hello-shuttle-gold-hand-white-text.png') ?>" alt="hello-shuttle-logo" style="max-height: 100px;">
                         </a>
                     </div>
                     <div class="col-12 col-lg-4 mt-3 mt-lg-0">
@@ -145,26 +145,11 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 col-12">
-                        <!-- <div class="site-logo-wrap">
-                            <div class="site-logo">
-                                <a href="<?= base_url('/') ?>">
-                                    <img src="<?= base_url('static/images/logo/hello-shuttle-white-03.png') ?>" alt="hello-shuttle-logo">
-                                </a>
-                            </div>
-                            <div class="get-support ltn__copyright-design clearfix">
-                                <div class="get-support-info">
-                                    <h6>Copyright & Design By</h6>
-                                    <h4>
-                                        <a href="https://www.dannythedesigner.com" target="_blank">DannyTheDesigner</a> - <span class="current-year"><?= date('Y') ?></span>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div> -->
                         <div class="row">
                             <div class="col-12 col-lg-6">
                                 <div class="site-logo">
                                     <a href="<?= base_url('/') ?>">
-                                        <img src="<?= base_url('static/images/logo/hello-shuttle-white-03.png') ?>" alt="hello-shuttle-logo">
+                                        <img src="<?= base_url('static/images/logo/hello-shuttle-gold-hand-white-text-01.png') ?>" alt="hello-shuttle-logo">
                                     </a>
                                 </div>
                             </div>
