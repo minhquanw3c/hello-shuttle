@@ -288,7 +288,6 @@ class Home extends BaseController
             $update_booking_status = $booking_model->updateBookingById(
                 $booking_id,
                 [
-                    'booking_status' => 'bk-sts-cnl',
                     'payment_status' => 'pmst-refunded',
                     'booking_updated_at' => Time::now('UTC'),
                 ]
@@ -308,7 +307,6 @@ class Home extends BaseController
             $update_booking_status = $booking_model->updateBookingById(
                 $booking_id,
                 [
-                    'booking_status' => 'bk-sts-cnl',
                     'payment_status' => 'pmst-cancelled',
                     'booking_updated_at' => Time::now('UTC'),
                 ]
@@ -322,6 +320,14 @@ class Home extends BaseController
                 'dashboardUrl' => $this->getResourcesURLs('dashboard'),
             ];
         }
+
+        $booking_model->updateBookingById(
+            $booking_id,
+            [
+                'booking_status' => 'bk-sts-cnl',
+                'booking_updated_at' => Time::now('UTC'),
+            ]
+        );
 
         $this->disablePaymentLink($booking->bookingPaymentLinkId);
         $this->removeBookingSchedules($booking_id);
@@ -615,6 +621,7 @@ class Home extends BaseController
 
     private function createBookingSchedule($receipt_data, $booking_id)
     {
+        $ACTIVE_SCHEDULE = 1;
         $booking_schedule_model = model(BookingScheduleModel::class);
 
         $trip_type = $receipt_data->reservation->tripType;
@@ -627,6 +634,7 @@ class Home extends BaseController
                 'booking_id' => $booking_id,
                 'car_id' => $one_way_car_id,
                 'scheduled_date' => $one_way_car_booked_date,
+                'schedule_active' => $ACTIVE_SCHEDULE,
             ]
         ];
 
@@ -638,6 +646,7 @@ class Home extends BaseController
                 'booking_id' => $booking_id,
                 'car_id' => $round_trip_car_id,
                 'scheduled_date' => $round_trip_car_booked_date,
+                'schedule_active' => $ACTIVE_SCHEDULE,
             ]);
         }
 

@@ -7,13 +7,18 @@ use CodeIgniter\Model;
 class BookingScheduleModel extends Model
 {
 	protected $table = 'booking_schedules';
-	protected $primaryKey = 'schedule_id';
-    protected $useAutoIncrement = true;
+	protected $primaryKey = 'booking_id';
+    protected $useAutoIncrement = false;
 
 	protected $allowedFields = [
+        'schedule_id',
         'booking_id',
 		'car_id',
         'scheduled_date',
+        'scheduled_time',
+        'estimated_complete_date',
+        'estimated_complete_time',
+        'schedule_active',
 	];
 
     public function getAvailableCarsForDate($params)
@@ -81,7 +86,9 @@ class BookingScheduleModel extends Model
 
     public function removeBookingSchedule($booking_id)
     {
-        $remove_schedules_query = $this->where('booking_id', $booking_id)->delete();
+        $INACTIVE_SCHEDULE = 0;
+
+        $remove_schedules_query = $this->update($booking_id, ['schedule_active' => $INACTIVE_SCHEDULE]);
 
         return $remove_schedules_query;
     }
