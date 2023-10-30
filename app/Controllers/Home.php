@@ -50,6 +50,7 @@ class Home extends BaseController
 
         $one_way_cars_payload = [
             'date' => $booking_data->oneWayTrip->pickup->date,
+            'time' => $booking_data->oneWayTrip->pickup->time,
             'passengers' => $booking_data->oneWayTrip->passengers,
             'luggages' => $booking_data->oneWayTrip->luggages,
         ];
@@ -59,6 +60,7 @@ class Home extends BaseController
         if ($booking_data->tripType == 'round-trip') {
             $round_trip_cars_payload = [
                 'date' => $booking_data->roundTrip->pickup->date,
+                'time' => $booking_data->roundTrip->pickup->time,
                 'passengers' => $booking_data->roundTrip->passengers,
                 'luggages' => $booking_data->roundTrip->luggages,
             ];
@@ -91,7 +93,10 @@ class Home extends BaseController
         
         if ($login_data->hasRegistered) {
             $customer_uuid = $booking_data->accountId;
-            $customer_handler->createCustomer($customer_data, $booking_data->accountId);
+
+            if (!$customer_handler->checkCustomerExisted($customer_uuid)) {
+                $customer_handler->createCustomer($customer_data, $booking_data->accountId);
+            }
         } else {
             $customer_uuid = $customer_handler->createCustomer($customer_data);
             
@@ -628,12 +633,14 @@ class Home extends BaseController
 
         $one_way_car_id = $receipt_data->selectCar->oneWayTrip->vehicle->carId;
         $one_way_car_booked_date = $receipt_data->reservation->oneWayTrip->pickup->date;
+        $one_way_car_booked_time = $receipt_data->reservation->oneWayTrip->pickup->time;
 
         $booking_schedules = [
             [
                 'booking_id' => $booking_id,
                 'car_id' => $one_way_car_id,
                 'scheduled_date' => $one_way_car_booked_date,
+                'scheduled_time' => $one_way_car_booked_time,
                 'schedule_active' => $ACTIVE_SCHEDULE,
             ]
         ];
@@ -641,11 +648,13 @@ class Home extends BaseController
         if ($trip_type == 'round-trip') {
             $round_trip_car_id = $receipt_data->selectCar->roundTrip->vehicle->carId;
             $round_trip_car_booked_date = $receipt_data->reservation->roundTrip->pickup->date;
+            $round_trip_car_booked_time = $receipt_data->reservation->roundTrip->pickup->time;
 
             array_push($booking_schedules, [
                 'booking_id' => $booking_id,
                 'car_id' => $round_trip_car_id,
                 'scheduled_date' => $round_trip_car_booked_date,
+                'scheduled_time' => $round_trip_car_booked_time,
                 'schedule_active' => $ACTIVE_SCHEDULE,
             ]);
         }

@@ -49,4 +49,13 @@ class CustomerController extends BaseController
     {
         return true;
     }
+
+    public function checkCustomerExisted($customer_id)
+    {
+        $customer_model = model(CustomerModel::class);
+
+        $rows_count = count($customer_model->getCustomerById($customer_id));
+
+        return $rows_count > 0 ? true : false;
+    }
 }

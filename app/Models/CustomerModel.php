@@ -37,4 +37,11 @@ class CustomerModel extends Model
 
         return $update_query;
     }
+
+    public function getCustomerById($customer_id)
+    {
+        $query = $this->select('*')->where('customer_id', $customer_id)->findAll();
+
+        return $query;
+    }
 }
