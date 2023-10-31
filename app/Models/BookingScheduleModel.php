@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Models\CarModel;
 
 class BookingScheduleModel extends Model
 {
@@ -91,5 +92,78 @@ class BookingScheduleModel extends Model
         $remove_schedules_query = $this->update($booking_id, ['schedule_active' => $INACTIVE_SCHEDULE]);
 
         return $remove_schedules_query;
+    }
+
+    public function findAvailableCars($params)
+    {
+        $desiredDate = $params['date'];
+        $desiredTime = $params['time'];
+
+        $config_cars_builder = $this->db->table('config_cars c');
+        $booking_schedules_builder_first = $this->db->table('booking_schedules r');
+        $booking_schedules_builder_second = $this->db->table('booking_schedules rs');
+
+        $cars_first_conditions = $booking_schedules_builder_first
+            ->select('r.car_id')
+            ->groupStart()
+                ->orGroupStart()
+                    ->where([
+                        'r.estimated_complete_date IS NOT ' => NULL,
+                        'r.estimated_complete_time IS NOT ' => NULL
+                    ])
+                    ->groupStart()
+                        ->where('r.estimated_complete_date < ', $desiredDate)
+                        ->orGroupStart()
+                            ->where([
+                                'r.estimated_complete_date = ' => $desiredDate,
+                                'r.estimated_complete_time <= ' => $desiredTime
+                            ])
+                        ->groupEnd()
+                    ->groupEnd()
+                ->groupEnd()
+                ->orGroupStart()
+                    ->where('r.scheduled_date > ', $desiredDate)
+                    ->orGroupStart()
+                        ->where([
+                            'r.scheduled_date = ' => $desiredDate,
+                            'r.scheduled_time >= ' => $desiredTime
+                        ])
+                    ->groupEnd()
+                ->groupEnd()
+                ->orGroupStart()
+                    ->where([
+                        'r.estimated_complete_date IS ' => NULL,
+                        'r.estimated_complete_time IS ' => NULL
+                    ])
+                ->groupEnd()
+            ->groupEnd()
+            ->where('r.schedule_active', 1)
+            //->getCompiledSelect();
+            ->get()
+            ->getResult();
+
+        $cars = $config_cars_builder
+            ->select('c.car_id')
+            ->distinct()
+            ->groupStart()
+                ->whereNotIn(
+                    'c.car_id',
+                    $cars_first_conditions
+                )
+                ->whereNotIn(
+                    'c.car_id',
+                    $booking_schedules_builder_second
+                        ->select('rs.car_id')
+                        ->groupBy('rs.car_id')
+                        ->having('COUNT(*) >= ', 'c.car_quantity')
+                        ->get()
+                        ->getResult()
+                )
+            ->groupEnd()
+            ->getCompiledSelect();
+            //->get()
+            //->getResult();
+
+        return $cars;
     }
 }
