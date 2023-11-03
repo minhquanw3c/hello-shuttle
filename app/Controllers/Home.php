@@ -55,7 +55,7 @@ class Home extends BaseController
             'luggages' => $booking_data->oneWayTrip->luggages,
         ];
 
-        $one_way_cars = $booking_schedule_model->getAvailableCarsForDate($one_way_cars_payload);
+        $one_way_cars = $booking_schedule_model->findAvailableCars($one_way_cars_payload);
 
         if ($booking_data->tripType == 'round-trip') {
             $round_trip_cars_payload = [
@@ -65,7 +65,7 @@ class Home extends BaseController
                 'luggages' => $booking_data->roundTrip->luggages,
             ];
 
-            $round_trip_cars = $booking_schedule_model->getAvailableCarsForDate($round_trip_cars_payload);
+            $round_trip_cars = $booking_schedule_model->findAvailableCars($round_trip_cars_payload);
         }
 
         $response = [
@@ -700,15 +700,12 @@ class Home extends BaseController
 
         $update_booking_result = $booking_model->updateBookingById($booking_id, $update_booking_data);
 
-        $create_booking_schedule_result = $this->createBookingSchedule($receipt_data, $booking_id);
-
         $send_receipt = $this->sendBookingReceiptEmail($receipt_data, $booking_id);
 
         $response = [
             'bookingId' => $booking_id,
             'result' => $update_booking_result,
             'sendBookingReceipt' => $send_receipt,
-            'createBookingSchedule' => $create_booking_schedule_result,
             'dashboardUrl' => $this->getResourcesURLs('dashboard'),
         ];
 

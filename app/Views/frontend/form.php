@@ -686,8 +686,8 @@
                                                 <span class="d-block"><b-icon icon="people"></b-icon> {{ vehicle.maxPassengers }}</span>
                                                 <span class="d-block"><b-icon icon="briefcase"></b-icon> {{ vehicle.maxLuggages }}</span>
                                             </p>
-                                            <p :class="{ 'danny--car danny--car-availability': true, 'text-danger': parseInt(vehicle.availableCars) <= 0 }">
-                                                {{ parseInt(vehicle.availableCars) <= 0 ? 'Out of service' : 'Available' }}
+                                            <p :class="{ 'danny--car danny--car-availability': true, 'text-danger': !vehicle.available }">
+                                                {{ !vehicle.available ? 'Out of service' : 'Available' }}
                                             </p>
                                         </div>
                                         <div class="col-12 col-sm-6 col-md-3 col-lg-3">
@@ -695,7 +695,7 @@
                                         </div>
                                         <div class="col-12 col-lg-3 text-right">
                                             <b-form-radio
-                                                :disabled="parseInt(vehicle.availableCars) <= 0"
+                                                :disabled="!vehicle.available"
                                                 v-model="$v.form.bookingRequirements.selectCar.oneWayTrip.vehicle.$model"
                                                 name="one-way-vehicle"
                                                 :value="vehicle"
@@ -728,8 +728,8 @@
                                                 <span class="d-block"><b-icon icon="people"></b-icon> {{ vehicle.maxPassengers }}</span>
                                                 <span class="d-block"><b-icon icon="briefcase"></b-icon> {{ vehicle.maxLuggages }}</span>
                                             </p>
-                                            <p :class="{ 'danny--car danny--car-availability': true, 'text-danger': parseInt(vehicle.availableCars) <= 0 }">
-                                                {{ parseInt(vehicle.availableCars) <= 0 ? 'Out of service' : 'Available' }}
+                                            <p :class="{ 'danny--car danny--car-availability': true, 'text-danger': !vehicle.available }">
+                                                {{ !vehicle.available ? 'Out of service' : 'Available' }}
                                             </p>
                                         </div>
                                         <div class="col-12 col-sm-6 col-md-3 col-lg-3">
@@ -737,7 +737,7 @@
                                         </div>
                                         <div class="col-12 col-lg-3 text-right">
                                             <b-form-radio
-                                                :disabled="parseInt(vehicle.availableCars) <= 0"
+                                                :disabled="!vehicle.available"
                                                 v-model="$v.form.bookingRequirements.selectCar.roundTrip.vehicle.$model"
                                                 name="round-trip-vehicle"
                                                 :value="vehicle"
