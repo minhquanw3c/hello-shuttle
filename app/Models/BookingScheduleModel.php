@@ -219,7 +219,7 @@ class BookingScheduleModel extends Model
                         'config_cars_price.extra_passengers_price AS extraPassengersPrice',
                     ])
                     ->join('config_cars_price', 'config_cars_price.car_id = c.car_id')
-                    // ->whereNotIn('c.car_id', $unavailable_cars)
+                    ->where('config_cars_price.max_passengers >=', $params['passengers'])
                     ->get()
                     ->getResultObject();
 
