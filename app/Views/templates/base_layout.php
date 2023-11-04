@@ -146,19 +146,19 @@
                 <div class="row">
                     <div class="col-md-6 col-12">
                         <div class="row">
-                            <div class="col-12 col-lg-6">
+                            <div class="col-12 col-lg-4">
                                 <div class="site-logo">
                                     <a href="<?= base_url('/') ?>">
                                         <img src="<?= base_url('static/images/logo/hello-shuttle-gold-hand-white-text-01.png') ?>" alt="hello-shuttle-logo">
                                     </a>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-6 mt-4 mt-lg-0">
+                            <div class="col-12 col-lg-8 mt-4 mt-lg-0">
                                 <div class="get-support ltn__copyright-design">
                                     <div class="get-support-info">
-                                        <h6>Copyright & Design By</h6>
-                                        <h4>
-                                            <a href="https://www.dannythedesigner.com" target="_blank">DannyTheDesigner</a> - <span class="current-year"><?= date('Y') ?></span>
+                                        <h6 class="text-white">&copy; <?= date('Y') ?> HelloShuttle. All Rights Reserved.</h6>
+                                        <h4 class="font-weight-normal">
+                                            Designed by <a href="https://www.dannythedesigner.com" target="_blank">DannyTheDesigner</a>
                                         </h4>
                                     </div>
                                 </div>
