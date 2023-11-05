@@ -377,7 +377,7 @@ var app = new Vue({
         }
     },
     methods: {
-        increasePassengers: function (tripType, maxPassengers = 10) {
+        increasePassengers: function (tripType, maxPassengers = 20) {
             const self = this;
             let passengers = self.form.bookingRequirements.reservation[tripType].passengers;
 
@@ -385,7 +385,7 @@ var app = new Vue({
                 self.form.bookingRequirements.reservation[tripType].passengers++;
             }
         },
-        increaseLuggages: function (tripType, maxLuggages = 10) {
+        increaseLuggages: function (tripType, maxLuggages = 40) {
             const self = this;
             let luggages = self.form.bookingRequirements.reservation[tripType].luggages;
 
