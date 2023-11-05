@@ -9,7 +9,7 @@
     <div class="ltn__slider-area ltn__slider-4 ">
         <div class="ltn__slide-one-active----- slick-slide-arrow-1----- slick-slide-dots-1----- arrow-white----- ltn__slide-animation-active">
             <!-- ltn__slide-item -->
-            <div class="ltn__slide-item ltn__slide-item-2 ltn__slide-item-4 text-color-white bg-image" data-bg="<?= base_url('static/images/backgrounds/bg-001.jpg') ?>">
+            <div class="ltn__slide-item ltn__slide-item-2 ltn__slide-item-4 text-color-white bg-image" data-bg="<?= base_url('static/images/backgrounds/bg-003.jpg') ?>">
                 <div class="ltn__slide-item-inner text-center">
                     <div class="container">
                         <div class="row">

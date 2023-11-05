@@ -71,13 +71,13 @@
         <div class="ltn__header-middle-area ltn__header-sticky ltn__sticky-bg-black">
             <div class="container">
                 <div class="row">
-                    <div class="col-12 col-lg-6">
-                        <a href="<?= base_url('/') ?>">
+                    <div class="col-12 col-lg-6 text-center text-md-left">
+                        <a class="d-inline-block" href="<?= base_url('/') ?>">
                             <img src="<?= base_url('static/images/logo/hello-shuttle-gold-hand-white-text.png') ?>" alt="hello-shuttle-logo" style="max-height: 100px;">
                         </a>
                     </div>
                     <div class="col-12 col-lg-4 mt-3 mt-lg-0">
-                        <div class="get-support get-support-color-white">
+                        <div class="get-support get-support-color-white justify-content-center justify-content-md-end">
                             <div class="get-support-icon">
                                 <i class="icon-call"></i>
                             </div>
@@ -85,7 +85,7 @@
                                 <h4><a href="tel:9498005678" target="_blank">(949) 800-5678</a></h4>
                             </div>
                         </div>
-                        <div class="get-support get-support-color-white">
+                        <div class="get-support get-support-color-white justify-content-center justify-content-md-end">
                             <div class="get-support-icon">
                                 <i class="icon-mail"></i>
                             </div>
@@ -94,7 +94,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-lg-2 mt-3 mt-lg-0 text-center">
+                    <div class="col-12 col-lg-2 mt-3 mt-lg-0 text-center text-md-right">
                         <a
                             class="align-items-center btn btn-primary d-inline-flex"
                             href="<?= $dashboardUrl ?>"
@@ -147,14 +147,14 @@
                     <div class="col-md-6 col-12">
                         <div class="row">
                             <div class="col-12 col-lg-4">
-                                <div class="site-logo">
+                                <div class="site-logo justify-content-center justify-content-md-start">
                                     <a href="<?= base_url('/') ?>">
                                         <img src="<?= base_url('static/images/logo/hello-shuttle-gold-hand-white-text-01.png') ?>" alt="hello-shuttle-logo">
                                     </a>
                                 </div>
                             </div>
                             <div class="col-12 col-lg-8 mt-4 mt-lg-0">
-                                <div class="get-support ltn__copyright-design">
+                                <div class="get-support ltn__copyright-design justify-content-center justify-content-md-start">
                                     <div class="get-support-info">
                                         <h6 class="text-white">&copy; <?= date('Y') ?> HelloShuttle. All Rights Reserved.</h6>
                                         <h4 class="font-weight-normal">
