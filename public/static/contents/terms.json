@@ -1,0 +1,28 @@
+{
+    "terms": [
+        {
+            "heading": "Gratuity is not included in the fares. If you'd like to tip your driver, it would be highly appreciated. You have the following options to do so:",
+            "children": [
+                "Pay in cash, Venmo, or Zelle (which drivers prefer).",
+                "Text your driver the dollar amount or percentage you wish to add to your reservation.",
+                "You can tip your driver during your booking."
+            ]
+        },
+        {
+            "heading": "HELLO SHUTTLE does not add any taxes to our fares. The fare you pay is solely based on the total number of passengers you have entered.",
+            "children": []
+        },
+        {
+            "heading": "***Rates are lower during non traffic hours ***",
+            "children": [
+                "3:00 a.m. to 6 a.m.",
+                "9:00 a.m. to 2 p.m.",
+                "7:00 p.m. to 11 p.m."
+            ]
+        },
+        {
+            "heading": "We provide a Private Non-Stop Service, we pick-up and drop-off right in front of your terminal",
+            "children": []
+        }
+    ]
+}
