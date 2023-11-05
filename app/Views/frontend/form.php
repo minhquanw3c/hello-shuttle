@@ -61,10 +61,6 @@
                             <b-form @submit.prevent="saveReservation" novalidate>
                                 <section>
                                     <div class="row">
-                                        <div class="col-12 text-center mb-1">
-                                            <p class="text-danger m-0">10% Off On Roundtrip</p>
-                                        </div>
-
                                         <div class="col-12 text-center">
                                             <b-form-group
                                                 :state="validateInputField($v.form.bookingRequirements.reservation.tripType)"
@@ -1879,6 +1875,7 @@
                 </div>
             </div>
 
+            <!-- Our competitve benefits -->
             <div class="row mt-5">
                 <div class="col-12 text-center">
                     <h2 class="text-white">Our competitve benefits</h2>
@@ -1892,14 +1889,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    You get 10&percnt; OFF when booking round trip
-                                </td>
-                                <td>
-                                    No discount
-                                </td>
-                            </tr>
                             <tr>
                                 <td>
                                     We pick you up right in front of your terminal
@@ -1958,240 +1947,34 @@
                 </div>
             </div>
 
+            <!-- Frequently asked questions -->
             <div class="row mt-5">
                 <div class="col-12 text-center">
                     <h2 class="text-white m-0">Frequently asked questions</h2>
                 </div>
-                <div class="col-12 col-lg-6">
-                    <div id="faq-accordion-left">
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <a class="card-link d-block collapsed" data-toggle="collapse" href="#collapse-01">
-                                    Rescheduling
-                                </a>
-                            </div>
-                            <div id="collapse-01" class="collapse" data-parent="#faq-accordion-left">
-                                <div class="card-body">
-                                    <p>
-                                        There is no charge if you reschedule your reservation more than 24 hours
-                                        to your pickup time. However, there will be 20&percnt; charge if either of the
-                                        following scenarios takes place:
-                                    </p>
-                                    <ol>
-                                        <li>
-                                            If you reschedule your reservation within 2-24 hours prior to your pickup time.
-                                        </li>
-                                        <li>
-                                            If you reschedule your pickup time due to flight delay or early arrivals. If the
-                                            flight delays multiple times, there will be 20&percnt; charge for each delay.
-                                        </li>
-                                    </ol>
-                                    <p>
-                                        You cannot reschedule your reservation within 2 hours prior to your pickup time.
-                                        You will need to cancel with 50&percnt; refund and book a new one.
-                                    </p>
-                                    <p>
-                                        Rescheduling must be requested by emailing us at
-                                        <a href="mailto:info@helloshuttle.com" target="_blank">info@helloshuttle.com</a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapse-02">
-                                    Cancellation
-                                </a>
-                            </div>
-                            <div id="collapse-02" class="collapse" data-parent="#faq-accordion-left">
-                                <div class="card-body">
-                                    <p>
-                                        There will be 20&percnt; cancellation fee for any reasons. If you choose to cancel your
-                                        reservation within 18-24 hours to you pickup time, there is 50&percnt; refund to your card.
-                                        However, if you cancel your reservation within 6 hours to your pickup time, there is no refund.
-                                    </p>
-                                    <p>
-                                        The original fare amount will be refunded to your card within 7-10 business days.
-                                        Cancellation must be requested through email
-                                        <a href="mailto:info@helloshuttle.com" target="_blank">info@helloshuttle.com</a>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapse-03">
-                                    Pets
-                                </a>
-                            </div>
-                            <div id="collapse-03" class="collapse" data-parent="#faq-accordion-left">
-                                <div class="card-body">
-                                    <p>
-                                        Pet cleaning fee is 35&dollar; for any pet size, even if it is a service dog.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapse-04">
-                                    Child safety seats
-                                </a>
-                            </div>
-                            <div id="collapse-04" class="collapse" data-parent="#faq-accordion-left">
-                                <div class="card-body">
-                                    <p>
-                                        &dollar;20 per car seats, boosters are free of charge. You will be given the option
-                                        to add this service during your booking.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapse-10">
-                                    Liability
-                                </a>
-                            </div>
-                            <div id="collapse-10" class="collapse" data-parent="#faq-accordion-left">
-                                <div class="card-body">
-                                    <p>
-                                        HELLO SHUTTLE is not liable in the event of mechanical breakdown while on charter and will
-                                        only be responsible for making up lost time at a mutually agreed date. The client assumes full
-                                        financial liability for any damage to the vehicle caused during the duration of the rental by
-                                        them or any members of their party. A fee of 100.00 for each carpet or seat burn. Sanitation
-                                        fee is 250.00. Alcohol Consumption and drug use is prohibited by law. Any fines will be paid
-                                        for by the customer. The driver has the right to terminate run without refund (if there is
-                                        blatant indiscretion on the part of the client(s)). It is Illegal to stand through the sunroof.
-                                        Smoking is not permitted in our vehicles. Overtime pay will apply after the first 10 minutes
-                                        of prearranged time described on the run sheet. Not responsible for delays or the termination
-                                        in winter caused by unsafe road conditions (ie. not salted, accidents, etc.). Not responsible
-                                        for articles left in the vehicle. Vehicles cannot be loaded beyond seating capacity.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapse-11">
-                                    Change of vehicle/service type
-                                </a>
-                            </div>
-                            <div id="collapse-11" class="collapse" data-parent="#faq-accordion-left">
-                                <div class="card-body">
-                                    <p>
-                                        It is possible that due to an unforeseen situation, the vehicle you have ordered might not be
-                                        available. In this situation, a different vehicle type will be sent to avoid leaving you stranded.
-                                        The replacement vehicle will still accommodate the number of passengers and luggage in your party.
-                                    </p>
-                                    <p>
-                                        If the new vehicle assigned costs more in fare, HELLO SHUTTLE will cover the difference.
-                                    </p>
-                                    <p>
-                                        If the vehicle assigned costs less in fare, HELLO SHUTTLE will refund the difference.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-lg-6">
-                    <div id="faq-accordion-right">
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <a class="card-link d-block collapsed" data-toggle="collapse" href="#collapse-05">
-                                    Waiting charges
-                                </a>
-                            </div>
-                            <div id="collapse-05" class="collapse" data-parent="#faq-accordion-right">
-                                <div class="card-body">
-                                    <p>
-                                        For all Airport arrivals, the first 20 minutes arrival times are free. After that,
-                                        there will be &dollar;1.50 charge for each additional minute. For all other pickup locations,
-                                        the first 10 minutes are free.
-                                    </p>
-                                    <p>
-                                        It is your responsibility to provide us the correct flight information, the correct address of
-                                        your pickup location and notify us of any changes. If you do not provide us with a correct flight
-                                        information to track your flight or the correct address of your pickup location, the driver will
-                                        show up at your requested pickup and the above waiting charges will apply.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapse-06">
-                                    Refund
-                                </a>
-                            </div>
-                            <div id="collapse-06" class="collapse" data-parent="#faq-accordion-right">
-                                <div class="card-body">
-                                    <p>
-                                        Refunds usually show in your account within 7-10 business days.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapse-07">
-                                    No Show - No Refund
-                                </a>
-                            </div>
-                            <div id="collapse-07" class="collapse" data-parent="#faq-accordion-right">
-                                <div class="card-body">
-                                    <p>
-                                        The driver will wait 10 minutes after your scheduled pickup time at no charge before
-                                        marking your reservation as a no-show. However, if the driver's schedule allows, the driver
-                                        will wait and the above waiting charges will apply.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapse-08">
-                                    Toll Roads and Parking Fees
-                                </a>
-                            </div>
-                            <div id="collapse-08" class="collapse" data-parent="#faq-accordion-right">
-                                <div class="card-body">
-                                    <p>
-                                        Hello Shuttle does not include coverage for toll roads and parking fees. If our drivers
-                                        determine it is necessary to use toll roads for the transportation to or from your destination,
-                                        these fees will be charged to the same card used for the reservation.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card mt-3">
-                            <div class="card-header">
-                                <a class="collapsed card-link d-block" data-toggle="collapse" href="#collapse-09">
-                                    Restrictions on luggage
-                                </a>
-                            </div>
-                            <div id="collapse-09" class="collapse" data-parent="#faq-accordion-right">
-                                <div class="card-body">
-                                    <p>
-                                        Each person has 1 free luggage and 1 free small bag. Extra luggage or bag will be
-                                        charged &dollar;10 each.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
+            <?php if(count($policies) > 0): ?>
+                <div class="row">
+                    <?php if (count($policies) === 1): ?>
+                        <div class="col-12">
+                            <?= view('templates/snippets/FAQs', ['policies' => $policies, 'accordianName' => 'first-accordian']) ?>
+                        </div>
+                    <?php else: ?>
+                        <?php
+                            $midpoint = (int)(count($policies) / 2);
+                            $first_half = array_slice($policies, 0, $midpoint);
+                            $second_half = array_slice($policies, $midpoint);
+                        ?>
+
+                        <div class="col-12 col-lg-6">
+                            <?= view('templates/snippets/FAQs', ['policies' => $first_half, 'accordianName' => 'first-accordian']) ?>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <?= view('templates/snippets/FAQs', ['policies' => $second_half, 'accordianName' => 'second-accordian']) ?>
+                        </div>
+                    <?php endif ?>
+                </div>
+            <?php endif ?>
         </div>
 
         <!-- Modals -->

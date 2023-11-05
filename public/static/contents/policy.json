@@ -1,5 +1,5 @@
 {
-    "helloShuttlePolicies": [
+    "policies": [
         {
             "heading": "Rescheduling",
             "descriptions": [
@@ -68,7 +68,8 @@
             "heading": "Restrictions on Luggage",
             "descriptions": [
                 "Each person is allowed 1 free luggage and 1 free small bag. Additional luggage or bags will be charged $10/each."
-            ]
+            ],
+            "children": []
         },
         {
             "heading": "Liability",
@@ -80,7 +81,8 @@
                 "Standing through the sunroof is illegal, and smoking is not allowed in our vehicles.",
                 "Overtime pay will apply after the first 10 minutes of the prearranged time stated on the run sheet. We are not responsible for delays or termination due to unsafe winter road conditions (e.g., unsalted roads, accidents).",
                 "Any articles left in the vehicle are the customer's responsibility, and vehicles cannot be overloaded beyond their seating capacity."
-            ]
+            ],
+            "children": []
         },
         {
             "heading": "Change of Vehicle/Service Type",
@@ -119,7 +121,8 @@
             "descriptions": [
                 "For Curbside Pickups, your driver will contact you via text and calls before your pickup time. You are requested NOT to go to the Uber/Lyft/Taxi transportation lot outside the airport.",
                 "Once you are outside by the curb in front of your terminal and ready for pick up, please contact your driver. He will promptly drive up to you within minutes to pick you up."
-            ]
+            ],
+            "children": []
         }
     ]
 }
