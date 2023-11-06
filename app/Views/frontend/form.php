@@ -1899,30 +1899,27 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <p class="m-0">FREE child booster charges</p>
+                                    <p class="m-0">Booster charge only &dollar;10</p>
                                     <p class="m-0">Child car seat charge only &dollar;20/each</p>
                                 </td>
                                 <td>
-                                    <p class="m-0">No free child booster</p>
-                                    <p class="m-0">Car seat charge a lot more</p>
+                                    <p class="m-0">Car seat and Booster charge a lot more</p>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    If you reschedule your reservation within 2 hours prior to your pickup time.
-                                    You will need to cancel with 50&percnt; refund and book a new one.
+                                    Private non-stop service
                                 </td>
                                 <td>
-                                    No refund and has to book a new one.
+                                    Multiple stops for additional passenger
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    If you cancel your reservation within 18-24 hours prior to your pickup time, there is
-                                    50&percnt; refund to your card
+                                    Care about our customers
                                 </td>
                                 <td>
-                                    No refund
+                                    Collect money and no pick up customers in the last minutes (SCAM)
                                 </td>
                             </tr>
                             <tr>
