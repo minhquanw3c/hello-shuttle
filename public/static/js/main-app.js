@@ -889,18 +889,27 @@ var app = new Vue({
             let routeMiles = parseFloat(miles);
 
             if (config.firstMilesPriceActive && routeMiles > 0) {
-                routeMiles -= parseFloat(config.firstMiles);
-                price += parseFloat(config.firstMilesPrice);
+                const firstMiles = parseFloat(config.firstMiles);
+                const firstMilesPrice = parseFloat(config.firstMilesPrice);
+
+                price += (firstMilesPrice * (routeMiles >= firstMiles ? firstMiles : routeMiles));
+                routeMiles -= firstMiles;
             }
 
             if (config.secondMilesPriceActive && routeMiles > 0) {
-                routeMiles -= parseFloat(config.secondMiles);
-                price += parseFloat(config.secondMilesPrice);
+                const secondMiles = parseFloat(config.secondMiles);
+                const secondMilesPrice = parseFloat(config.secondMilesPrice);
+
+                price += (secondMilesPrice * (routeMiles >= secondMiles ? secondMiles : routeMiles));
+                routeMiles -= secondMiles;
             }
 
             if (config.thirdMilesPriceActive && routeMiles > 0) {
-                routeMiles -= parseFloat(config.thirdMiles);
-                price += (routeMiles * parseFloat(config.thirdMilesPrice));
+                const thirdMiles = parseFloat(config.thirdMiles);
+                const thirdMilesPrice = parseFloat(config.thirdMilesPrice);
+
+                price += (thirdMilesPrice * routeMiles);
+                routeMiles -= thirdMiles;
             }
 
             return price;
