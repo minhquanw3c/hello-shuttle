@@ -1418,6 +1418,16 @@
                                                         </div>
                                                     </div>
                                                     <div class="row">
+                                                            <div class="col-8">
+                                                                Free luggages (&times;{{ extraLuggages.oneWayTrip.free }})
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <span class="danny--car-option-price">
+                                                                    &dollar;0
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    <div class="row">
                                                         <div class="col-8">
                                                             Extra luggages (&times;{{ extraLuggages.oneWayTrip.extras }})
                                                         </div>
@@ -1624,6 +1634,16 @@
                                                                 <b-button class="btn" title="Edit luggages" @click="() => { formActiveTabIndex = 0 }">
                                                                     <b-icon icon="pencil-square"></b-icon>
                                                                 </b-button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-8">
+                                                                Free luggages (&times;{{ extraLuggages.roundTrip.free }})
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <span class="danny--car-option-price">
+                                                                    &dollar;0
+                                                                </span>
                                                             </div>
                                                         </div>
                                                         <div class="row">

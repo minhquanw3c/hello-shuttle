@@ -52,7 +52,7 @@ $routes->post('api/user/get', 'UserController::getUserDataFromBookingForm');
 $routes->post('api/email/validate', 'UserController::validateRegisterAccountEmail');
 
 // test/update pdf receipt UI
-$routes->get('test-pdf-receipt', 'Home::generateSampleBookingReceipt');
+// $routes->get('test-pdf-receipt', 'Home::generateSampleBookingReceipt');
 
 /*
  * --------------------------------------------------------------------

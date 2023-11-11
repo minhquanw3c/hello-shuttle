@@ -929,7 +929,7 @@ var app = new Vue({
 
             self.form.bookingRequirements.review.prices.adminFee[tripType] = price;
 
-            return price;
+            return parseFloat(price.toFixed(2));
         },
         calculatePickupFee: function (config, milesFromBaseToPickup, totalPrice, tripType) {
             const self = this;
@@ -946,7 +946,7 @@ var app = new Vue({
 
             self.form.bookingRequirements.review.prices.pickupFee[tripType] = price;
 
-            return price;
+            return parseFloat(price.toFixed(2));
         },
         calculatePackagesPrice: function (config, passengers, packages) {
             const self = this;
@@ -1355,6 +1355,7 @@ var app = new Vue({
 
             let luggages = {
                 oneWayTrip: {
+                    free: oneWayTripVehicleConfig.freeLuggagesQuantity,
                     extras: !_.isNil(oneWayTripVehicleConfig) ? 
                         (
                             (parseInt(oneWayTripVehicleConfig.freeLuggagesQuantity) - parseInt(oneWayTripLuggages)) < 0 ?
@@ -1370,6 +1371,7 @@ var app = new Vue({
                         ) : 0,
                 },
                 roundTrip: {
+                    free: roundTripVehicleConfig.freeLuggagesQuantity,
                     extras: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? 
                         (
                             (parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) < 0 ?
@@ -1386,10 +1388,12 @@ var app = new Vue({
                 }
             };
 
-            // Update extras for passengers and luggages
+            // Update free-extras for passengers and luggages
+            self.form.bookingRequirements.review.prices.luggages.oneWayTrip.free = luggages.oneWayTrip.free;
             self.form.bookingRequirements.review.prices.luggages.oneWayTrip.extras = luggages.oneWayTrip.extras;
             self.form.bookingRequirements.review.prices.luggages.oneWayTrip.prices = luggages.oneWayTrip.extrasPrice;
 
+            self.form.bookingRequirements.review.prices.luggages.roundTrip.free = luggages.roundTrip.free;
             self.form.bookingRequirements.review.prices.luggages.roundTrip.extras = luggages.roundTrip.extras;
             self.form.bookingRequirements.review.prices.luggages.roundTrip.prices = luggages.roundTrip.extrasPrice;
 
