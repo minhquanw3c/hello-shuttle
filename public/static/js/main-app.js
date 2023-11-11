@@ -1359,7 +1359,7 @@ var app = new Vue({
 
             let luggages = {
                 oneWayTrip: {
-                    free: oneWayTripVehicleConfig.freeLuggagesQuantity,
+                    free: !_.isNil(oneWayTripVehicleConfig) ? oneWayTripVehicleConfig.freeLuggagesQuantity : 0,
                     extras: !_.isNil(oneWayTripVehicleConfig) ? 
                         (
                             (parseInt(oneWayTripVehicleConfig.freeLuggagesQuantity) - parseInt(oneWayTripLuggages)) < 0 ?
@@ -1375,7 +1375,7 @@ var app = new Vue({
                         ) : 0,
                 },
                 roundTrip: {
-                    free: roundTripVehicleConfig.freeLuggagesQuantity,
+                    free: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? roundTripVehicleConfig.freeLuggagesQuantity : 0,
                     extras: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? 
                         (
                             (parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) < 0 ?
