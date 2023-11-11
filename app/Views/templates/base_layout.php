@@ -145,7 +145,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 col-12">
-                        <div class="row">
+                        <div class="row align-items-center">
                             <div class="col-12 col-lg-4">
                                 <div class="site-logo justify-content-center justify-content-md-start">
                                     <a href="<?= base_url('/') ?>">
@@ -157,9 +157,6 @@
                                 <div class="get-support ltn__copyright-design justify-content-center justify-content-md-start">
                                     <div class="get-support-info">
                                         <h6 class="text-white">&copy; <?= date('Y') ?> HelloShuttle. All Rights Reserved.</h6>
-                                        <h4 class="font-weight-normal">
-                                            Designed by <a href="https://www.dannythedesigner.com" target="_blank">DannyTheDesigner</a>
-                                        </h4>
                                     </div>
                                 </div>
                             </div>
