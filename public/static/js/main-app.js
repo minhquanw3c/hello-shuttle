@@ -927,9 +927,11 @@ var app = new Vue({
                         (routePrice * (parseFloat(config.adminFeePercentage) / 100));
             }
 
+            price = parseFloat(price.toFixed(2));
+
             self.form.bookingRequirements.review.prices.adminFee[tripType] = price;
 
-            return parseFloat(price.toFixed(2));
+            return price;
         },
         calculatePickupFee: function (config, milesFromBaseToPickup, totalPrice, tripType) {
             const self = this;
@@ -944,9 +946,11 @@ var app = new Vue({
                         (routePrice * (parseFloat(config.pickupFeePercentage) / 100));
             }
 
+            price = parseFloat(price.toFixed(2));
+
             self.form.bookingRequirements.review.prices.pickupFee[tripType] = price;
 
-            return parseFloat(price.toFixed(2));
+            return price;
         },
         calculatePackagesPrice: function (config, passengers, packages) {
             const self = this;
