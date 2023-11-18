@@ -11,6 +11,7 @@
 </head>
 <body>
     <p>Thank you for choosing us!</p>
+    <p><strong>Please ignore this email if you've already paid for the reservation.</strong></p>
     <p>You can click on below payment link to complete booking no: <?= $paymentData->bookingRefNo ?>.</p>
     <ul>
         <li>

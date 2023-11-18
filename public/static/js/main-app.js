@@ -1137,6 +1137,16 @@ var app = new Vue({
                 customerData.account.email = val;
             }
         },
+        formatCurrency: function (value) {
+            return new Intl.NumberFormat(
+                    'en-US',
+                    {
+                        style: 'currency',
+                        currency: 'USD'
+                    }
+                )
+                .format(value);
+        }
     },
     computed: {
         errorMessageEmail: function () {

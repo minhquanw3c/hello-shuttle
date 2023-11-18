@@ -1486,7 +1486,7 @@
                                                         </div>
                                                         <div class="col-12 col-lg-4">
                                                             <p class="danny--review-payment-total-price m-0">
-                                                                &dollar;{{ form.bookingRequirements.review.prices.oneWayTrip }}
+                                                                {{ formatCurrency(form.bookingRequirements.review.prices.oneWayTrip) }}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -1705,7 +1705,7 @@
                                                             </div>
                                                             <div class="col-12 col-lg-4">
                                                                 <p class="danny--review-payment-total-price m-0">
-                                                                    &dollar;{{ form.bookingRequirements.review.prices.roundTrip }}
+                                                                    {{ formatCurrency(form.bookingRequirements.review.prices.roundTrip) }}
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -1826,7 +1826,7 @@
                                                         </div>
                                                         <div class="col-12 col-lg-4">
                                                             <p class="danny--review-payment-total-price m-0">
-                                                                &dollar;{{ form.bookingRequirements.review.prices.totalNotDiscount }}
+                                                                {{ formatCurrency(form.bookingRequirements.review.prices.totalNotDiscount) }}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -1839,7 +1839,7 @@
                                                         </div>
                                                         <div class="col-12 col-lg-4">
                                                             <p class="danny--review-payment-total-price m-0">
-                                                                &dollar;{{ form.bookingRequirements.review.prices.discountAmount }}
+                                                                {{ formatCurrency(form.bookingRequirements.review.prices.discountAmount) }}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -1851,7 +1851,7 @@
                                                         </div>
                                                         <div class="col-12 col-lg-4">
                                                             <p class="danny--review-payment-total-price m-0">
-                                                                &dollar;{{ totalRoutesPrice }}
+                                                                {{ formatCurrency(totalRoutesPrice) }}
                                                             </p>
                                                         </div>
                                                     </div>
