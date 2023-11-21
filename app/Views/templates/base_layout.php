@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Car rental service | Hello Shuttle</title>
+    <title>Hello Shuttle</title>
     <meta name="description" content="High-quality car rental service in California United States. Call us at 9498005678 for best deal">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
