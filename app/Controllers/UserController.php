@@ -135,7 +135,12 @@ class UserController extends BaseController
         $user = $user[0];
         $hash = $user['userPassword'];
 
-        if (!password_verify($user_data['password'], $hash)) {
+        $password_handler = new PasswordManagerController();
+
+        if (!$password_handler->verifyPasswordPairMatch(
+            $user_data['password'],
+            $hash
+        )) {
             array_push($response['errorMessages'], "Email or password is incorrect");
             $response['result'] = false;
             return $this->response->setJSON($response);
