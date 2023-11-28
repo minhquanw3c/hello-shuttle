@@ -682,7 +682,7 @@
                                                 <span class="d-block"><b-icon icon="people"></b-icon> {{ vehicle.maxPassengers }}</span>
                                                 <span class="d-block"><b-icon icon="briefcase"></b-icon> {{ vehicle.maxLuggages }}</span>
                                             </p>
-                                            <p :class="{ 'danny--car danny--car-availability': true, 'text-danger': !vehicle.available }">
+                                            <p :class="{ 'danny--car danny--car-availability text-success': true, 'text-danger': !vehicle.available }">
                                                 {{ !vehicle.available ? 'Out of service' : 'Available' }}
                                             </p>
                                         </div>
@@ -724,7 +724,7 @@
                                                 <span class="d-block"><b-icon icon="people"></b-icon> {{ vehicle.maxPassengers }}</span>
                                                 <span class="d-block"><b-icon icon="briefcase"></b-icon> {{ vehicle.maxLuggages }}</span>
                                             </p>
-                                            <p :class="{ 'danny--car danny--car-availability': true, 'text-danger': !vehicle.available }">
+                                            <p :class="{ 'danny--car danny--car-availability text-success': true, 'text-danger': !vehicle.available }">
                                                 {{ !vehicle.available ? 'Out of service' : 'Available' }}
                                             </p>
                                         </div>

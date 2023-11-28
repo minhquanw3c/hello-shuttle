@@ -51,7 +51,9 @@ class Home extends BaseController
         $booking_schedule_model = model(BookingScheduleModel::class);
 
         $one_way_cars = [];
+        $one_way_cars_data = [];
         $round_trip_cars = [];
+        $round_trip_cars_data = [];
 
         $one_way_cars_payload = [
             'date' => $booking_data->oneWayTrip->pickup->date,
@@ -60,7 +62,8 @@ class Home extends BaseController
             'luggages' => $booking_data->oneWayTrip->luggages,
         ];
 
-        $one_way_cars = $booking_schedule_model->findAvailableCars($one_way_cars_payload);
+        $one_way_cars = $booking_schedule_model->findAvailableCarsTwo($one_way_cars_payload);
+        // $one_way_cars = $one_way_cars_data['availableCars'];
 
         if ($booking_data->tripType == 'round-trip') {
             $round_trip_cars_payload = [
@@ -70,12 +73,15 @@ class Home extends BaseController
                 'luggages' => $booking_data->roundTrip->luggages,
             ];
 
-            $round_trip_cars = $booking_schedule_model->findAvailableCars($round_trip_cars_payload);
+            $round_trip_cars = $booking_schedule_model->findAvailableCarsTwo($round_trip_cars_payload);
+            // $round_trip_cars = $round_trip_cars_data['availableCars'];
         }
 
         $response = [
             'result' => 'success',
+            'oneWayCarsData' => $one_way_cars_data,
             'oneWayCars' => $one_way_cars,
+            'roundTripCarsData' => $round_trip_cars_data,
             'roundTripCars' => $round_trip_cars,
         ];
 
