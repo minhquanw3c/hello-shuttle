@@ -959,8 +959,9 @@ var app = new Vue({
             let totalPackages = parseInt(packages);
             let freePackages = parseInt(config.freeLuggagesQuantity);
             
-            if (totalPackages > freePackages) {
-                let exceedAmount = totalPackages - freePackages;
+            // if (totalPackages > freePackages) {
+            if (totalPackages > passengers) {
+                let exceedAmount = totalPackages - passengers;
                 price += (exceedAmount * parseFloat(config.extraLuggagesPrice));
             }
 
@@ -1367,38 +1368,30 @@ var app = new Vue({
             let oneWayTripVehicleConfig = self.form.bookingRequirements.selectCar.oneWayTrip.vehicle;
             let roundTripVehicleConfig = self.form.bookingRequirements.selectCar.roundTrip.vehicle;
 
+            let oneWayTripPassengers = self.form.bookingRequirements.reservation.oneWayTrip.passengers;
+            let roundTripPassengers = self.form.bookingRequirements.reservation.roundTrip.passengers;
+
             let luggages = {
                 oneWayTrip: {
-                    free: !_.isNil(oneWayTripVehicleConfig) ? oneWayTripVehicleConfig.freeLuggagesQuantity : 0,
-                    extras: !_.isNil(oneWayTripVehicleConfig) ? 
-                        (
-                            (parseInt(oneWayTripVehicleConfig.freeLuggagesQuantity) - parseInt(oneWayTripLuggages)) < 0 ?
-                            Math.abs(parseInt(oneWayTripVehicleConfig.freeLuggagesQuantity) - parseInt(oneWayTripLuggages)) :
-                            0
-                        ) : 0,
-                    extrasPrice: !_.isNil(oneWayTripVehicleConfig) ? 
-                        (
-                            // (parseInt(oneWayTripVehicleConfig.freeLuggagesQuantity) - parseInt(oneWayTripLuggages)) < 0 ?
-                            // Math.abs(parseInt(oneWayTripVehicleConfig.freeLuggagesQuantity) - parseInt(oneWayTripLuggages)) * oneWayTripVehicleConfig.extraLuggagesPrice :
-                            // 0
-                            self.calculatePackagesPrice(oneWayTripVehicleConfig, null, oneWayTripLuggages)
-                        ) : 0,
+                    free: oneWayTripPassengers >= oneWayTripLuggages ? oneWayTripLuggages : oneWayTripPassengers,
+                    extras: oneWayTripPassengers >= oneWayTripLuggages ? 0 : oneWayTripLuggages - oneWayTripPassengers,
+                    extrasPrice: oneWayTripPassengers >= oneWayTripLuggages ? 0 : self.calculatePackagesPrice(oneWayTripVehicleConfig, oneWayTripPassengers, oneWayTripLuggages),
                 },
                 roundTrip: {
-                    free: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? roundTripVehicleConfig.freeLuggagesQuantity : 0,
-                    extras: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? 
-                        (
-                            (parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) < 0 ?
-                            Math.abs(parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) :
-                            0
-                        ) : 0,
-                    extrasPrice: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? 
-                        (
-                            // (parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) < 0 ?
-                            // Math.abs(parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) * roundTripVehicleConfig.extraLuggagesPrice :
-                            // 0
-                            self.calculatePackagesPrice(roundTripVehicleConfig, null, roundTripLuggages)
-                        ) : 0,
+                    // free: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? roundTripVehicleConfig.freeLuggagesQuantity : 0,
+                    // extras: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? 
+                    //     (
+                    //         (parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) < 0 ?
+                    //         Math.abs(parseInt(roundTripVehicleConfig.freeLuggagesQuantity) - parseInt(roundTripLuggages)) :
+                    //         0
+                    //     ) : 0,
+                    // extrasPrice: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? 
+                    //     (
+                    //         self.calculatePackagesPrice(roundTripVehicleConfig, null, roundTripLuggages)
+                    //     ) : 0,
+                    free: self.isRoundTrip ? roundTripPassengers >= roundTripLuggages ? roundTripLuggages : roundTripPassengers : 0,
+                    extras: self.isRoundTrip ? roundTripPassengers >= roundTripLuggages ? 0 : roundTripLuggages - roundTripPassengers : 0,
+                    extrasPrice: self.isRoundTrip ? roundTripPassengers >= roundTripLuggages ? 0 : self.calculatePackagesPrice(roundTripVehicleConfig, roundTripPassengers, roundTripLuggages) : 0,
                 }
             };
 
@@ -1432,9 +1425,6 @@ var app = new Vue({
                         ) : 0,
                     extrasPrice: !_.isNil(oneWayTripVehicleConfig) ? 
                         (
-                            // (parseInt(oneWayTripVehicleConfig.freePassengersQuantity) - parseInt(oneWayTripPassengers)) < 0 ?
-                            // Math.abs(parseInt(oneWayTripVehicleConfig.freePassengersQuantity) - parseInt(oneWayTripPassengers)) * oneWayTripVehicleConfig.extraPassengersPrice :
-                            // 0
                             self.calculatePassengersPrice(oneWayTripVehicleConfig, null, oneWayTripPassengers)
                         ) : 0,
                 },
@@ -1447,9 +1437,6 @@ var app = new Vue({
                         ) : 0,
                     extrasPrice: !_.isNil(roundTripVehicleConfig) && self.isRoundTrip ? 
                         (
-                            // (parseInt(roundTripVehicleConfig.freePassengersQuantity) - parseInt(roundTripPassengers)) < 0 ?
-                            // Math.abs(parseInt(roundTripVehicleConfig.freePassengersQuantity) - parseInt(roundTripPassengers)) * roundTripVehicleConfig.extraPassengersPrice :
-                            // 0
                             self.calculatePassengersPrice(roundTripVehicleConfig, null, roundTripPassengers)
                         ) : 0,
                 }
