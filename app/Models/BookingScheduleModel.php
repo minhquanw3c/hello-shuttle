@@ -241,55 +241,42 @@ class BookingScheduleModel extends Model
 
         return $response;
     }
+
+    private function matchingCars($availableCars, $unavailableCars)
+    {
+        // Filter available cars based on conditions
+        $filteredAvailableCars = array_filter($availableCars, function ($availableCar) use ($unavailableCars) {
+            $matchingUnavailableCar = array_filter($unavailableCars, function ($unavailableCar) use ($availableCar) {
+                return $availableCar->car_id === $unavailableCar->car_id;
+            });
+        
+            // Check if there's a matching unavailable car
+            if (!empty($matchingUnavailableCar)) {
+                $matchingUnavailableCar = reset($matchingUnavailableCar); // Get the first matching element
+        
+                // Check if car_quantity is greater than booked_quantities
+                return $availableCar->car_quantity > $matchingUnavailableCar->car_booked_quantities;
+            }
+        
+            // No matching unavailable car, keep the available car
+            return true;
+        });
+
+        $carIds = array_map(function ($car) {
+            return $car->car_id;
+        }, array_values($filteredAvailableCars));
+
+        return $carIds;
+    }
     
     public function findAvailableCarsTwo($params)
     {
         $date = $params['date'];
         $time = $params['time'];
         $passengers = $params['passengers'];
+        $available_cars = [];
 
-        $sql_query = "SELECT c.car_id AS carId, 1 AS available, c.car_active AS carActive,
-        c.car_name AS carName,
-        c.car_image AS carImage,
-        c.car_seats_capacity AS carSeats,
-        --
-        ccp.open_door_price AS openDoorPrice,
-        --
-        ccp.first_miles AS firstMiles,
-        ccp.first_miles_price AS firstMilesPrice,
-        ccp.first_miles_price_active AS firstMilesPriceActive,
-        --
-        ccp.second_miles AS secondMiles,
-        ccp.second_miles_price AS secondMilesPrice,
-        ccp.second_miles_price_active AS secondMilesPriceActive,
-        --
-        ccp.third_miles AS thirdMiles,
-        ccp.third_miles_price AS thirdMilesPrice,
-        ccp.third_miles_price_active AS thirdMilesPriceActive,
-        --
-        ccp.admin_fee_type AS adminFeeType,
-        ccp.admin_fee_limit_miles AS adminFeeLimitMiles,
-        ccp.admin_fee_percentage AS adminFeePercentage,
-        ccp.admin_fee_fixed_amount AS adminFeeFixedAmount,
-        ccp.admin_fee_active AS adminFeeActive,
-        --
-        ccp.pickup_fee_type AS pickupFeeType,
-        ccp.pickup_fee_limit_miles AS pickupFeeLimitMiles,
-        ccp.pickup_fee_percentage AS pickupFeePercentage,
-        ccp.pickup_fee_fixed_amount AS pickupFeeFixedAmount,
-        ccp.pickup_fee_active AS pickupFeeActive,
-        --
-        ccp.max_luggages AS maxLuggages,
-        ccp.free_luggages_quantity AS freeLuggagesQuantity,
-        ccp.extra_luggages_price AS extraLuggagesPrice,
-        --
-        ccp.max_passengers AS maxPassengers,
-        ccp.free_passengers_quantity AS freePassengersQuantity,
-        ccp.extra_passengers_price AS extraPassengersPrice
-        FROM config_cars c
-        JOIN config_cars_price ccp ON ccp.car_id = c.car_id
-        WHERE c.car_id NOT IN (
-            SELECT r.car_id
+        $unavailable_cars_query = "SELECT r.car_id AS car_id, COUNT(r.car_id) AS car_booked_quantities
             FROM booking_schedules r
             WHERE (
                 -- Check if the reservation has an estimated complete date and time, and it ends before the desired date and time
@@ -304,17 +291,91 @@ class BookingScheduleModel extends Model
                     (r.scheduled_date = ? AND r.scheduled_time >= ?)
                 ) OR (
                     -- Check for open-ended reservations (where estimated_complete_date and estimated_complete_time are both NULL)
-                    r.estimated_complete_date IS NULL AND r.estimated_complete_time IS NULL
+                    r.scheduled_date = ? AND r.scheduled_time = ? AND r.estimated_complete_date IS NULL AND r.estimated_complete_time IS NULL
                 )
-            ) AND r.schedule_active = 1  -- Only active bookings are considered
-        ) AND c.car_id NOT IN (
-            SELECT r.car_id
-            FROM booking_schedules r
-            GROUP BY r.car_id
-            HAVING COUNT(*) >= c.car_quantity
-        ) AND ccp.max_passengers >= ? AND c.car_active = 1";
+            )
+            AND r.schedule_active = 1  -- Only active bookings are considered
+            GROUP BY r.car_id";
+        
+        $unvailable_parameters = [
+            $date,
+            $date,
+            $time,
+            $date,
+            $date,
+            $time,
+            $date,
+            $time
+        ];
 
-        return $this->db->query($sql_query, [$date, $date, $time, $date, $date, $time, $passengers])->getResult();
+        $unavailable_cars = $this->db->query($unavailable_cars_query, $unvailable_parameters)->getResult();
+
+        $active_cars_list_query = "SELECT c.car_id, c.car_quantity FROM config_cars c WHERE c.car_active = 1";
+
+        $active_cars_list = $this->db->query($active_cars_list_query, [])->getResult();
+
+        $available_cars = $this->matchingCars($active_cars_list, $unavailable_cars);
+
+        if (count($available_cars) > 0) {
+            $temp_array = [];
+
+            foreach($available_cars as $car_id) {
+                $sql_query = "SELECT c.car_id AS carId, 1 AS available, c.car_active AS carActive,
+                    c.car_name AS carName,
+                    c.car_image AS carImage,
+                    c.car_seats_capacity AS carSeats,
+                    --
+                    ccp.open_door_price AS openDoorPrice,
+                    --
+                    ccp.first_miles AS firstMiles,
+                    ccp.first_miles_price AS firstMilesPrice,
+                    ccp.first_miles_price_active AS firstMilesPriceActive,
+                    --
+                    ccp.second_miles AS secondMiles,
+                    ccp.second_miles_price AS secondMilesPrice,
+                    ccp.second_miles_price_active AS secondMilesPriceActive,
+                    --
+                    ccp.third_miles AS thirdMiles,
+                    ccp.third_miles_price AS thirdMilesPrice,
+                    ccp.third_miles_price_active AS thirdMilesPriceActive,
+                    --
+                    ccp.admin_fee_type AS adminFeeType,
+                    ccp.admin_fee_limit_miles AS adminFeeLimitMiles,
+                    ccp.admin_fee_percentage AS adminFeePercentage,
+                    ccp.admin_fee_fixed_amount AS adminFeeFixedAmount,
+                    ccp.admin_fee_active AS adminFeeActive,
+                    --
+                    ccp.pickup_fee_type AS pickupFeeType,
+                    ccp.pickup_fee_limit_miles AS pickupFeeLimitMiles,
+                    ccp.pickup_fee_percentage AS pickupFeePercentage,
+                    ccp.pickup_fee_fixed_amount AS pickupFeeFixedAmount,
+                    ccp.pickup_fee_active AS pickupFeeActive,
+                    --
+                    ccp.max_luggages AS maxLuggages,
+                    ccp.free_luggages_quantity AS freeLuggagesQuantity,
+                    ccp.extra_luggages_price AS extraLuggagesPrice,
+                    --
+                    ccp.max_passengers AS maxPassengers,
+                    ccp.free_passengers_quantity AS freePassengersQuantity,
+                    ccp.extra_passengers_price AS extraPassengersPrice
+                    FROM config_cars c
+                    JOIN config_cars_price ccp ON ccp.car_id = c.car_id
+                    WHERE ccp.max_passengers >= ?
+                    AND c.car_id = ?";
+
+                $parameters = [
+                    $passengers,
+                    $car_id
+                ];
+
+                $result = $this->db->query($sql_query, $parameters)->getResult();
+                array_push($temp_array, $result[0]);
+            }
+
+            return $temp_array;
+        } else {
+            return [];
+        }
     }
 
 }
