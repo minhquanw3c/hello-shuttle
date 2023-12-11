@@ -283,7 +283,8 @@ class BookingScheduleModel extends Model
                 (r.estimated_complete_date IS NOT NULL AND r.estimated_complete_time IS NOT NULL AND 
                     (
                         r.estimated_complete_date < ? OR
-                        (r.estimated_complete_date = ? AND r.estimated_complete_time <= ?)
+                        (r.estimated_complete_date = ? AND r.estimated_complete_time <= ?) OR
+                        (r.scheduled_date = ? AND (r.estimated_complete_time >= ? AND r.scheduled_time <= ?))
                     )
                 ) OR (
                     -- Check if the reservation has a scheduled date and time, and it starts after the desired date and time
@@ -302,6 +303,9 @@ class BookingScheduleModel extends Model
             $date,
             $time,
             $date,
+            $time,
+            $time,
+            $date,
             $date,
             $time,
             $date,
@@ -309,6 +313,8 @@ class BookingScheduleModel extends Model
         ];
 
         $unavailable_cars = $this->db->query($unavailable_cars_query, $unvailable_parameters)->getResult();
+
+        // return $unavailable_cars;
 
         $active_cars_list_query = "SELECT c.car_id, c.car_quantity FROM config_cars c WHERE c.car_active = 1";
 
