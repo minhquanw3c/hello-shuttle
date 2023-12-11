@@ -283,8 +283,8 @@ class BookingScheduleModel extends Model
                 (r.estimated_complete_date IS NOT NULL AND r.estimated_complete_time IS NOT NULL AND 
                     (
                         r.estimated_complete_date < ? OR
-                        (r.estimated_complete_date = ? AND r.estimated_complete_time <= ?) OR
-                        (r.scheduled_date = ? AND (r.estimated_complete_time >= ? AND r.scheduled_time <= ?))
+                        (r.estimated_complete_date = ? AND r.estimated_complete_time >= ?) OR
+                        r.estimated_complete_date > ?
                     )
                 ) OR (
                     -- Check if the reservation has a scheduled date and time, and it starts after the desired date and time
@@ -292,7 +292,7 @@ class BookingScheduleModel extends Model
                     (r.scheduled_date = ? AND r.scheduled_time >= ?)
                 ) OR (
                     -- Check for open-ended reservations (where estimated_complete_date and estimated_complete_time are both NULL)
-                    r.scheduled_date = ? AND r.scheduled_time = ? AND r.estimated_complete_date IS NULL AND r.estimated_complete_time IS NULL
+                    r.estimated_complete_date IS NULL AND r.estimated_complete_time IS NULL
                 )
             )
             AND r.schedule_active = 1  -- Only active bookings are considered
@@ -303,11 +303,7 @@ class BookingScheduleModel extends Model
             $date,
             $time,
             $date,
-            $time,
-            $time,
             $date,
-            $date,
-            $time,
             $date,
             $time
         ];
