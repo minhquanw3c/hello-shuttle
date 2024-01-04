@@ -156,7 +156,7 @@
                             <div class="col-12 col-lg-8 mt-4 mt-lg-0">
                                 <div class="get-support ltn__copyright-design justify-content-center justify-content-md-start">
                                     <div class="get-support-info">
-                                        <h6 class="text-white">&copy; <?= date('Y') ?> HelloShuttle. All Rights Reserved.</h6>
+                                        <h6 class="text-white">&copy; 2023 - <?= date('Y') ?> HelloShuttle. All Rights Reserved.</h6>
                                     </div>
                                 </div>
                             </div>
