@@ -2059,7 +2059,7 @@
         const baseURL = "<?= base_url('/') ?>";
         const bookingId = "<?= $bookingId ?>";
         const env = "<?= $enviroment ?>";
-        const apiKey = "<?= $enviroment === 'production' ? 'AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s' : 'AIzaSyB6QD0bdHEY5R9qoQ58VuFzdwm0YDLeSzA' ?>";
+        const apiKey = "<?= $enviroment === 'production' ? 'AIzaSyC4gxrKfizx7xSK912SaaaM6MX435TX0to' : 'AIzaSyApfeU5TZMWFCnVBDA8edm8lVUzFJ24Z8k' ?>";
     </script>
 
     <script src="<?= base_url('static/js/vendors/jquery.min.js') ?>" type="text/javascript"></script>
@@ -2079,12 +2079,12 @@
     <?php if ($enviroment === 'production'): ?>
         <script
             defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBEGGWz3KOsiPnxuygccrvKGBJEJgxih3s&libraries=places&callback=initMap">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4gxrKfizx7xSK912SaaaM6MX435TX0to&libraries=places&callback=initMap">
         </script>
     <?php else: ?>
         <script
             defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6QD0bdHEY5R9qoQ58VuFzdwm0YDLeSzA&libraries=places&callback=initMap">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApfeU5TZMWFCnVBDA8edm8lVUzFJ24Z8k&libraries=places&callback=initMap">
         </script>
     <?php endif ?>
 
