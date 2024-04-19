@@ -5,7 +5,7 @@ Options All -Indexes
 # Rewrite engine
 # ----------------------------------------------------------------------
 <IfModule mod_headers.c>
-    Header set Access-Control-Allow-Origin "https://helloshuttledashboard.project.minhquanle.a2hosted.com/"
+    Header set Access-Control-Allow-Origin "https://helloshuttledashboard.project.minhquanle.a2hosted.com"
     Header set Access-Control-Allow-Headers "Content-Type, Authorization"
 </IfModule>
 # Turning on the rewrite engine is necessary for the following rules and features.
