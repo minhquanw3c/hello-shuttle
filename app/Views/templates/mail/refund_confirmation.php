@@ -14,7 +14,7 @@
     </p>
     <p>
         In case it takes too long, please call us at: 
-        <a href="tel:9498005678" target="_blank">9498005678</a>
+        <a href="javascript:void(0)" target="_blank">(000) 000-0000</a>
     </p>
 </body>
 </html>

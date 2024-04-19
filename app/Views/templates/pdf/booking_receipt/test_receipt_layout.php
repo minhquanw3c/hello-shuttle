@@ -36,17 +36,17 @@
         <!-- Company contact -->
         <tr>
             <td colspan="3">
-                <span>Tel: (949) 800-5678</span>
+                <span>Tel: (000) 000-0000</span>
             </td>
         </tr>
         <tr>
             <td colspan="3">
-                <span>Email: info@helloshuttle.com</span>
+                <span>Email: info@testemail.com</span>
             </td>
         </tr>
         <tr>
             <td colspan="3">
-                <span>Address: 10700 Flower Ave, Stanton, CA 90680, USA</span>
+                <span>Address: Lorem ipsum</span>
             </td>
         </tr>
 

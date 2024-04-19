@@ -82,7 +82,7 @@
                                 <i class="icon-call"></i>
                             </div>
                             <div class="get-support-info">
-                                <h4><a href="tel:9498005678" target="_blank">(949) 800-5678</a></h4>
+                                <h4><a href="javascript:void(0)" target="_blank">(000) 000-0000</a></h4>
                             </div>
                         </div>
                         <div class="get-support get-support-color-white justify-content-center justify-content-md-end">
@@ -90,7 +90,7 @@
                                 <i class="icon-mail"></i>
                             </div>
                             <div class="get-support-info">
-                                <h4 style="font-size: 1.7rem;"><a href="mailto:info@helloshuttle.com" target="_blank">info@helloshuttle.com</a></h4>
+                                <h4 style="font-size: 1.7rem;"><a href="javascript:void(0)" target="_blank">info@testmail.com</a></h4>
                             </div>
                         </div>
                     </div>
