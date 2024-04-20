@@ -14,10 +14,12 @@ class CouponController extends BaseController
     {
         $response = [
             'result' => false,
-            'message' => 'Invalid coupon'
+            'message' => 'Invalid coupon',
+            // 'userRequestDatetime' => null,
+            // 'serverRequestDatetime' => null
         ];
 
-        $coupon_in_request = $this->request->getVar('couponCode');
+        $coupon_in_request = $this->request->getJsonVar('couponCode');
 
         $coupon_model = model(CouponModel::class);
         $coupon_in_db = $coupon_model->getCoupon($coupon_in_request);
@@ -35,6 +37,9 @@ class CouponController extends BaseController
         $coupon_end_date = new DateTime($coupon->couponEndDate, new DateTimeZone('UTC'));
 
         if (!($current_date >= $coupon_start_date && $current_date <= $coupon_end_date)) {
+            // $response['userRequestDatetime'] = $current_date;
+            // $response['serverRequestDatetime'] = $coupon_start_date;
+
             return $this->response->setJSON($response);
         }
 
