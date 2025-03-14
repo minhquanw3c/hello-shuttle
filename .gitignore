@@ -21,4 +21,3 @@ application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess
 /vendor/
-app/Config/Email.php
