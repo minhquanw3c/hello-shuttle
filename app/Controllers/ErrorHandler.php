@@ -15,8 +15,8 @@ class ErrorHandler extends BaseController
 
         $resources = (object) [];
 
-        $resources->form = $current_env === 'production' ? 'https://helloshuttle.com/' : 'http://localhost/projects/hello-shuttle/public/';
-        $resources->dashboard = $current_env === 'production' ? 'https://dashboard.helloshuttle.com/' : 'http://localhost/projects/hello-shuttle-dashboard/public/';
+        $resources->form = $current_env === 'production' ? $_SERVER['PROD_FORM_DOMAIN'] : 'http://localhost/projects/hello-shuttle/public/';
+        $resources->dashboard = $current_env === 'production' ? $_SERVER['PROD_DASHBOARD_DOMAIN'] : 'http://localhost/projects/hello-shuttle-dashboard/public/';
 
         return $resources->{$resource_type};
     }

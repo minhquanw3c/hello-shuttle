@@ -98,10 +98,10 @@ class Home extends BaseController
 
         $customer_data = $booking_data->bookingRequirements->review->customer;
         $login_data = $booking_data->loginForm;
-        
+
         $customer_handler = new CustomerController();
         $user_handler = new UserController();
-        
+
         if ($login_data->hasRegistered) {
             $customer_uuid = $booking_data->accountId;
 
@@ -110,10 +110,10 @@ class Home extends BaseController
             }
         } else {
             $customer_uuid = $customer_handler->createCustomer($customer_data);
-            
+
             if ($customer_data->registerAccount) {
                 $user_successfully_created = $user_handler->createUser($customer_data, $customer_uuid);
-    
+
                 if ($user_successfully_created) {
                     $user_handler->generateAccountActivationLink($customer_data->contact->email);
                 }
@@ -203,7 +203,8 @@ class Home extends BaseController
         return $charge_object->refunded == true ? $refunded : !$refunded;
     }
 
-    public function calculateTripRefundAmount($booking_data, $trip_type) {
+    public function calculateTripRefundAmount($booking_data, $trip_type)
+    {
         $config_model = model(ConfigModel::class);
         $valid_full_refund_hours = $config_model->getConfigById('cfg-rfd-tm')[0]['configValue'];
         $invalid_full_refund_percentage = $config_model->getConfigById('cfg-ivld-frd')[0]['configValue'];
@@ -214,9 +215,9 @@ class Home extends BaseController
         $refund_amount = 0.00;
 
         $is_full_refund_eligible = $this->checkEligibleRefundTime(
-                $cancel_booking_request_time,
-                $booking_data->bookingCreatedAt,
-                $valid_full_refund_hours
+            $cancel_booking_request_time,
+            $booking_data->bookingCreatedAt,
+            $valid_full_refund_hours
         );
 
         if ($has_purchased_booking_insurance) {
@@ -478,22 +479,22 @@ class Home extends BaseController
 
     public function generateBookingReceipt($pdf_template, $booking_ref_no)
     {
-       // Create a new PDF instance
-       $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8');
+        // Create a new PDF instance
+        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8');
 
-       // Set document information
-       $pdf->SetCreator('Hello Shuttle');
-       $pdf->SetAuthor('Hello Shuttle Billing Department');
-       $pdf->SetTitle('Hello Shuttle - Booking receipt on ' . now());
-       $pdf->SetSubject('Booking receipt');
-       $pdf->SetKeywords('Hello Shuttle, Booking receipt, Car rental');
+        // Set document information
+        $pdf->SetCreator('Hello Shuttle');
+        $pdf->SetAuthor('Hello Shuttle Billing Department');
+        $pdf->SetTitle('Hello Shuttle - Booking receipt on ' . now());
+        $pdf->SetSubject('Booking receipt');
+        $pdf->SetKeywords('Hello Shuttle, Booking receipt, Car rental');
 
-       // Set default font settings
-       $pdf->SetFont('helvetica', '', 10);
+        // Set default font settings
+        $pdf->SetFont('helvetica', '', 10);
 
-       // remove default header/footer
-       $pdf->setPrintHeader(false);
-       $pdf->setPrintFooter(false);
+        // remove default header/footer
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(false);
 
         // Add a page
         $pdf->AddPage();
@@ -524,11 +525,11 @@ class Home extends BaseController
     {
         $booking_model = model(BookingModel::class);
         $latest_booking = $booking_model->asObject()->select('*')->join('payment_status', 'payment_status.payment_status_id = bookings.payment_status')->orderBy('booking_ref_no', 'desc')->first();
-        
+
         if (!$latest_booking) {
             return view('templates/page_not_found', ['dashboardUrl' => $this->getResourcesURLs('dashboard')]);
         }
-        
+
         $latest_booking_data = json_decode($latest_booking->booking_data);
         $latest_booking_data->bookedAt = $latest_booking->booking_created_at;
         $latest_booking_data->bookingRefNo = $latest_booking->booking_ref_no;
@@ -600,10 +601,13 @@ class Home extends BaseController
             'bookingData' => $booking_data,
         ));
 
-        $pdf_content = view('templates/pdf/booking_receipt/test_receipt_layout', array(
-            'bookingData' => $booking_data,
-            'bookingRefNo' => $booking_ref_no,
-            ), ['debug' => false]
+        $pdf_content = view(
+            'templates/pdf/booking_receipt/test_receipt_layout',
+            array(
+                'bookingData' => $booking_data,
+                'bookingRefNo' => $booking_ref_no,
+            ),
+            ['debug' => false]
         );
 
         $pdf_receipt_name = $this->generateBookingReceipt($pdf_content, $booking_ref_no);
@@ -853,8 +857,8 @@ class Home extends BaseController
 
         $resources = (object) [];
 
-        $resources->form = $current_env === 'production' ? 'https://helloshuttle.project.minhquanle.a2hosted.com/' : 'http://localhost/projects/hello-shuttle/public/';
-        $resources->dashboard = $current_env === 'production' ? 'https://helloshuttledashboard.project.minhquanle.a2hosted.com/' : 'http://localhost/projects/hello-shuttle-dashboard/public/';
+        $resources->form = $current_env === 'production' ? $_SERVER['PROD_FORM_DOMAIN'] : 'http://localhost/projects/hello-shuttle/public/';
+        $resources->dashboard = $current_env === 'production' ? $_SERVER['PROD_DASHBOARD_DOMAIN'] : 'http://localhost/projects/hello-shuttle-dashboard/public/';
 
         return $resources->{$resource_type};
     }
