@@ -17,14 +17,15 @@ class Home extends BaseController
         $booking_id = now() . random_string('alnum', 10);
 
         $policy_file_path = base_url('/static/contents/policy.json');
-        $policy_file = file_get_contents($policy_file_path);
-        $policies = json_decode($policy_file, true);
+        // $policy_file = file_get_contents($policy_file_path);
+        // $policies = json_decode($policy_file, true);
 
         $data = [
             'bookingId' => $booking_id,
             'enviroment' => $_SERVER['CI_ENVIRONMENT'],
             'dashboardUrl' => $this->getResourcesURLs('dashboard'),
-            'policies' => $policies['policies'],
+            // 'policies' => $policies['policies'],
+            'policies' => []
         ];
 
         return view('frontend/form', $data);
