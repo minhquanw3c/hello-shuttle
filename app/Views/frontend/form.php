@@ -2075,10 +2075,6 @@
     Vue.use(window.vuelidate.default);
 </script>
 
-<?php if ($enviroment === 'production'): ?>
-    <script src="<?= base_url('static/js/main-app.min.js?v=' . now()) ?>"></script>
-<?php else: ?>
-    <script src="<?= base_url('static/mixins/formData.js') ?>" type="text/javascript"></script>
-    <script src="<?= base_url('static/js/main-app.js') ?>"></script>
-<?php endif ?>
+<script src="<?= base_url('static/js/main-app.js') ?>"></script>
+
 <?= $this->endSection() ?>
