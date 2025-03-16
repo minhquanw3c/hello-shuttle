@@ -5,7 +5,7 @@ Options All -Indexes
 # Rewrite engine
 # ----------------------------------------------------------------------
 <IfModule mod_headers.c>
-    Header set Access-Control-Allow-Origin "https://helloshuttle.minhquanw3c.host"
+    Header set Access-Control-Allow-Origin "https://ssshutledashboard.website"
     Header set Access-Control-Allow-Headers "Content-Type, Authorization"
 </IfModule>
 # Turning on the rewrite engine is necessary for the following rules and features.
@@ -15,7 +15,7 @@ Options All -Indexes
 	RewriteEngine On
 
 	# Block access to the JS file in production
-	RewriteCond %{HTTP_HOST} ^helloshuttle\.minhquanw3c\.host$ [NC]
+	RewriteCond %{HTTP_HOST} ^ssshutle\.website$ [NC]
 	RewriteCond %{REQUEST_URI} \/static\/js\/main-app\.js$
 	RewriteRule ^ - [F,L]
 
