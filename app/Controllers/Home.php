@@ -586,8 +586,8 @@ class Home extends BaseController
         $config_model = model(ConfigModel::class);
         $booking_model = model(BookingModel::class);
 
-        $config = $config_model->getEmailSender();
-        $sender = $config['configValue'];
+        // $config = $config_model->getEmailSender();
+        // $sender = $config['configValue'];
 
         $recipient = $booking_data->review->customer->contact->email;
         $booking_ref_no = $booking_model->getColumnValueByKeys($booking_id, 'booking_ref_no');
@@ -617,7 +617,9 @@ class Home extends BaseController
 
         $email = \Config\Services::email();
 
-        $email->setFrom($sender);
+        $email->setFrom(isset($_SERVER["CI_ENVIRONMENT"]) && $_SERVER["CI_ENVIRONMENT"] === "production"
+            ? $_SERVER["PROD_MAIL_USER"]
+            : $_SERVER["LOCALHOST_MAIL_USER"]);
         $email->setTo($recipient);
         $email->setSubject($email_subject);
         $email->setMessage($message);
