@@ -619,13 +619,13 @@ class Home extends BaseController
 
         $email->setFrom(isset($_SERVER["CI_ENVIRONMENT"]) && $_SERVER["CI_ENVIRONMENT"] === "production"
             ? $_SERVER["PROD_MAIL_USER"]
-            : $_SERVER["LOCALHOST_MAIL_USER"]);
+            : $_SERVER["LOCALHOST_MAIL_USER"], "SSShutle");
         $email->setTo($recipient);
         $email->setSubject($email_subject);
         $email->setMessage($message);
         $email->attach($receiptsPath);
 
-        $send_email_result = $email->send(false);
+        $send_email_result = $email->send(true);
 
         $response['result'] = $send_email_result;
         $response['message'] = $send_email_result ? $email->printDebugger() : $email->printDebugger();
