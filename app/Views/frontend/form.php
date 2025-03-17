@@ -2056,7 +2056,7 @@
 <?php if ($enviroment === 'production'): ?>
     <script
         defer
-        src=<?= "https://maps.googleapis.com/maps/api/js?key=" . $$_SERVER['GOOGLE_MAP_API_KEY_PROD'] . "&libraries=places&callback=initMap" ?>>
+        src=<?= "https://maps.googleapis.com/maps/api/js?key=" . $_SERVER['GOOGLE_MAP_API_KEY_PROD'] . "&libraries=places&callback=initMap" ?>>
     </script>
 <?php else: ?>
     <script
