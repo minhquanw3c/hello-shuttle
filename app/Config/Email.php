@@ -120,5 +120,13 @@ class Email extends BaseConfig
         $this->SMTPHost = isset($_SERVER["CI_ENVIRONMENT"]) && $_SERVER["CI_ENVIRONMENT"] === "production"
             ? $_SERVER["PROD_MAIL_SMTP_HOST"]
             : $_SERVER["LOCALHOST_MAIL_SMTP_HOST"];
+
+        $this->SMTPUser = isset($_SERVER["CI_ENVIRONMENT"]) && $_SERVER["CI_ENVIRONMENT"] === "production"
+            ? $_SERVER["PROD_MAIL_USER"]
+            : $_SERVER["LOCALHOST_MAIL_USER"];
+
+        $this->SMTPPass = isset($_SERVER["CI_ENVIRONMENT"]) && $_SERVER["CI_ENVIRONMENT"] === "production"
+            ? $_SERVER["PROD_MAIL_PASSWORD"]
+            : $_SERVER["LOCALHOST_MAIL_PASSWORD"];
     }
 }
