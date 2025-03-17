@@ -583,7 +583,7 @@ class Home extends BaseController
 
     public function sendBookingReceiptEmail($booking_data, $booking_id)
     {
-        $config_model = model(ConfigModel::class);
+        # $config_model = model(ConfigModel::class);
         $booking_model = model(BookingModel::class);
 
         // $config = $config_model->getEmailSender();
