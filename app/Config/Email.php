@@ -132,5 +132,9 @@ class Email extends BaseConfig
         $this->SMTPPort = isset($_SERVER["CI_ENVIRONMENT"]) && $_SERVER["CI_ENVIRONMENT"] === "production"
             ? $_SERVER["PROD_MAIL_PORT"]
             : $_SERVER["LOCALHOST_MAIL_PORT"];
+
+        $this->SMTPCrypto = isset($_SERVER["CI_ENVIRONMENT"]) && $_SERVER["CI_ENVIRONMENT"] === "production"
+            ? $_SERVER["PROD_MAIL_CRYPTO"]
+            : $_SERVER["LOCALHOST_MAIL_CRYPTO"];
     }
 }
